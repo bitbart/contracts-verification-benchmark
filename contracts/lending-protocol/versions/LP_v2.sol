@@ -130,8 +130,7 @@ contract LP {
 
     function _calculate_linear_interest() internal view returns (uint) {
         uint elapsed = block.number - last_global_update;
-        uint elapsed_ratio = (elapsed * 1e6) / blockPeriod;
-        uint multiplier = 1 + ratePerPeriod * elapsed_ratio;
+        uint multiplier = 1e6 + (ratePerPeriod * elapsed) / blockPeriod;
         return multiplier;
     }
 
@@ -142,7 +141,7 @@ contract LP {
         }
         else if (block.number > last_global_update) {
             uint multiplier = _calculate_linear_interest();
-            global_borrow_index *= multiplier / 1e6;
+            global_borrow_index = (global_borrow_index * multiplier) / 1e6;
             last_global_update = block.number;
         }
     }
@@ -154,6 +153,9 @@ contract LP {
 
     function _get_accrued_debt(address token, address borrower) internal view returns (uint) {
         uint current_debt = debit[token][borrower];
+        if (current_debt == 0) {
+            return 0; // No debt, so no accrued debt
+        }
         uint accrued_debt = (current_debt * global_borrow_index) / borrow_index[token][borrower];
         return accrued_debt;
     }
@@ -215,8 +217,10 @@ contract LP {
             "Repay: invalid token"
         );
 
+        uint debt = _get_accrued_debt(token_addr, msg.sender);
+
         require(
-            debit[token_addr][msg.sender] >= amount,
+            debt >= amount,
             "Repay: insufficient debts"
         );
 
@@ -226,7 +230,6 @@ contract LP {
         reserves[token_addr] += amount;
 
         // Update user's debt and index
-        uint debt = _get_accrued_debt(token_addr, msg.sender);
         debit[token_addr][msg.sender] = debt - amount;
         borrow_index[token_addr][msg.sender] = global_borrow_index;    
 
@@ -278,5 +281,76 @@ contract LP {
             "Redeem: invalid token"
         );
         return prices[token_addr];
+    }
+
+    function getAccruedDebt(address token_addr, address borrower) public view returns (uint){
+        require(
+            _isValidToken(token_addr),
+            "GetAccruedDebt: invalid token"
+        );
+
+        if (borrow_index[token_addr][borrower] == 0) return 0;
+
+        // Update globalBorrowIndex
+        uint _global_borrow_index = 0;
+        if (last_global_update == 0) {
+           _global_borrow_index = 1e6; 
+        }
+        else if (block.number > last_global_update) {
+            uint multiplier = _calculate_linear_interest();
+            _global_borrow_index = (global_borrow_index * multiplier) / 1e6;
+        }
+        else {
+            _global_borrow_index = global_borrow_index;
+        }
+
+        // _get_accrued_debt
+        uint current_debt = debit[token_addr][borrower];
+        if (current_debt == 0) {
+            return 0; // No debt, so no accrued debt
+        }
+        uint accrued_debt = (current_debt * _global_borrow_index) / borrow_index[token_addr][borrower]; 
+        return accrued_debt;
+    }
+
+    function getUpdatedSumDebits(address token_addr) public view returns (uint) {
+        require(
+            _isValidToken(token_addr),
+            "GetAccruedDebt: invalid token"
+        );
+        // Update globalBorrowIndex
+        uint _global_borrow_index = 0;
+        if (last_global_update == 0) {
+           _global_borrow_index = 1e6; 
+        }
+        else if (block.number > last_global_update) {
+            uint multiplier = _calculate_linear_interest();
+            _global_borrow_index = (global_borrow_index * multiplier) / 1e6;
+        }
+        else {
+            _global_borrow_index = global_borrow_index;
+        }
+
+        uint tot_debt = (sum_debits[token_addr] * _global_borrow_index) / sum_debits_index[token_addr];
+
+        return tot_debt;
+    }
+
+    function getUpdatedXR(address token_addr) public view returns (uint) {
+        require(
+            _isValidToken(token_addr),
+            "GetUpdatedXR: invalid token"
+        );
+
+        uint multiplier = _calculate_linear_interest();
+        uint _global_borrow_index = (global_borrow_index * multiplier) / 1e6;
+
+        uint tot_debt = (sum_debits[token_addr] * _global_borrow_index) / sum_debits_index[token_addr];
+
+        if (sum_credits[token_addr] == 0) {
+            return 1e6;
+        } else {
+            return ((reserves[token_addr] + tot_debt) * 1e6)/sum_credits[token_addr];
+        }
     }
 }
