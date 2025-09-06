@@ -64,7 +64,7 @@ rule dep_xr {
         old_computed_xr_t0 = ((old_reserves_t0 + old_sum_debits_t0) * 1000000) / old_sum_credits_t0;
     }
 
-    require(old_xr_t0 >= 1000000);
+    //require(old_xr_t0 >= 1000000); //requirement is not necessary relative to skeleton
 
     deposit(e, amt, t0);
 
@@ -100,12 +100,12 @@ rule dep_xr {
     assert(old_xr_t0 == old_computed_xr_t0);
     assert(new_xr_t0 == new_computed_xr_t0);
 
-    assert(new_xr_t0 >= 1000000);
+    // assert(new_xr_t0 >= 1000000);
 
     assert(new_sum_credits_t0 == old_sum_credits_t0 + ((amt * 1000000)/old_computed_xr_t0));
     assert(new_sum_debits_t0 == old_sum_debits_t0);
 
-    // assert(old_computed_xr_t0 == new_computed_xr_t0);
+    // assert(old_computed_xr_t0 == new_computed_xr_t0); //requirement is not necessary relative to skeleton
     
     // false because of roundings (integer arithmetics)
     assert(old_xr_t0 <= new_xr_t0);

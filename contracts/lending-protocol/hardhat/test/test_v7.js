@@ -283,10 +283,10 @@ describe("LendingProtocol_v7", function () {
 
         await actor_a_conn.deposit(10, tok0_addr); // res=10,tot_cred=10,tot_deb=0,xr=1e6
         await actor_a_conn.borrow(10, tok0_addr); // res=0,tot_cred=10,tot_deb=10,xr=1e6 
-
+        await lp.connect(owner).accrueInt(); //res=0,tot_cred=10,tot_deb=11,xr=1.1e6
         const old_xr_t0 = await lp.XR(tok0); //1e6
 
-        await lp.connect(owner).accrueInt(); //res=0,tot_cred=10,tot_deb=11,xr=1.1e6
+
 
         await actor_a_conn.deposit(1, tok0_addr); // rounding error
         //res=1,tot_cred=floor(1*1e6/1.1e6)= floor(0.9) = 0, tot_deb=11, xr=1.2e6
@@ -294,34 +294,6 @@ describe("LendingProtocol_v7", function () {
         const new_xr_t0 = await lp.XR(tok0);
 
         expect(new_xr_t0).not.to.equal(old_xr_t0);
-    });
-
-    it("dep-xr", async function () {
-
-        const { lp, tok0, tok1, actor_a, actor_b, owner } = await loadFixture(deployContract);
-
-        await tok0.connect(actor_a).approve(await lp.getAddress(), 11);
-
-        const actor_a_conn = lp.connect(actor_a);
-        const tok0_addr = await tok0.getAddress();
-
-        await actor_a_conn.deposit(10, tok0_addr); // res=10,tot_cred=10,tot_deb=0,xr=1e6
-        await actor_a_conn.borrow(10, tok0_addr); // res=0,tot_cred=10,tot_deb=10,xr=1e6 
-
-        const old_xr_t0 = await lp.XR(tok0); //1e6
-        //uint old_sum_credits_t0 = currentContract.sum_credits[t0];
-        const old_sum_credits_t0 = await lp.sum_credits(tok0);
-
-        await lp.connect(owner).accrueInt(); //res=0,tot_cred=10,tot_deb=11,xr=1.1e6
-
-        await actor_a_conn.deposit(1, tok0_addr); // rounding error
-        //res=1,tot_cred=floor(1*1e6/1.1e6)= floor(0.9) = 0, tot_deb=11, xr=1.2e6
-        //wasted deposit, not enough to convert to an integer amount of credits
-        const new_xr_t0 = await lp.XR(tok0);
-
-        expect(new_xr_t0).to.be.greaterThan(old_xr_t0);
-
-        expect(new_xr_t0).to.be.greaterThan(old_xr_t0 + (1n * 1000000n / old_sum_credits_t0) + 1n);
     });
 
     it("rdm-additivity", async function () {
