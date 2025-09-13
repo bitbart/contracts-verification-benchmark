@@ -169,23 +169,23 @@ deposit-contract-balance,v6,1,
 deposit-contract-balance,v7,1,
 deposit-contract-balance,v8,1,
 deposit-contract-balance,v9,1,
-deposit-not-revert-exsternal,v1,1,
-deposit-not-revert-exsternal,v10,1,
-deposit-not-revert-exsternal,v11,0,"Deposits may be paused by the owner."
-deposit-not-revert-exsternal,v12,1,
-deposit-not-revert-exsternal,v13,0,"The low-level call to the owner may revert."
-deposit-not-revert-exsternal,v14,0,"The sender may be blacklisted by the owner."
-deposit-not-revert-exsternal,v15,0,"The operation limit per block may be exceeded."
-deposit-not-revert-exsternal,v16,0,
-deposit-not-revert-exsternal,v17,1,
-deposit-not-revert-exsternal,v2,1,
-deposit-not-revert-exsternal,v3,0,
-deposit-not-revert-exsternal,v4,0,"Reverts when credits[msg.sender]==0 and msg.value==0",
-deposit-not-revert-exsternal,v5,0,"Reverts after type(uint256).max calls with msg.value == 0."
-deposit-not-revert-exsternal,v6,1,
-deposit-not-revert-exsternal,v7,0,
-deposit-not-revert-exsternal,v8,1,
-deposit-not-revert-exsternal,v9,1,
+deposit-not-revert-external,v1,1,
+deposit-not-revert-external,v10,1,
+deposit-not-revert-external,v11,0,"Deposits may be paused by the owner."
+deposit-not-revert-external,v12,1,
+deposit-not-revert-external,v13,0,"The low-level call to the owner may revert."
+deposit-not-revert-external,v14,0,"The sender may be blacklisted by the owner."
+deposit-not-revert-external,v15,0,"The operation limit per block may be exceeded."
+deposit-not-revert-external,v16,0,
+deposit-not-revert-external,v17,1,
+deposit-not-revert-external,v2,1,
+deposit-not-revert-external,v3,0,
+deposit-not-revert-external,v4,0,"Reverts when credits[msg.sender]==0 and msg.value==0"
+deposit-not-revert-external,v5,0,"Reverts after type(uint256).max calls with msg.value == 0."
+deposit-not-revert-external,v6,1,
+deposit-not-revert-external,v7,0,
+deposit-not-revert-external,v8,1,
+deposit-not-revert-external,v9,1,
 deposit-not-revert,v1,1,
 deposit-not-revert,v10,1,
 deposit-not-revert,v11,0,"Deposits may be paused by the owner."
@@ -197,7 +197,7 @@ deposit-not-revert,v16,0,
 deposit-not-revert,v17,1,
 deposit-not-revert,v2,1,
 deposit-not-revert,v3,0,
-deposit-not-revert,v4,0,"Reverts when credits[msg.sender]==0 and msg.value==0",
+deposit-not-revert,v4,0,"Reverts when credits[msg.sender]==0 and msg.value==0"
 deposit-not-revert,v5,0,"Reverts after type(uint256).max calls with msg.value == 0."
 deposit-not-revert,v6,1,
 deposit-not-revert,v7,0,
@@ -270,7 +270,7 @@ exists-unique-credit-change,v5,0,"A:withdraw() triggers a call to B:deposit()"
 exists-unique-credit-change,v6,0,
 exists-unique-credit-change,v7,0,"deposit updates credits of msg.sender and owner"
 exists-unique-credit-change,v8,0,
-exists-unique-credit-change,v9,0,"Deposit is non-reentrant.",
+exists-unique-credit-change,v9,0,"Deposit is non-reentrant."
 no-frozen-assets,v1,0,"all the creditors have a receive method that reverts" 
 no-frozen-assets,v10,0,
 no-frozen-assets,v11,0,
@@ -288,7 +288,7 @@ no-frozen-assets,v6,0,
 no-frozen-assets,v7,0,
 no-frozen-assets,v8,0,
 no-frozen-assets,v9,0,
-no-frozen-credits,v1,0,"all the creditors have a receive method that reverts" 
+no-frozen-credits,v1,0,"all the creditors have a receive method that reverts"
 no-frozen-credits,v10,0,
 no-frozen-credits,v11,0,
 no-frozen-credits,v12,0,
