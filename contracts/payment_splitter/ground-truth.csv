@@ -89,16 +89,16 @@ release-balance-payee,v7,1
 release-balance-payee,v8,1
 release-balance-payee,v9,1
 release-balance-payee,v10,1
-release-balance-ps,v1,1
-release-balance-ps,v2,1
-release-balance-ps,v3,1
-release-balance-ps,v4,0,"`release()` does not verify the success of the call, so even when it doesn't revert, it is not guaranteed that the call didn't"
-release-balance-ps,v5,1
-release-balance-ps,v6,1
-release-balance-ps,v7,1
-release-balance-ps,v8,0,"if `releasable(a)==0` and `balance > 0`, one ETH will be transferred to `owner`, decreasing the balance of `PaymentSplitter`"
-release-balance-ps,v9,0,"see v8"
-release-balance-ps,v10,1
+release-balance-contract,v1,1
+release-balance-contract,v2,1
+release-balance-contract,v3,1
+release-balance-contract,v4,0,"`release()` does not verify the success of the call, so even when it doesn't revert, it is not guaranteed that the call didn't"
+release-balance-contract,v5,1
+release-balance-contract,v6,1
+release-balance-contract,v7,1
+release-balance-contract,v8,0,"if `releasable(a)==0` and `balance > 0`, one ETH will be transferred to `owner`, decreasing the balance of `PaymentSplitter`"
+release-balance-contract,v9,0,"see v8"
+release-balance-contract,v10,1
 release-not-revert,v1,0,"The contract could revert when `totalReleased += payment` overflows, or when the external call reverts"
 release-not-revert,v2,0,"see v1"
 release-not-revert,v3,0,"see v1"

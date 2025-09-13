@@ -18,10 +18,10 @@ The contract follows a pull payment model. This means that payments are not auto
 - **fair-split-geq-no-overflow**: for every address `a` in `payees`, `(totalReceived * shares[a]) / totalShares >= released[a]` whenever the expression does not overflow.
 - **non-zero-payees**: for all addresses `a` in `payees`, `a != address(0)`.
 - **positive-shares**: for all addresses `addr` in `payees`, `shares[addr] > 0`.
-- **releasable-balance-check**: for all addresses `addr` in `payees`, `releasable(addr)` is less than or equal to the balance of the contract.
+- **releasable-leq-balance**: for all addresses `addr` in `payees`, `releasable(addr)` is less than or equal to the balance of the contract.
 - **releasable-sum-balance**: the sum of the releasable funds for every addresses is equal to the balance of the contract.
+- **release-balance-contract**: for every address `a` in `payees`, after a non-reverting call to `release(a)` the balance of `PaymentSplitter` is decreased by `releasable(a)`.
 - **release-balance-payee**: for every address `a` in `payees`, after a non-reverting call to `release(a)` the balance of `a` is increased by `releasable(a)`.
-- **release-balance-ps**: for every address `a` in `payees`, after a non-reverting call to `release(a)` the balance of `PaymentSplitter` is decreased by `releasable(a)`.
 - **release-not-revert**: for all addresses `a` in `payees`, if `releasable(a) > 0`, then `release(a)` does not revert.
 - **release-not-revert-receive**: if the address `a` is in `payees`, and its `receive` method just accepts all ETH, and `releasable(a) > 0`, then `release(a)` does not revert
 - **release-release-revert**: two consecutive calls to `release` for the same address `a`, without there being any ETH transfer to the contract in-between calls, revert on the second call.

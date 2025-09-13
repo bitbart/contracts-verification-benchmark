@@ -6,5 +6,7 @@
 **/.certora_recent_jobs.json
 **/.zip-output-url.txt
 **/log.txt
+**/logs_verification_tasks/
+**/llms_results/
 
 .vscode/

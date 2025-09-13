@@ -1,4 +1,4 @@
-//release-balance-ps invariant
+//release-balance-contract invariant
 
 function invariant(uint index) public {
     require(index < payees.length, "Index out of bounds");

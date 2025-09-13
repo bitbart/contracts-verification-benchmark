@@ -98,7 +98,7 @@ describe("PaymentSplitter_v4", function () {
         })
     }
 
-    //     release-balance-ps
+    //     release-balance-contract
 
     {
         async function deployContract() {
@@ -121,7 +121,7 @@ describe("PaymentSplitter_v4", function () {
             return { PaymentSplitter, Returns5 };
         }
 
-        it("release-balance-ps", async function () {
+        it("release-balance-contract", async function () {
             const { PaymentSplitter, Returns5 } = await loadFixture(deployContract);
 
             const balanceBefore = await ethers.provider.getBalance(PaymentSplitter.getAddress());

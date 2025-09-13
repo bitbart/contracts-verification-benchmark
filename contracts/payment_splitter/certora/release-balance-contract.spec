@@ -1,6 +1,6 @@
 import "helper/methods.spec";
 
-rule release_balance_ps {
+rule release_balance_contract {
     env e;
     uint idx;
     address a = getPayee(idx);
