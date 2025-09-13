@@ -139,13 +139,6 @@ swappable-call-order,v7,0,"see v1"
 swappable-call-order,v8,0,"see v1"
 swappable-call-order,v9,0,"see v1"
 swappable-call-order,v10,0,"see v1"
-tx-transfer-releasable-receive,v1,1,
-tx-transfer-releasable-receive,v2,1,
-tx-transfer-releasable-receive,v3,1,
-tx-transfer-releasable-receive,v4,1,
-tx-transfer-releasable-receive,v5,1,
-tx-transfer-releasable-receive,v6,1,"also address(0) can receive ETH",
-tx-transfer-releasable-receive,v7,0,"if `a` is a contract without a function to call `releasable`, then noone cannot fire the required transaction",
 tx-transfer-balance-receive,v1,0,"false if forall a : balance * shares[a] < totalShares",
 tx-transfer-balance-receive,v2,0,
 tx-transfer-balance-receive,v3,0,
@@ -155,3 +148,14 @@ tx-transfer-balance-receive,v6,0,
 tx-transfer-balance-receive,v7,0,
 tx-transfer-balance-receive,v8,1,"owner can withdraw remaining balance",
 tx-transfer-balance-receive,v9,0,"all payees can have zero shares"
+tx-transfer-balance-receive,v10,0,
+tx-transfer-releasable-receive,v1,1,
+tx-transfer-releasable-receive,v2,1,
+tx-transfer-releasable-receive,v3,1,
+tx-transfer-releasable-receive,v4,1,
+tx-transfer-releasable-receive,v5,1,
+tx-transfer-releasable-receive,v6,1,"also address(0) can receive ETH",
+tx-transfer-releasable-receive,v7,0,"if `a` is a contract without a function to call `releasable`, then nobody can fire the required transaction",
+tx-transfer-releasable-receive,v8,1,
+tx-transfer-releasable-receive,v9,1,
+tx-transfer-releasable-receive,v10,1,
