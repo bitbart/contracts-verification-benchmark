@@ -6,6 +6,8 @@ bor-additivity,v4,P!
 bor-additivity,v5,ERR
 bor-additivity,v6,ERR
 bor-additivity,v7,P!
+bor-additivity,v8,P!
+bor-additivity,v9,ERR
 bor-state,v1,P!
 bor-state,v2,ERR
 bor-state,v3,P!
@@ -13,6 +15,8 @@ bor-state,v4,P!
 bor-state,v5,ERR
 bor-state,v6,ERR
 bor-state,v7,P!
+bor-state,v8,P!
+bor-state,v9,ERR
 bor-tokens,v1,P!
 bor-tokens,v2,P!
 bor-tokens,v3,P!
@@ -20,6 +24,8 @@ bor-tokens,v4,P!
 bor-tokens,v5,P!
 bor-tokens,v6,P!
 bor-tokens,v7,P!
+bor-tokens,v8,P!
+bor-tokens,v9,P!
 bor-xr-eq,v1,P!
 bor-xr-eq,v2,N
 bor-xr-eq,v3,P!
@@ -27,6 +33,8 @@ bor-xr-eq,v4,P!
 bor-xr-eq,v5,N
 bor-xr-eq,v6,N
 bor-xr-eq,v7,P!
+bor-xr-eq,v8,P!
+bor-xr-eq,v9,P!
 credits-zero,v1,N
 credits-zero,v2,N
 credits-zero,v3,N
@@ -34,6 +42,8 @@ credits-zero,v4,N
 credits-zero,v5,N
 credits-zero,v6,N
 credits-zero,v7,N
+credits-zero,v8,N
+credits-zero,v9,N
 dep-additivity,v1,N
 dep-additivity,v2,N
 dep-additivity,v3,N
@@ -41,6 +51,8 @@ dep-additivity,v4,N
 dep-additivity,v5,N
 dep-additivity,v6,N
 dep-additivity,v7,N
+dep-additivity,v8,P!
+dep-additivity,v9,P!
 dep-state,v1,P!
 dep-state,v2,P!
 dep-state,v3,P!
@@ -48,6 +60,8 @@ dep-state,v4,P!
 dep-state,v5,P!
 dep-state,v6,P!
 dep-state,v7,P!
+dep-state,v8,P!
+dep-state,v9,P!
 dep-tokens,v1,P!
 dep-tokens,v2,P!
 dep-tokens,v3,P!
@@ -55,13 +69,17 @@ dep-tokens,v4,P!
 dep-tokens,v5,P!
 dep-tokens,v6,P!
 dep-tokens,v7,P!
+dep-tokens,v8,P!
+dep-tokens,v9,P!
 dep-xr,v1,P!
-dep-xr,v2,N
+dep-xr,v2,ERR
 dep-xr,v3,P!
 dep-xr,v4,P!
-dep-xr,v5,N
-dep-xr,v6,N
+dep-xr,v5,ERR
+dep-xr,v6,ERR
 dep-xr,v7,P!
+dep-xr,v8,P!
+dep-xr,v9,P!
 dep-xr-eq,v1,N
 dep-xr-eq,v2,N
 dep-xr-eq,v3,N
@@ -69,6 +87,8 @@ dep-xr-eq,v4,N
 dep-xr-eq,v5,N
 dep-xr-eq,v6,N
 dep-xr-eq,v7,N
+dep-xr-eq,v8,P!
+dep-xr-eq,v9,P!
 expected-interest,v1,P!
 expected-interest,v2,ERR
 expected-interest,v3,N
@@ -76,6 +96,8 @@ expected-interest,v4,P!
 expected-interest,v5,ERR
 expected-interest,v6,ERR
 expected-interest,v7,P!
+expected-interest,v8,P!
+expected-interest,v9,ERR
 rdm-additivity,v1,N
 rdm-additivity,v2,N
 rdm-additivity,v3,N
@@ -83,6 +105,8 @@ rdm-additivity,v4,N
 rdm-additivity,v5,N
 rdm-additivity,v6,N
 rdm-additivity,v7,N
+rdm-additivity,v8,P!
+rdm-additivity,v9,P!
 rdm-state,v1,P!
 rdm-state,v2,ERR
 rdm-state,v3,P!
@@ -90,6 +114,8 @@ rdm-state,v4,N
 rdm-state,v5,ERR
 rdm-state,v6,N
 rdm-state,v7,P!
+rdm-state,v8,P!
+rdm-state,v9,P!
 rdm-tokens,v1,P!
 rdm-tokens,v2,P!
 rdm-tokens,v3,P!
@@ -97,6 +123,8 @@ rdm-tokens,v4,N
 rdm-tokens,v5,P!
 rdm-tokens,v6,N
 rdm-tokens,v7,P!
+rdm-tokens,v8,P!
+rdm-tokens,v9,P!
 rdm-xr-eq,v1,N
 rdm-xr-eq,v2,N
 rdm-xr-eq,v3,N
@@ -104,6 +132,8 @@ rdm-xr-eq,v4,N
 rdm-xr-eq,v5,N
 rdm-xr-eq,v6,N
 rdm-xr-eq,v7,N
+rdm-xr-eq,v8,P!
+rdm-xr-eq,v9,P!
 rpy-additivity,v1,P!
 rpy-additivity,v2,P!
 rpy-additivity,v3,P!
@@ -111,6 +141,8 @@ rpy-additivity,v4,P!
 rpy-additivity,v5,P!
 rpy-additivity,v6,P!
 rpy-additivity,v7,P!
+rpy-additivity,v8,P!
+rpy-additivity,v9,P!
 rpy-state,v1,P!
 rpy-state,v2,ERR
 rpy-state,v3,P!
@@ -118,6 +150,8 @@ rpy-state,v4,P!
 rpy-state,v5,N
 rpy-state,v6,ERR
 rpy-state,v7,N
+rpy-state,v8,P!
+rpy-state,v9,ERR
 rpy-tokens,v1,P!
 rpy-tokens,v2,P!
 rpy-tokens,v3,P!
@@ -125,6 +159,8 @@ rpy-tokens,v4,P!
 rpy-tokens,v5,N
 rpy-tokens,v6,P!
 rpy-tokens,v7,N
+rpy-tokens,v8,P!
+rpy-tokens,v9,P!
 rpy-xr-eq,v1,P!
 rpy-xr-eq,v2,N
 rpy-xr-eq,v3,P!
@@ -132,6 +168,8 @@ rpy-xr-eq,v4,P!
 rpy-xr-eq,v5,N
 rpy-xr-eq,v6,N
 rpy-xr-eq,v7,P!
+rpy-xr-eq,v8,P!
+rpy-xr-eq,v9,P!
 trace1,v1,P!
 trace1,v2,N
 trace1,v3,P!
@@ -139,6 +177,8 @@ trace1,v4,P!
 trace1,v5,N
 trace1,v6,N
 trace1,v7,P!
+trace1,v8,P!
+trace1,v9,N
 trace2,v1,P!
 trace2,v2,N
 trace2,v3,P!
@@ -146,6 +186,8 @@ trace2,v4,P!
 trace2,v5,N
 trace2,v6,N
 trace2,v7,P!
+trace2,v8,P!
+trace2,v9,N
 xr-geq-one,v1,N
 xr-geq-one,v2,N
 xr-geq-one,v3,N
@@ -153,6 +195,8 @@ xr-geq-one,v4,N
 xr-geq-one,v5,N
 xr-geq-one,v6,N
 xr-geq-one,v7,N
+xr-geq-one,v8,P!
+xr-geq-one,v9,P!
 xr-increasing,v1,P!
 xr-increasing,v2,N
 xr-increasing,v3,P!
@@ -160,6 +204,8 @@ xr-increasing,v4,P!
 xr-increasing,v5,N
 xr-increasing,v6,N
 xr-increasing,v7,P!
+xr-increasing,v8,P!
+xr-increasing,v9,P!
 xr-invariant,v1,N
 xr-invariant,v2,N
 xr-invariant,v3,N
@@ -167,3 +213,5 @@ xr-invariant,v4,N
 xr-invariant,v5,N
 xr-invariant,v6,N
 xr-invariant,v7,N
+xr-invariant,v8,P!
+xr-invariant,v9,P!
