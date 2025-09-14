@@ -406,7 +406,7 @@ timeout-balance,v12,0,
 timeout-balance,v13,0,
 timeout-balance,v14,1,"Uses transfer instead of low-level call to send ETH"
 timeout-balance,v15,0,
-timeout-balance,v16,1,
+timeout-balance,v16,0,
 timeout-balance,v2,0,
 timeout-balance,v3,0,
 timeout-balance,v4,0,
