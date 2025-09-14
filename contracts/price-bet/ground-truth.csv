@@ -607,22 +607,38 @@ win-not-revert,v6,0,
 win-not-revert,v7,0,
 win-not-revert,v8,0,
 win-not-revert,v9,0,
-win-pot-receive,v10,1,
-win-pot-receive,v1,1,
-win-pot-receive,v11,1,
-win-pot-receive,v12,1,
-win-pot-receive,v13,1,
-win-pot-receive,v14,1,
-win-pot-receive,v15,1,
-win-pot-receive,v16,1,
-win-pot-receive,v2,1,
-win-pot-receive,v3,0,"Timeout can be called before win, emptying the balance"
-win-pot-receive,v4,0,"Join does not require the player to deposit an amount corresponding to the initial pot"
-win-pot-receive,v5,1,
-win-pot-receive,v6,1,
-win-pot-receive,v7,0,"Win can be called after timeout"
-win-pot-receive,v8,0,"Win only transfer 1 wei"
-win-pot-receive,v9,1,
+win-pot-receive,v10,0,
+win-pot-receive,v1,0,"constructor(value=2) join(value=2) win() selfdestruct(value=1) win(): the final win() does not revert and only transfers 1"
+win-pot-receive,v11,0,
+win-pot-receive,v12,0,
+win-pot-receive,v13,0,
+win-pot-receive,v14,0,
+win-pot-receive,v15,0,
+win-pot-receive,v16,0,"Since win() is not payable, msg.value must be 0, hence the contract balance before the call must be equal to 2*initial_pot"
+win-pot-receive,v2,0,
+win-pot-receive,v3,0,
+win-pot-receive,v4,0,
+win-pot-receive,v5,0,
+win-pot-receive,v6,0,
+win-pot-receive,v7,0,
+win-pot-receive,v8,0,
+win-pot-receive,v9,0,
+win-pot-first-receive,v10,1,
+win-pot-first-receive,v1,1,
+win-pot-first-receive,v11,1,
+win-pot-first-receive,v12,1,
+win-pot-first-receive,v13,1,
+win-pot-first-receive,v14,1,
+win-pot-first-receive,v15,1,
+win-pot-first-receive,v16,1,
+win-pot-first-receive,v2,1,
+win-pot-first-receive,v3,0,"Timeout can be called before win, emptying the balance"
+win-pot-first-receive,v4,0,"Join does not require the player to deposit an amount corresponding to the initial pot"
+win-pot-first-receive,v5,1,
+win-pot-first-receive,v6,1,
+win-pot-first-receive,v7,0,"Win can be called after timeout"
+win-pot-first-receive,v8,0,"Win only transfer 1 wei"
+win-pot-first-receive,v9,1,
 win-pot,v10,0,
 win-pot,v1,0,"The low-level call can trigger further transfers"
 win-pot,v11,0,
