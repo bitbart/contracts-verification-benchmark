@@ -469,7 +469,7 @@ transfer-pot-join,v11,0,
 transfer-pot-join,v12,0,
 transfer-pot-join,v13,0,
 transfer-pot-join,v14,0,
-transfer-pot-join,v15,1,"timeout can only be called once, if a player has joined"
+transfer-pot-join,v15,0,"constructor(value=2) join(value=2) win() selfdestruct(value=1) win()"
 transfer-pot-join,v16,0,
 transfer-pot-join,v2,0,
 transfer-pot-join,v3,0,"timeout can be called before win emptying the balance"
@@ -485,7 +485,7 @@ transfer-pot,v11,0,
 transfer-pot,v12,0,
 transfer-pot,v13,0,
 transfer-pot,v14,0,
-transfer-pot,v15,1,"Timeout can only be called once, if a player has joined"
+transfer-pot,v15,0,"constructor(value=2) join(value=2) win() selfdestruct(value=1) timeout()"
 transfer-pot,v16,0,
 transfer-pot,v2,0,
 transfer-pot,v3,0,
