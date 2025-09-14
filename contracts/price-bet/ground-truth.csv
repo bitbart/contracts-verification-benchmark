@@ -628,7 +628,7 @@ win-pot,v1,0,"The low-level call can trigger further transfers"
 win-pot,v11,0,
 win-pot,v12,0,
 win-pot,v13,0,
-win-pot,v14,1,"Uses transfer instead of low-level call to send ETH"
+win-pot,v14,0,"constructor(value=2) join(value=2) win() selfdestruct(value=1) win(): the final win() does not revert and only transfers 1"
 win-pot,v15,0,
 win-pot,v16,0,"Since win() is not payable, msg.value must be 0, hence the contract balance before the call must be equal to 2*initial_pot"
 win-pot,v2,0,

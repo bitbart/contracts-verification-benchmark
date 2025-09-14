@@ -40,8 +40,8 @@
         "win-frontrun": "if the `player` can win the bet, there exists an adversary that can frontrun the `player` to prevent him from actually winning.",
         "win-frontrun-not-oracle": "if the `player` can win the bet, there exists an adversary different from the oracle owner who can frontrun the `player` to prevent him from actually winning.",
         "win-not-revert": "a transaction `win()` does not revert if the deadline has not expired, the sender is the `player`, and the call to oracle returns an exchange rate that is greater than or equal to the target `exchange_rate`.",
-        "win-pot": "after a non-reverting `win()`, the ETH balance of `player` is increased at least twice the initial pot.",
-        "win-pot-receive": "if the `receive` method of `player` just accepts all ETH, then after a non-reverting `win()`, the ETH balance of `player` increases of at least twice the initial pot.",        
+        "win-pot": "after a non-reverting `win()`, the ETH balance of `player` is increased by at least twice the initial pot.",
+        "win-pot-receive": "if the `receive` method of `player` just accepts all ETH, then after a non-reverting `win()`, the ETH balance of `player` increases by at least twice the initial pot.",        
         "win-revert": "a transaction `win()` reverts if the deadline has expired, or the sender is not the player, or the `exchange_rate` within the Oracle contract is less than the target `exchange_rate` within the PriceBet contract. Assume that the address `oracle` actually contains a deployment of contract Oracle."
     },    
     "property-types": {
