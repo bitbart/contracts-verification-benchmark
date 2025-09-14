@@ -563,10 +563,10 @@ win-frontrun-not-oracle,v1,0,
 win-frontrun-not-oracle,v10,0,
 win-frontrun-not-oracle,v11,0,
 win-frontrun-not-oracle,v12,0,
-win-frontrun-not-oracle,v13,1,"In a state with block.number < deadline, it also holds that block.timestamp > deadline, so the owner can front-run the player with a timeout"
+win-frontrun-not-oracle,v13,0,"at construction, set a very long timeout so that timestamp < deadline for a very long time. Then, no adversary can front-run `win` with a `timeout`"
 win-frontrun-not-oracle,v14,0,
 win-frontrun-not-oracle,v15,0,
-win-frontrun-not-oracle,v16,1,"the adversary fires a selfdestruct, since win requires that the contract balance is equal to 2*initial_pot"
+win-frontrun-not-oracle,v16,1,"The adversary fires a selfdestruct, since win requires that the contract balance is equal to 2*initial_pot"
 win-frontrun-not-oracle,v2,1,"Anyone can call a join() and take the role of player"
 win-frontrun-not-oracle,v3,1,"Anyone can call a timeout() and transfer the pot to the owner"
 win-frontrun-not-oracle,v4,0,
