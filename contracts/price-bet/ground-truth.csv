@@ -370,7 +370,7 @@ price-below-player-lose-not-owner,v9,0,"win does not check the oracle exchange r
 price-below-player-lose,v10,0,
 price-below-player-lose,v1,0,"The player and owner addresses could be equal"
 price-below-player-lose,v11,0,
-price-below-player-lose,v12,1,"The player address is different from the owner address"
+price-below-player-lose,v12,0,"owner is a contract with a `receive` that sends ETH to player. Player calls `timeout`, which sends funds to the owner, which forwards them to player"
 price-below-player-lose,v13,0,
 price-below-player-lose,v14,0,
 price-below-player-lose,v15,0,
