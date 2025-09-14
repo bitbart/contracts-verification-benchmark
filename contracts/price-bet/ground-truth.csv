@@ -17,7 +17,7 @@ eventually-balance-zero-receive,v8,1,
 eventually-balance-zero-receive,v9,1,
 eventually-balance-zero,v10,0,
 eventually-balance-zero,v1,0,"Owner has a receive that always fails"
-eventually-balance-zero,v11,1,"after timeout+1000, anyone can withdraw"
+eventually-balance-zero,v11,0,"Even though, after timeout+1000, anyone can withdraw, the fairness condition does not ensure that `timeout` succeeds and transfers the entire balance"
 eventually-balance-zero,v12,0,
 eventually-balance-zero,v13,0,
 eventually-balance-zero,v14,0,
