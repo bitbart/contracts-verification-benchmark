@@ -417,14 +417,14 @@ timeout-balance,v8,0,
 timeout-balance,v9,0,
 timeout-not-revert-receive,v10,1,
 timeout-not-revert-receive,v1,1,
-timeout-not-revert-receive,v11,1,"after timeout+1000, a sender with a failing receive can make timeout fail"
+timeout-not-revert-receive,v11,0,"After timeout+1000, a sender with a failing receive can make timeout fail"
 timeout-not-revert-receive,v12,1,
 timeout-not-revert-receive,v13,1,
 timeout-not-revert-receive,v14,1,
 timeout-not-revert-receive,v15,0,"If player has not joined, timeout cannot be called"
 timeout-not-revert-receive,v16,1,
 timeout-not-revert-receive,v2,1,
-timeout-not-revert-receive,v3,0,"timeout can only be called before the deadline"
+timeout-not-revert-receive,v3,0,"Timeout can only be called before the deadline"
 timeout-not-revert-receive,v4,1,
 timeout-not-revert-receive,v5,1,
 timeout-not-revert-receive,v6,1,
