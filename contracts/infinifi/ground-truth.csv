@@ -41,11 +41,14 @@ uw_total_voting_exceeds_sum_user_voting_noapplyLosses,v1,1
 uw_total_voting_exceeds_sum_user_voting_noapplyLosses_noassumptions,v1,1
 uw_total_voting_exceeds_sum_user_voting_nonorm,v1,"TODO, here they used a different contract"
 strict_solvency_mint_4626,v1,0
+strict_solvency_mint_4626_HintHooks,v1,0
+strict_solvency_mint_4626_HintHooks2,v1,0
 strict_solvency_mint_4626_hint_totalSupply0,v1,0
 strict_solvency_mint_4626_hint_CertState,v1,0
 strict_solvency_mint_4626_hint_CertState_noafterMint,v1,0
 strict_solvency_mint_4626_hint_CertState_askCEX,v1,0
 strict_solvency_mint_aave,v1,0
+strict_solvency_mint_aave_HintHooks,v1,0
 strict_solvency_redeem_4626,v1,0
 strict_solvency_redeem_4626_CAREFULARITH,v1,0
 strict_solvency_redeem_4626_CAREFULARITH_askCEX,v1,0
