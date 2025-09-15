@@ -40,8 +40,9 @@
         "win-frontrun": "if the `player` can win the bet, there exists an adversary that can frontrun the `player` to prevent him from actually winning.",
         "win-frontrun-not-oracle": "if the `player` can win the bet, there exists an adversary different from the oracle owner who can frontrun the `player` to prevent him from actually winning.",
         "win-not-revert": "a transaction `win()` does not revert if the deadline has not expired, the sender is the `player`, and the call to oracle returns an exchange rate that is greater than or equal to the target `exchange_rate`.",
-        "win-pot": "after a non-reverting `win()`, the ETH balance of `player` is increased at least twice the initial pot.",
-        "win-pot-receive": "if the `receive` method of `player` just accepts all ETH, then after a non-reverting `win()`, the ETH balance of `player` increases of at least twice the initial pot.",        
+        "win-pot": "after a non-reverting `win()`, the ETH balance of `player` is increased by at least twice the initial pot.",
+        "win-pot-first-receive": "if the `receive` method of `player` just accepts all ETH, then after the first non-reverting `win()`, the ETH balance of `player` increases by at least twice the initial pot.",
+        "win-pot-receive": "if the `receive` method of `player` just accepts all ETH, then after a non-reverting `win()`, the ETH balance of `player` increases by at least twice the initial pot.",        
         "win-revert": "a transaction `win()` reverts if the deadline has expired, or the sender is not the player, or the `exchange_rate` within the Oracle contract is less than the target `exchange_rate` within the PriceBet contract. Assume that the address `oracle` actually contains a deployment of contract Oracle."
     },    
     "property-types": {
@@ -57,6 +58,8 @@
         "join-player": "function spec",
         "join-revert": "function spec",
         "only-owner-or-player-receive":	"single-transition invariant",
+        "owner-cannot-receive-before-deadline": "other",
+        "owner-cannot-receive-before-deadline-not-player": "other",
         "owner-cannot-withdraw-before-deadline": "other",
         "owner-cannot-withdraw-before-deadline-not-player": "other",
         "player-cannot-withdraw-after-deadline": "other",
@@ -65,6 +68,7 @@
         "price-above-player-win-frontrun": "other",
         "price-above-player-win": "other",
         "price-below-player-lose": "other",
+        "price-below-player-lose-before-deadline-not-owner": "other",
         "price-below-player-lose-not-owner": "other",
         "timeout-balance": "function spec",
         "timeout-balance-receive": "function spec",
@@ -81,6 +85,7 @@
         "win-frontrun-not-oracle": "other",
         "win-not-revert": "function spec",
         "win-pot": "function spec",
+        "win-pot-first-receive": "other",      
         "win-pot-receive": "function spec",      
         "win-revert": "function spec"
     }
