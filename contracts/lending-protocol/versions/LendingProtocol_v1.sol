@@ -207,8 +207,9 @@ contract LendingProtocol {
         );
 
         IERC20 token = IERC20(token_addr);
-        token.transfer(msg.sender, amount_rdm);
-
+        bool succ = token.transfer(msg.sender, amount_rdm);
+        require(succ, "Redeem: transfer failed");
+        
         reserves[token_addr] -= amount_rdm;
         credit[token_addr][msg.sender] -= amount;
         sum_credits[token_addr] -= amount;
