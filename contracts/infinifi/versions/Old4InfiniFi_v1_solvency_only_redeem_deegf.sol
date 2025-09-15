@@ -1238,7 +1238,7 @@ contract RedeemController is Farm, RedemptionPool, IRedeemController {
     function _getReceiptToAssetConvertRatio() internal view returns (uint256) {
         uint256 _assetTokenPrice = Accounting(accounting).price(assetToken);
         uint256 _receiptTokenPrice = Accounting(accounting).price(receiptToken);
-        return _receiptTokenPrice.divWadDown(_assetTokenPrice);
+        return _receiptTokenPrice.divWadUp(_assetTokenPrice);
     }
     function _convertReceiptToAsset(uint256 _amountReceipt, uint256 _convertRatio) internal pure returns (uint256) {
         return _amountReceipt.mulWadDown(_convertRatio);

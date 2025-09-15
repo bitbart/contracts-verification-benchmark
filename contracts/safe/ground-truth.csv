@@ -1,23 +1,48 @@
 property,version,truth,footnote-md
 guardAddressChange,v1,1,
+guardAddressChange_nodelegatecalls,v1,1
 REFINED_guardAddressChange,v1,1,
 REFINED2_guardAddressChange,v1,1,
 REFINED3_guardAddressChange,v1,1,
 setGuardReentrant,v1,1,
+setGetCorrespondenceGuard,v1,1,"todo a bit vague"
 txnGuardCalled,v1,1
+txnGuardCalledFIX,v1,1
 moduleGuardAddressChange,v1,1
+moduleGuardAddressChange_nodelegatecalls,v1,1
+setGetCorrespondenceModuleGuard,v1,1,"todo a bit vague"
 setModuleGuardReentrant,v1,1
+moduleGuardCalled,v1,1
+moduleGuardCalledFIX,v1,1
+moduleGuardCalledReturn,v1,1
 execTxnModulePermissions,v1,1
 execTxnModuleReturnDataPermissions,v1,1
 executePermissions,v1,1
+executePermissionsFIX,v1,1
+executePermissionsFIX_nodelegatecalls,v1,1
+executeThresholdMet,v1,1,"todo a bit vague"
+executeThresholdMet_nodelegatecalls,v1,1
+executeThresholdMet_nodelegatecalls_noexecFromMod,v1,1
+executeThresholdMet_noexecFromMod,v1,1
 approvedHashesUpdate,v1,1
+approvedHashesUpdate_nodelegatecalls,v1,1
 approvedHashesSet,v1,1
-transactionHashCantCollide,v1,1,"TODO"
+approvedHashesSetFIX,v1,1
+transactionHashCantCollide,v1,"unknown"
+transactionHashCantCollide_assumeNoKekkakCollision,v1,1
 setupThresholdZeroAndSetsPositiveThreshold,v1,1
 setFallbackIntegrity,v1,1
+setFallbackIntegrityFIX,v1,1
 fallbackHandlerNeverSelf,v1,1
+fallbackHandlerNeverSelf_nodelegatecalls,v1,1
 simulateAndRevertReverts,v1,1
+setSafeMethodSets,v1,1
+setSafeMethodRemoves,v1,1
+setSafeMethodRemovesFIX,v1,1
+setSafeMethodChanges,v1,1
+setSafeMethodChangesFIX,v1,1
 handlerCallableIfSet,v1,1
+handlerCalledIfSet,v1,1,"todo vague"
 MYonlyOwnersAddModule,v1,1
 MYonlyOwnersAddModule2,v1,1
 MYboundedowners,v1,1
