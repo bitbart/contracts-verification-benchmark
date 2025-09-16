@@ -163,4 +163,51 @@ describe("PaymentSplitter_v2", function () {
             expect(balanceAfter1).not.to.equal(balanceAfter2);
         });
     }
+
+    //release-release-revert
+    {
+        async function deployContract() {
+            // A is a contract with a payable fallback that immediately sends 3 wei to msg.sender
+            const A = await (ethers.deployContract("ReturnsN", [3], {
+                value: ethers.parseUnits("6", "wei") // it will send 3 two times (once per release(A))
+            }));
+
+            const [B, C] = await ethers.getSigners();
+
+            const PaymentSplitter = await ethers.deployContract(
+                "PaymentSplitter_v2",
+                [await A.getAddress(),1, B.address,1, C.address,1],
+                { value: ethers.parseUnits("3", "wei") }
+            );
+
+            return { PaymentSplitter, A };
+        }
+
+        it("release-release-revert", async function () {
+            const { PaymentSplitter, A } = await loadFixture(deployContract);
+
+            // payment = floor((3 + 0) * 1 / 3) - 0 = 1 wei.
+            // A will send back 3 wei
+            await expect(PaymentSplitter.release(await A.getAddress()))
+                .to.not.be.reverted;
+
+            // Assert balance is now 5 wei and totalReleased is 1 wei (if available)
+            const balAfter1 = await ethers.provider.getBalance(
+                await PaymentSplitter.getAddress()
+            );
+            expect(balAfter1).to.equal(5n);
+
+            // totalReleased() equals 1 
+            if (PaymentSplitter.totalReleased) {
+                const tr = await PaymentSplitter.totalReleased();
+                expect(tr).to.equal(1n);
+            }
+
+            // Without any additional ETH transfers to the splitter, call release(A) again:
+            //   releasable(A) = floor((5 + 1) * 1 / 3) - 1 = floor(6/3) - 1 = 2 - 1 = 1 wei > 0
+            // So it MUST NOT revert.
+            await expect(PaymentSplitter.release(await A.getAddress()))
+                .to.not.be.reverted;
+        });
+    }
 });

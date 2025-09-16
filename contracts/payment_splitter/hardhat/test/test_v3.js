@@ -3,7 +3,49 @@ const {
 } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const { expect } = require("chai");
 
+const PANIC_OVERFLOW = 0x11;
+
 describe("PaymentSplitter_v3", function () {
+
+    //     fair-split-eq
+    { 
+        async function deployContract(){
+
+            const [payee, tmp1, tmp2] = await ethers.getSigners();
+
+            const PaymentSplitter = await (ethers.deployContract("PaymentSplitter_v3", [
+                payee.address,
+                tmp1,
+                tmp2
+            ],
+                {
+                    value: ethers.parseUnits("3", "wei")
+                }
+            ));
+
+            return {PaymentSplitter, payee};
+        }
+
+        it("fair-split-eq", async function () {
+            const {PaymentSplitter, payee} = await loadFixture(deployContract);
+
+            await PaymentSplitter.release(payee.address);
+           
+            // totalReleased is now 1; if PaymentSplitter balance is maxed,
+            // when balance + totalReleased is calculated, an overflow will happen
+
+            const targetBalance = ethers.MaxUint256;
+            
+            await network.provider.send("hardhat_setBalance", [
+                await PaymentSplitter.getAddress(),
+                ethers.toBeHex(targetBalance) 
+            ]);
+
+            await expect(PaymentSplitter.release(payee.address))
+            .to.be.revertedWithPanic(PANIC_OVERFLOW);
+        });
+    }
+
     {
         async function deployContract() {
             const RevertOnReceive = await (ethers.deployContract("RevertOnReceive"))
