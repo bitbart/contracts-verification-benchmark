@@ -178,7 +178,9 @@ contract LendingProtocol {
         // computes XR in the pre-state
         uint xr = XR(token_addr);
 
-        token.transferFrom(msg.sender, address(this), amount);
+        bool succ = token.transferFrom(msg.sender, address(this), amount);
+        require(succ, "Transfer failed");
+
         reserves[token_addr] += amount;
 
         // credit tokens for liquidity provider
@@ -200,7 +202,8 @@ contract LendingProtocol {
 
         // Transfer tokens to the borrower
         IERC20 token = IERC20(token_addr);
-        token.transfer(msg.sender, amount);
+        bool succ = token.transfer(msg.sender, amount);
+        require(succ, "Transfer failed");
 
         reserves[token_addr] -= amount;
     
@@ -236,7 +239,8 @@ contract LendingProtocol {
         );
 
         IERC20 token = IERC20(token_addr);
-        token.transferFrom(msg.sender, address(this), amount);
+        bool succ = token.transferFrom(msg.sender, address(this), amount);
+        require(succ, "Transfer failed");
 
         reserves[token_addr] += amount;
 
@@ -273,7 +277,8 @@ contract LendingProtocol {
         );
 
         IERC20 token = IERC20(token_addr);
-        token.transfer(msg.sender, amount_rdm);
+        bool succ = token.transfer(msg.sender, amount_rdm);
+        require(succ, "Transfer failed");
 
         reserves[token_addr] -= amount_rdm;
         credit[token_addr][msg.sender] -= amount;

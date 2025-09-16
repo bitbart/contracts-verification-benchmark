@@ -3,7 +3,7 @@
 
 pragma solidity ^0.8.0;
 
-/// @custom:version owner can withdraw remining balance & payees can have zero shares
+/// @custom:version owner can withdraw remaining balance & payees can have zero shares
 
 contract PaymentSplitter {
     uint256 private totalShares;

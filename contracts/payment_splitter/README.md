@@ -37,8 +37,8 @@ The contract follows a pull payment model. This means that payments are not auto
 - **v5**: faulty implementation with a parenthesis error in `pendingPayment`
 - **v6**: homograph attack in ZERO_ADDRESS 
 - **v7**: `releasable` must be called by the payee
-- **v8**: owner can withdraw remining balance
-- **v9**: owner can withdraw remining balance & payees can have zero shares
+- **v8**: owner can withdraw remaining balance
+- **v9**: owner can withdraw remaining balance & payees can have zero shares
 - **v10**: shares capped at 10000, refuses more than 999_999_999_999_999 wei
 
 ## Verification data
