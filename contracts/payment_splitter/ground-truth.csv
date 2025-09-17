@@ -79,16 +79,16 @@ releasable-sum-balance,v7,0,"see v1"
 releasable-sum-balance,v8,0,"see v1"
 releasable-sum-balance,v9,0,"see v1"
 releasable-sum-balance,v10,0,"see v1"
-release-balance-payee,v1,1
-release-balance-payee,v2,1
-release-balance-payee,v3,1
+release-balance-payee,v1,0,"`payee` is a contract with a receive that transfers the incoming ETH elsewhere"
+release-balance-payee,v2,0
+release-balance-payee,v3,0
 release-balance-payee,v4,0,"`release()` does not verify the success of the call, so even when it doesn't revert, it is not guaranteed that the call didn't"
-release-balance-payee,v5,1
-release-balance-payee,v6,1
-release-balance-payee,v7,1
-release-balance-payee,v8,1
-release-balance-payee,v9,1
-release-balance-payee,v10,1
+release-balance-payee,v5,0
+release-balance-payee,v6,0
+release-balance-payee,v7,0
+release-balance-payee,v8,0
+release-balance-payee,v9,0
+release-balance-payee,v10,0
 release-balance-contract,v1,1
 release-balance-contract,v2,1
 release-balance-contract,v3,1
