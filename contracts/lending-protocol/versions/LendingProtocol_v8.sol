@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >= 0.8.2;
 
-/// @custom:version v1 mutation with a fixed XR
+/// @custom:version fixed XR (based on v1)
 
 import "./lib/IERC20.sol";
 

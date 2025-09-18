@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >= 0.8.2;
 
-/// @custom:version faulty version based on v1, `token_addr` in `repay` is always overwritten into `tok1`
+/// @custom:version `repay`  overwrites `token_addr` into `tok1` (based on v1)
 
 import "./lib/IERC20.sol";
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >= 0.8.2;
 
-/// @custom:version version that keeps 1 token for itself on redeem (based on v2)
+/// @custom:version  `redeem` keeps 1 token for the contract (based on v2)
 
 import "./lib/IERC20.sol"; 
 
