@@ -35,15 +35,15 @@ bor-xr-eq,v6,1,"certora claims violation"
 bor-xr-eq,v7,1,
 bor-xr-eq,v8,1,
 bor-xr-eq,v9,1,
-credits-zero,v1,1,"check"
-credits-zero,v2,1,"check"
-credits-zero,v3,1,"check"
-credits-zero,v4,0,"NOT SURE ABOUT THE EXPECTED OUTCOME, CHECK"
-credits-zero,v5,0,"NOT SURE ABOUT THE EXPECTED OUTCOME, CHECK"
-credits-zero,v6,0,"NOT SURE ABOUT THE EXPECTED OUTCOME, CHECK"
-credits-zero,v7,0,"NOT SURE ABOUT THE EXPECTED OUTCOME, CHECK"
-credits-zero,v8,0,"NOT SURE ABOUT THE EXPECTED OUTCOME, CHECK"
-credits-zero,v9,0,"NOT SURE ABOUT THE EXPECTED OUTCOME, CHECK"
+credits-zero,v1,0,
+credits-zero,v2,0,"integer truncation"
+credits-zero,v3,0,
+credits-zero,v4,0,
+credits-zero,v5,0,
+credits-zero,v6,0,
+credits-zero,v7,0,
+credits-zero,v8,0,
+credits-zero,v9,0,
 dep-additivity,v1,0,"correct violation found"
 dep-additivity,v2,0,"correct violation found"
 dep-additivity,v3,0,"correct violation found"
