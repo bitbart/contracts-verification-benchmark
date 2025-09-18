@@ -63,6 +63,9 @@ dep-additivity,v7,0,
 dep-additivity,v8,1,"XR is fixed"
 dep-additivity,v9,1,"XR is fixed"
 dep-gain-eq,v1,0,"integer truncation"
+dep-gain-eq,v2,0,"integer truncation"
+dep-gain-eq-notrunc,v1,1,
+dep-gain-eq-notrunc,v2,1,
 dep-state,v1,1,
 dep-state,v2,1,
 dep-state,v3,1,
