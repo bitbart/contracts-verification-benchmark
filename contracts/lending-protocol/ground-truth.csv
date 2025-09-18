@@ -1,40 +1,40 @@
 property,version,truth,footnote-md
-bor-additivity,v1,1,"verified by Certora"
-bor-additivity,v2,1,"times out"
-bor-additivity,v3,1,"verified by Certora"
-bor-additivity,v4,1,"verified by Certora"
-bor-additivity,v5,1,"times out"
-bor-additivity,v6,1,"times out"
-bor-additivity,v7,1,"verified by Certora"
-bor-additivity,v8,1,"verified by Certora"
-bor-additivity,v9,1,"times out"
-bor-state,v1,1,"verified by Certora"
-bor-state,v2,1,"times out" 
-bor-state,v3,1,"verified by Certora, could duplicate borrowers but the the state does not change until an accrual"
-bor-state,v4,1,"verified by Certora"
-bor-state,v5,1,"times out"
-bor-state,v6,1,"times out"
-bor-state,v7,1,"verified by Certora"
-bor-state,v8,1,"verified by Certora"
-bor-state,v9,1,"times out"
-bor-tokens,v1,1,"verified by Certora"
-bor-tokens,v2,1,"verified by Certora"
-bor-tokens,v3,1,"verified by Certora"
-bor-tokens,v4,1,"verified by Certora"
-bor-tokens,v5,1,"verified by Certora"
-bor-tokens,v6,1,"verified by Certora"
-bor-tokens,v7,1,"verified by Certora"
-bor-tokens,v8,1,"verified by Certora"
-bor-tokens,v9,1,"verified by Certora"
-bor-xr-eq,v1,1,"verified by Certora"
+bor-additivity,v1,1,
+bor-additivity,v2,1,
+bor-additivity,v3,1,
+bor-additivity,v4,1,
+bor-additivity,v5,1,
+bor-additivity,v6,1,
+bor-additivity,v7,1,
+bor-additivity,v8,1,
+bor-additivity,v9,1,
+bor-state,v1,1,
+bor-state,v2,1, 
+bor-state,v3,1,"could duplicate borrowers but the the state does not change until an accrual"
+bor-state,v4,1,
+bor-state,v5,1,
+bor-state,v6,1,
+bor-state,v7,1,
+bor-state,v8,1,
+bor-state,v9,1,
+bor-tokens,v1,1,
+bor-tokens,v2,1,
+bor-tokens,v3,1,
+bor-tokens,v4,1,
+bor-tokens,v5,1,
+bor-tokens,v6,1,
+bor-tokens,v7,1,
+bor-tokens,v8,1,
+bor-tokens,v9,1,
+bor-xr-eq,v1,1,
 bor-xr-eq,v2,1,"certora claims violation"
-bor-xr-eq,v3,1,"verified by Certora"
-bor-xr-eq,v4,1,"verified by Certora"
+bor-xr-eq,v3,1,
+bor-xr-eq,v4,1,
 bor-xr-eq,v5,1,"certora claims violation"
 bor-xr-eq,v6,1,"certora claims violation"
-bor-xr-eq,v7,1,"verified by Certora"
-bor-xr-eq,v8,1,"verified by Certora"
-bor-xr-eq,v9,1,"verified by Certora"
+bor-xr-eq,v7,1,
+bor-xr-eq,v8,1,
+bor-xr-eq,v9,1,
 credits-zero,v1,1,"check"
 credits-zero,v2,1,"check"
 credits-zero,v3,1,"check"
