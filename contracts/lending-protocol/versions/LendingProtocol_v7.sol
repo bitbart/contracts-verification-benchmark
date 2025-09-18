@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >= 0.8.2;
 
-/// @custom:version faulty version based on v1, token_addr repay is always overwritten to tok1
+/// @custom:version faulty version based on v1, `token_addr` in `repay` is always overwritten into `tok1`
 
 import "./lib/IERC20.sol";
 
@@ -170,7 +170,7 @@ contract LendingProtocol {
 
     function repay(uint amount, address token_addr) public{
 
-        token_addr = address(tok1); //INTENTIONAL BUG HERE
+        token_addr = address(tok1);
 
         require(amount > 0, "Repay: amount must be greater than zero");
         require(

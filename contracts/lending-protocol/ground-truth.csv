@@ -44,69 +44,69 @@ credits-zero,v6,0,
 credits-zero,v7,0,
 credits-zero,v8,0,
 credits-zero,v9,0,
-dep-additivity,v1,0,"correct violation found"
-dep-additivity,v2,0,"correct violation found"
-dep-additivity,v3,0,"correct violation found"
-dep-additivity,v4,0,"correct violation found"
-dep-additivity,v5,0,"correct violation found"
-dep-additivity,v6,0,"correct violation found"
-dep-additivity,v7,0,"correct violation found"
-dep-additivity,v8,1,"verified by Certora, xr is fixed"
-dep-additivity,v9,1,"verified by Certora, xr is fixed"
-dep-state,v1,1,"verified by Certora"
-dep-state,v2,1,"verified by Certora"
-dep-state,v3,1,"verified by Certora"
-dep-state,v4,1,"verified by Certora"
-dep-state,v5,1,"verified by Certora"
-dep-state,v6,1,"verified by Certora"
-dep-state,v7,1,"verified by Certora"
-dep-state,v8,1,"verified by Certora"
-dep-state,v9,1,"verified by Certora"
-dep-tokens,v1,1,"verified by Certora"
-dep-tokens,v2,1,"verified by Certora"
-dep-tokens,v3,1,"verified by Certora"
-dep-tokens,v4,1,"verified by Certora"
-dep-tokens,v5,1,"verified by Certora"
-dep-tokens,v6,1,"verified by Certora"
-dep-tokens,v7,1,"verified by Certora"
-dep-tokens,v8,1,"verified by Certora"
-dep-tokens,v9,1,"verified by Certora"
-dep-xr,v1,1,"verified by Certora"
-dep-xr,v2,1,"times out"
-dep-xr,v3,1,"verified by Certora"
-dep-xr,v4,1,"verified by Certora"
-dep-xr,v5,1,"times out"
-dep-xr,v6,1,"times out"
-dep-xr,v7,1,"verified by Certora"
-dep-xr,v8,1,"verified by Certora, xr is fixed"
-dep-xr,v9,1,"verified by Certora, xr is fixed"
-dep-xr-eq,v1,0,"correct violation found, falsified by rounding in integer arithmetics"
-dep-xr-eq,v2,0,"correct violation found"
-dep-xr-eq,v3,0,"correct violation found"
-dep-xr-eq,v4,0,"correct violation found"
-dep-xr-eq,v5,0,"correct violation found"
-dep-xr-eq,v6,0,"correct violation found"
-dep-xr-eq,v7,0,"correct violation found"
-dep-xr-eq,v8,1,"verified by Certora, xr is fixed"
-dep-xr-eq,v9,1,"verified by Certora, xr is fixed"
-expected-interest,v1,1,"verified by Certora"
-expected-interest,v2,1,"times out"
-expected-interest,v3,0,"correct violation found, duplicate borrower causes double accrued interest"
-expected-interest,v4,1,"verified by Certora"
-expected-interest,v5,1,"times out"
-expected-interest,v6,1,"times out"
-expected-interest,v7,1,"verified by Certora"
-expected-interest,v8,1,"verified by Certora"
-expected-interest,v9,1,"times out"
-rdm-additivity,v1,0,"correct violation found, redeem computes xr again, so the calculated amounts can differ"
-rdm-additivity,v2,0,"correct violation found"
-rdm-additivity,v3,0,"correct violation found"
-rdm-additivity,v4,0,"correct violation found, this version also always transfers one token less, so two calls take two tokens while one call takes only one"
-rdm-additivity,v5,0,"correct violation found"
-rdm-additivity,v6,0,"correct violation found,this version also always transfers one token less, so two calls take two tokens while one call takes only one"
-rdm-additivity,v7,0,"correct violation found"
-rdm-additivity,v8,1,"verified by Certora, xr is fixed"
-rdm-additivity,v9,1,"verified by Certora, xr is fixed"
+dep-additivity,v1,0,"the XR computed after the first deposit may be different from that computed before"
+dep-additivity,v2,0,
+dep-additivity,v3,0,
+dep-additivity,v4,0,
+dep-additivity,v5,0,
+dep-additivity,v6,0,
+dep-additivity,v7,0,
+dep-additivity,v8,1,"XR is fixed"
+dep-additivity,v9,1,"XR is fixed"
+dep-state,v1,1,
+dep-state,v2,1,
+dep-state,v3,1,
+dep-state,v4,1,
+dep-state,v5,1,
+dep-state,v6,1,
+dep-state,v7,1,
+dep-state,v8,1,
+dep-state,v9,1,
+dep-tokens,v1,1,
+dep-tokens,v2,1,
+dep-tokens,v3,1,
+dep-tokens,v4,1,
+dep-tokens,v5,1,
+dep-tokens,v6,1,
+dep-tokens,v7,1,
+dep-tokens,v8,1,
+dep-tokens,v9,1,
+dep-xr,v1,1,
+dep-xr,v2,1,
+dep-xr,v3,1,
+dep-xr,v4,1,
+dep-xr,v5,1,
+dep-xr,v6,1,
+dep-xr,v7,1,
+dep-xr,v8,1,
+dep-xr,v9,1,
+dep-xr-eq,v1,0,"falsified by rounding in integer arithmetics"
+dep-xr-eq,v2,0,
+dep-xr-eq,v3,0,
+dep-xr-eq,v4,0,
+dep-xr-eq,v5,0,
+dep-xr-eq,v6,0,
+dep-xr-eq,v7,0,
+dep-xr-eq,v8,1,"XR is fixed"
+dep-xr-eq,v9,1,"XR is fixed"
+expected-interest,v1,1,
+expected-interest,v2,1,
+expected-interest,v3,0,"duplicate borrower causes double accrued interest"
+expected-interest,v4,1,
+expected-interest,v5,1,
+expected-interest,v6,1,
+expected-interest,v7,1,
+expected-interest,v8,1,
+expected-interest,v9,1,
+rdm-additivity,v1,0,"redeem computes XR again, so the calculated amounts can differ"
+rdm-additivity,v2,0,
+rdm-additivity,v3,0,
+rdm-additivity,v4,0,"this version always transfers one token less, so two calls take two tokens while one call takes only one"
+rdm-additivity,v5,0,
+rdm-additivity,v6,0,"this version always transfers one token less, so two calls take two tokens while one call takes only one"
+rdm-additivity,v7,0,
+rdm-additivity,v8,1,"XR is fixed"
+rdm-additivity,v9,1,"XR is fixed"
 rdm-state,v1,1,"verified by Certora"
 rdm-state,v2,1,"times out"
 rdm-state,v3,1,"verified by Certora"
