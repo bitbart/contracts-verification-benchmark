@@ -36,12 +36,12 @@ keys-invariant-inter,3
 keys-invariant-inter,1
 keys-invariant-intra,6
 keys-invariant-intra,9
-okey-rkey-private-withdraw,11
 okey-rkey-private-withdraw,1
 okey-rkey-private-withdraw,6
+okey-rkey-private-withdraw,3
+okey-rkey-private-withdraw,11
 okey-rkey-private-withdraw,10
 okey-rkey-private-withdraw,9
-okey-rkey-private-withdraw,3
 okey-rkey-private-withdraw,5
 okey-rkey-private-withdraw,7
 receive-not-revert,2
@@ -58,10 +58,12 @@ state-update,10
 state-update,7
 state-update-receive,8
 state-update-receive,11
-tx-idle-req,11
 tx-idle-req,1
+tx-idle-req,9
+tx-idle-req,11
 tx-idle-req-eoa,1
 tx-idle-req-eoa,6
+tx-idle-req-eoa,9
 tx-owner-assets-transfer,9
 tx-owner-assets-transfer,7
 tx-owner-assets-transfer-eoa,8
@@ -76,6 +78,8 @@ tx-req-idle,5
 tx-req-idle,10
 tx-req-idle-eoa,1
 tx-req-idle-eoa,2
+tx-tx-amount-transfer-eoa-private,1
+tx-tx-amount-transfer-eoa-private,9
 tx-tx-assets-transfer,8
 tx-tx-assets-transfer,6
 tx-tx-assets-transfer-eoa,7
