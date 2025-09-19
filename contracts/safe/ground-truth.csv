@@ -42,7 +42,12 @@ setSafeMethodRemovesFIX,v1,1
 setSafeMethodChanges,v1,1
 setSafeMethodChangesFIX,v1,1
 handlerCallableIfSet,v1,1
+handlerCallableIfSet_assump,v1,1
+handlerCallableIfSet_assump2,v1,1
+handlerCallableIfSet_assump_dummyhandler,v1,1
 handlerCalledIfSet,v1,1,"todo vague"
+handlerCalledIfSet_assump2,v1,1,
+handlerCalledIfSet_assump_dummyhandler,v1,1
 MYonlyOwnersAddModule,v1,1
 MYonlyOwnersAddModule2,v1,1
 MYboundedowners,v1,1
