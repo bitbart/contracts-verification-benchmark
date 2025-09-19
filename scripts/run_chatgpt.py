@@ -205,6 +205,12 @@ def parse_llm_output(text):
         counterexample = match.group(3).strip()
     else:
         answer, explanation, counterexample = "PARSE_ERROR", text.strip(), "N/A"
+    
+    # Sometimes when the answer is True GPT does not include "COUNTEREXAMPLE: " in the output, hence in such cases parsing needs to be fixed
+    if answer == "PARSE_ERROR" and "ANSWER: TRUE\nEXPLANATION: " in explanation:
+        answer = "TRUE"
+        explanation = explanation.replace("ANSWER: TRUE\nEXPLANATION: ","")
+
     return answer, explanation, counterexample
 
 def run_experiment(contract, prop, version, prompt_file, token_limit, model):
