@@ -3,255 +3,168 @@ bor-additivity,v1,1,
 bor-additivity,v2,1,
 bor-additivity,v3,1,
 bor-additivity,v4,1,
-bor-additivity,v5,1,
-bor-additivity,v6,1,
 bor-additivity,v7,1,
 bor-additivity,v8,1,
-bor-additivity,v9,1,
 bor-state,v1,1,
-bor-state,v2,1, 
-bor-state,v3,1,"could duplicate borrowers but the the state does not change until an accrual"
+bor-state,v2,1,
+bor-state,v3,1,could duplicate borrowers but the the state does not change until an accrual
 bor-state,v4,1,
-bor-state,v5,1,
-bor-state,v6,1,
 bor-state,v7,1,
 bor-state,v8,1,
-bor-state,v9,1,
 bor-tokens,v1,1,
 bor-tokens,v2,1,
 bor-tokens,v3,1,
 bor-tokens,v4,1,
-bor-tokens,v5,1,
-bor-tokens,v6,1,
 bor-tokens,v7,1,
 bor-tokens,v8,1,
-bor-tokens,v9,1,
 bor-xr-eq,v1,1,
-bor-xr-eq,v2,1,"certora claims violation"
+bor-xr-eq,v2,1,
 bor-xr-eq,v3,1,
 bor-xr-eq,v4,1,
-bor-xr-eq,v5,1,"certora claims violation"
-bor-xr-eq,v6,1,"certora claims violation"
 bor-xr-eq,v7,1,
 bor-xr-eq,v8,1,
-bor-xr-eq,v9,1,
+credits-zero,v1,0,
+credits-zero,v2,0,integer truncation
+credits-zero,v3,0,
+credits-zero,v4,0,
+credits-zero,v7,0,
+credits-zero,v8,0,
 credits-zero-notrunc,v1,1,
 credits-zero-notrunc,v2,1,
 credits-zero-notrunc,v3,1,
-credits-zero-notrunc,v4,1,
-credits-zero-notrunc,v5,1,
-credits-zero-notrunc,v6,1,
+credits-zero-notrunc,v4,0,
 credits-zero-notrunc,v7,1,
-credits-zero-notrunc,v8,1,
-credits-zero-notrunc,v9,1,
-credits-zero,v1,0,
-credits-zero,v2,0,"integer truncation"
-credits-zero,v3,0,
-credits-zero,v4,0,
-credits-zero,v5,0,
-credits-zero,v6,0,
-credits-zero,v7,0,
-credits-zero,v8,0,
-credits-zero,v9,0,
-dep-additivity,v1,0,"the XR computed after the first deposit may be different from that computed before"
+credits-zero-notrunc,v8,0,
+dep-additivity,v1,0,the XR computed after the first deposit may be different from that computed before
 dep-additivity,v2,0,
 dep-additivity,v3,0,
 dep-additivity,v4,0,
-dep-additivity,v5,0,
-dep-additivity,v6,0,
 dep-additivity,v7,0,
-dep-additivity,v8,1,"XR is fixed"
-dep-additivity,v9,1,"XR is fixed"
-dep-gain-eq,v1,0,"integer truncation"
-dep-gain-eq,v2,0,"integer truncation"
+dep-additivity,v8,1,XR is fixed
+dep-gain-eq,v1,0,integer truncation
+dep-gain-eq,v2,0,integer truncation
 dep-gain-eq-notrunc,v1,1,
 dep-gain-eq-notrunc,v2,1,
 dep-state,v1,1,
 dep-state,v2,1,
 dep-state,v3,1,
 dep-state,v4,1,
-dep-state,v5,1,
-dep-state,v6,1,
 dep-state,v7,1,
 dep-state,v8,1,
-dep-state,v9,1,
 dep-tokens,v1,1,
 dep-tokens,v2,1,
 dep-tokens,v3,1,
 dep-tokens,v4,1,
-dep-tokens,v5,1,
-dep-tokens,v6,1,
 dep-tokens,v7,1,
 dep-tokens,v8,1,
-dep-tokens,v9,1,
 dep-xr,v1,1,
 dep-xr,v2,1,
 dep-xr,v3,1,
 dep-xr,v4,1,
-dep-xr,v5,1,
-dep-xr,v6,1,
 dep-xr,v7,1,
 dep-xr,v8,1,
-dep-xr,v9,1,
-dep-xr-eq-notrunc,v1,1
-dep-xr-eq-notrunc,v2,1,
-dep-xr-eq-notrunc,v3,1,
-dep-xr-eq-notrunc,v4,0,"A:dep(100:T0) A:rdm(100:T0) B:dep(1:T0) gives XR(T0)=2 rather than =1"
-dep-xr-eq-notrunc,v5,1,
-dep-xr-eq-notrunc,v6,0,"as in v4"
-dep-xr-eq-notrunc,v7,1,
-dep-xr-eq-notrunc,v8,1,
-dep-xr-eq-notrunc,v9,1,
-dep-xr-eq,v1,0,"falsified by rounding in integer arithmetics"
+dep-xr-eq,v1,0,falsified by rounding in integer arithmetics
 dep-xr-eq,v2,0,
 dep-xr-eq,v3,0,
 dep-xr-eq,v4,0,
-dep-xr-eq,v5,0,
-dep-xr-eq,v6,0,
 dep-xr-eq,v7,0,
-dep-xr-eq,v8,1,"XR is fixed"
-dep-xr-eq,v9,1,"XR is fixed"
+dep-xr-eq,v8,1,XR is fixed
+dep-xr-eq-notrunc,v1,1,
+dep-xr-eq-notrunc,v2,1,
+dep-xr-eq-notrunc,v3,1,
+dep-xr-eq-notrunc,v4,0,A:dep(100:T0) A:rdm(100:T0) B:dep(1:T0) gives XR(T0)=2 rather than =1
+dep-xr-eq-notrunc,v7,1,
+dep-xr-eq-notrunc,v8,1,
 expected-interest,v1,1,
 expected-interest,v2,1,
-expected-interest,v3,0,"duplicate borrower causes double accrued interest"
+expected-interest,v3,0,duplicate borrower causes double accrued interest
 expected-interest,v4,1,
-expected-interest,v5,1,
-expected-interest,v6,1,
 expected-interest,v7,1,
 expected-interest,v8,1,
-expected-interest,v9,1,
 int-xr-gneq,v1,1,
 int-xr-gneq,v2,1,
 int-xr-gneq,v3,1,
 int-xr-gneq,v4,1,
-int-xr-gneq,v5,1,
-int-xr-gneq,v6,1,
 int-xr-gneq,v7,1,
-int-xr-gneq,v8,0,"XR is fixed"
-int-xr-gneq,v9,0,"XR is fixed"
+int-xr-gneq,v8,0,XR is fixed
 rdm-additivity,v1,0,"redeem computes XR again, so the calculated amounts can differ"
 rdm-additivity,v2,0,
 rdm-additivity,v3,0,
 rdm-additivity,v4,0,"this version always transfers one token less, so two calls take two tokens while one call takes only one"
-rdm-additivity,v5,0,
-rdm-additivity,v6,0,"this version always transfers one token less, so two calls take two tokens while one call takes only one"
 rdm-additivity,v7,0,
-rdm-additivity,v8,1,"XR is fixed"
-rdm-additivity,v9,1,"XR is fixed"
+rdm-additivity,v8,1,XR is fixed
 rdm-state,v1,1,
 rdm-state,v2,1,
 rdm-state,v3,1,
-rdm-state,v4,0,"redeem always transfers one token less"
-rdm-state,v5,1,
-rdm-state,v6,0,"redeem always transfers one token less"
+rdm-state,v4,0,redeem always transfers one token less
 rdm-state,v7,1,
 rdm-state,v8,1,
-rdm-state,v9,1,
 rdm-tokens,v1,1,
 rdm-tokens,v2,1,
 rdm-tokens,v3,1,
-rdm-tokens,v4,0,"redeem always transfers one token less"
-rdm-tokens,v5,1,
-rdm-tokens,v6,0,"redeem always transfers one token less, CHECK"
+rdm-tokens,v4,0,redeem always transfers one token less
 rdm-tokens,v7,1,
 rdm-tokens,v8,1,
-rdm-tokens,v9,1,
-rdm-xr-eq,v1,0,"rounding errors caused by integer arithmetics"
+rdm-xr-eq,v1,0,rounding errors caused by integer arithmetics
 rdm-xr-eq,v2,0,
 rdm-xr-eq,v3,0,
 rdm-xr-eq,v4,0,
-rdm-xr-eq,v5,0,
-rdm-xr-eq,v6,0,
 rdm-xr-eq,v7,0,
-rdm-xr-eq,v8,1,"XR is fixed"
-rdm-xr-eq,v9,1,"XR is fixed"
+rdm-xr-eq,v8,1,XR is fixed
 rpy-additivity,v1,1,
 rpy-additivity,v2,1,
 rpy-additivity,v3,1,
 rpy-additivity,v4,1,
-rpy-additivity,v5,1,"even though repay could operate on the wrong token, both ways operate on the same token"
-rpy-additivity,v6,1,
 rpy-additivity,v7,1,
 rpy-additivity,v8,1,
-rpy-additivity,v9,1,
 rpy-state,v1,1,
-rpy-state,v2,1,
-rpy-state,v3,1,
+rpy-state,v2,0,violation when debts have not been accrued yet
 rpy-state,v4,1,
-rpy-state,v5,0,"repay could operate on the wrong token"
-rpy-state,v6,1,
-rpy-state,v7,0,"repay could operate on the wrong token"
+rpy-state,v7,0,repay could operate on the wrong token
 rpy-state,v8,1,
-rpy-state,v9,1,
 rpy-tokens,v1,1,
 rpy-tokens,v2,1,
 rpy-tokens,v3,1,
 rpy-tokens,v4,1,
-rpy-tokens,v5,0,"repay could operate on the wrong token"
-rpy-tokens,v6,1,
-rpy-tokens,v7,0,"repay could operate on the wrong token"
+rpy-tokens,v7,0,repay could operate on the wrong token
 rpy-tokens,v8,1,
-rpy-tokens,v9,1,
-rpy-xr-eq,v1,1,
+rpy-xr-eq,v1,1,no rounding errors
 rpy-xr-eq,v2,1,
 rpy-xr-eq,v3,1,
 rpy-xr-eq,v4,1,
-rpy-xr-eq,v5,1,"even though repay could operate on the wrong token, XR does not change"
-rpy-xr-eq,v6,1,
 rpy-xr-eq,v7,1,
-rpy-xr-eq,v8,1,"XR is fixed"
-rpy-xr-eq,v9,1,"XR is fixed"
+rpy-xr-eq,v8,1,XR is fixed
 trace1,v1,1,
 trace1,v2,1,
 trace1,v3,1,
 trace1,v4,1,
-trace1,v5,1,
-trace1,v6,1,
 trace1,v7,1,
 trace1,v8,1,
-trace1,v9,1,
 trace2,v1,1,
 trace2,v2,1,
 trace2,v3,1,
 trace2,v4,1,
-trace2,v5,0,"repay could operate on the wrong token"
-trace2,v6,1,
-trace2,v7,0,"repay could operate on the wrong token"
+trace2,v7,0,repay could operate on the wrong token
 trace2,v8,1,
-trace2,v9,1,
 xr-geq-one,v1,1,
 xr-geq-one,v2,1,
 xr-geq-one,v3,1,
 xr-geq-one,v4,1,
-xr-geq-one,v5,1,
-xr-geq-one,v6,1,
 xr-geq-one,v7,1,
 xr-geq-one,v8,1,
-xr-geq-one,v9,1,
-xr-increasing-but-rdm,v1,1
-xr-increasing-but-rdm,v2,1
-xr-increasing-but-rdm,v3,1
-xr-increasing-but-rdm,v4,1
-xr-increasing-but-rdm,v5,1
-xr-increasing-but-rdm,v6,1
-xr-increasing-but-rdm,v7,1
-xr-increasing-but-rdm,v8,1
-xr-increasing-but-rdm,v9,1
 xr-increasing,v1,0,
 xr-increasing,v2,0,
 xr-increasing,v3,0,
 xr-increasing,v4,0,
-xr-increasing,v5,0,
-xr-increasing,v6,0,
 xr-increasing,v7,0,
-xr-increasing,v8,0,
-xr-increasing,v9,0,
-xr-invariant,v1,1,
-xr-invariant,v2,1,
-xr-invariant,v3,1,
-xr-invariant,v4,0,
-xr-invariant,v5,0,
-xr-invariant,v6,0,
-xr-invariant,v7,0,
-xr-invariant,v8,0,
-xr-invariant,v9,0,
+xr-increasing,v8,1,XR is constant
+xr-increasing-but-rdm,v1,1,
+xr-increasing-but-rdm,v2,1,
+xr-increasing-but-rdm,v3,1,
+xr-increasing-but-rdm,v4,1,
+xr-increasing-but-rdm,v7,1,
+xr-increasing-but-rdm,v8,1,
+xr-invariant,v1,0,truncation on integer division
+xr-invariant,v2,0,truncation on integer division
+xr-invariant-notrunc,v1,1,
+xr-invariant-notrunc,v2,1,

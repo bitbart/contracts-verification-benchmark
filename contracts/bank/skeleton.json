@@ -27,7 +27,7 @@
         "withdraw-not-revert": "a `withdraw(amount)` call does not revert if `amount` is bigger than zero and less or equal to the credit of `msg.sender`.",
         "withdraw-revert": "a `withdraw(amount)` call reverts if `amount` is zero or greater than the credit of `msg.sender`.",
         "withdraw-sender-credit": "after a non-reverting `withdraw(amount)`, the credit of `msg.sender` is decreased by `amount`.",
-        "withdraw-sender-rcv": "after a non-reverting `withdraw(amount)`, the ETH balance of 'msg.sender` is increased by `amount` wei.",
+        "withdraw-sender-rcv": "after a non-reverting `withdraw(amount)`, the ETH balance of `msg.sender` is increased by `amount` wei.",
         "withdraw-sender-rcv-EOA": "after a non-reverting `withdraw(amount)` originated by an EOA, the ETH balance of the `msg.sender` is increased by `amount` wei."
     },
     "property-types": {

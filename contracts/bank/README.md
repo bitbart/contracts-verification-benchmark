@@ -8,7 +8,7 @@ The Bank contract stores assets deposited by users, and and pays them out when r
 ## Properties
 - **assets-dec-onlyif-deposit**: if the ETH balance of a user A is decreased after a transaction (of the Bank contract), then that transaction must be a `deposit` where A is the sender.
 - **assets-inc-onlyif-withdraw**: if the ETH balance of a user A is increased after a transaction (of the Bank contract), then that transaction must be a `withdraw` where A is the sender.
-- **credit-dec-onlyif-withdraw**: if the credit of a user A is decreased after a transaction (of the Bank contract), then that transaction must be a `withdraw` where A is the sender
+- **credit-dec-onlyif-withdraw**: if the credit of a user A is decreased after a transaction (of the Bank contract), then that transaction must be a `withdraw` where A is the sender.
 - **credit-inc-onlyif-deposit**: if the credit of a user A is increased after a transaction (of the Bank contract), then that transaction must be a `deposit` where A is the sender.
 - **credits-leq-balance**: the wei balance stored in the contract is greater than or equal to the sum of all the users' credits
 - **deposit-additivity**: two non-reverting consecutive (i.e., not interleaved with other transactions) `deposit` of n1 and n2 wei performed by the same sender are equivalent to a single `deposit` of n1+n2 wei of T.
@@ -17,6 +17,7 @@ The Bank contract stores assets deposited by users, and and pays them out when r
 - **deposit-assets-transfer-others**: after a non-reverting `deposit()`, the ETH balance of any user but the sender are preserved.
 - **deposit-contract-balance**: after a non-reverting `deposit()`, the ETH balance of the contract is increased by `msg.value`.
 - **deposit-not-revert**: a `deposit` transaction never reverts
+- **deposit-not-revert-external**: an external `deposit` transaction never reverts
 - **deposit-revert**: a `deposit` transaction reverts if `msg.value` plus the current credits of `msg.sender` overflows.
 - **exists-at-least-one-credit-change**: after a non-reverting `deposit` or `withdraw` transaction to the Bank contract, the credits of at least one user have changed
 - **exists-unique-asset-change**: after a non-reverting `deposit` or `withdraw` transaction to the Bank contract, the ETH balance of exactly one account (except the contract's) have changed
@@ -30,7 +31,7 @@ The Bank contract stores assets deposited by users, and and pays them out when r
 - **withdraw-not-revert**: a `withdraw(amount)` call does not revert if `amount` is bigger than zero and less or equal to the credit of `msg.sender`.
 - **withdraw-revert**: a `withdraw(amount)` call reverts if `amount` is zero or greater than the credit of `msg.sender`.
 - **withdraw-sender-credit**: after a non-reverting `withdraw(amount)`, the credit of `msg.sender` is decreased by `amount`.
-- **withdraw-sender-rcv**: after a non-reverting `withdraw(amount)`, the ETH balance of 'msg.sender` is increased by `amount` wei.
+- **withdraw-sender-rcv**: after a non-reverting `withdraw(amount)`, the ETH balance of `msg.sender` is increased by `amount` wei.
 - **withdraw-sender-rcv-EOA**: after a non-reverting `withdraw(amount)` originated by an EOA, the ETH balance of the `msg.sender` is increased by `amount` wei.
 
 ## Versions

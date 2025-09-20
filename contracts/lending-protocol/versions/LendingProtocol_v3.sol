@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >= 0.8.2;
 
-/// @custom:version faulty version that could duplicate borrowers after a `borrow`, leading to incorrect interest accruals
+/// @custom:version `borrow` could duplicate borrowers in the array, leading to incorrect interest accruals (based on v1)
 
 import "./lib/IERC20.sol";
 

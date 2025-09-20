@@ -77,11 +77,12 @@ the sender to repay a debt of `amount` units of token `t_debit` of `debtor`, rec
 - **xr-increasing**: Let T be a token handled by the lending protocol, and assume that T is a standard ERC20 token. Then, `deposit`, `borrow`, `repay` and `redeem` transactions do not decrease XR(T). Assume that before performing the transaction, the interests on T have already been accrued for all users affected by the transaction.
 - **xr-increasing-but-rdm**: Let T be a token handled by the lending protocol, and assume that T is a standard ERC20 token. Then, `deposit`, `borrow`, `repay` and `redeem` transactions do not decrease XR(T), except for a `redeem`  after which the total credits becomes zero. Assume that before performing the transaction, the interests on T have already been accrued for all users affected by the transaction.
 - **xr-invariant**: for each token type T handled by the lending protocol, any transaction of type `deposit`, `borrow`, `repay` preserve the exchange rate XR(T). Assume that before performing the transaction, the interests have already been accrued, for all token and users involved in the transaction.
+- **xr-invariant-notrunc**: for each token type T handled by the lending protocol, any transaction of type `deposit`, `borrow`, `repay` preserve the exchange rate XR(T). Assume that before performing the transaction, the interests have already been accrued, for all token and users involved in the transaction. Assume that arithmetic is exact: integer operations do not overflow and do not lead to truncations.
 
 ## Versions
 - **v1**: minimal implementation without liquidation
 - **v2**: compound interests inspired by Aave v1 
-- **v3**: faulty version that could duplicate borrowers after a `borrow`, leading to incorrect interest accruals
+- **v3**: `borrow` could duplicate borrowers in the array, leading to incorrect interest accruals (based on v1)
 - **v4**: `redeem` keeps 1 token for the contract (based on v1)
 - **v5**: `repay` overwrites `token_addr` to `tok1` (based on v2)
 - **v6**:  `redeem` keeps 1 token for the contract (based on v2)
