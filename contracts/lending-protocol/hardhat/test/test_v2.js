@@ -374,5 +374,34 @@ describe("LendingProtocol_v2", function () {
         expect(newXR).not.to.equal(oldXR);               // 1_100_000 > 1_090_909
     });
 
+    /*1) Alice deposit(3, tok0): reserves[tok0]=3, sum_credits[tok0]=3.
+        2) Alice borrow(1, tok0): reserves=2; her debt=1; sum_debits=1; collateral check passes.
+        3) Advance blocks so global_borrow_index doubles (e.g., multiplier=2). 
+        4) Alice repay(2, tok0): updateBorrowIndex applies; accrued debt is 2, so repayment succeeds. Reserves increase to 4; her debt and sum_debits go to 0.
+        5) Alice redeem(3, tok0): XR = floor(4e6/3) = 1,333,333, so amount_rdm = floor(3*1,333,333/1e6) = 3. After redeem, sum_credits=0 but reserves=4−3=1>0 and sum_debits=0.
+        Thus sum of credits is 0 while reserves are not 0, contradicting the property. */
+
+    it("credits-zero", async function () {
+
+        const { lp, tok0, actor_a, owner } = await loadFixture(deployContract);
+        const lpAddr = await lp.getAddress();
+        const tok0_addr = await tok0.getAddress();
+
+        await tok0.connect(actor_a).approve(lpAddr, 3);
+        await lp.connect(actor_a).deposit(3, tok0_addr);      // reserves=3, credits=3, debits=0
+        await lp.connect(actor_a).borrow(1, tok0_addr);       // reserves=2, credits=3, debits=1
+             
+        await mine(10_000_000);
+
+        await tok0.connect(actor_a).approve(lpAddr, 2);
+        await lp.connect(actor_a).repay(2, tok0_addr);       // reserves=4, credits=3, debits=0
+        await lp.connect(actor_a).redeem(3, tok0_addr);      // reserves=1, credits=0, debits=0
+
+        expect(await lp.sum_debits(tok0_addr)).to.equal(0);
+        expect(await lp.sum_credits(tok0_addr)).to.equal(0);
+        expect(await lp.reserves(tok0_addr)).to.equal(1); // POC: reserves>0 while credits=0
+
+    });
+
 });
 
