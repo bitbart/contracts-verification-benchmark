@@ -16,6 +16,8 @@ import glob
 from pathlib import Path
 import sys
 
+def normalize_version(version):
+    return version.replace("v","")
 
 def normalize_truth_value(value):
     """
@@ -34,6 +36,23 @@ def normalize_truth_value(value):
     str_value = str(value).strip().upper()
     
     # Truth value mapping
+
+    truth_mapping = {
+        'P': "TRUE",
+        'P!': "TRUE",
+        'N': "FALSE",
+        'N!': "FALSE",
+        'UNK': "UNK",
+        'ERR': "UNK",
+        'PARSE_ERROR' : "UNK",
+        'TRUE': "TRUE",
+        'FALSE': "FALSE",
+        '1': "TRUE",
+        '0': "FALSE",
+        '1.0': "TRUE",
+        '0.0': "FALSE"
+    }
+    """
     truth_mapping = {
         'P': 1,
         'P!': 1,
@@ -47,7 +66,7 @@ def normalize_truth_value(value):
         '0': 0,
         '1.0': 1,
         '0.0': 0
-    }
+    }"""
     
     return truth_mapping.get(str_value, None)
 
@@ -74,7 +93,6 @@ def load_and_process_csv(file_path):
         
         # Take only the first three columns
         df_processed = df.iloc[:, :3].copy()
-        
         # Rename columns to standard names
         df_processed.columns = ['property', 'version', 'truth_value']
         
@@ -86,7 +104,7 @@ def load_and_process_csv(file_path):
         
         # Convert property and version to strings to ensure consistent types
         df_processed['property'] = df_processed['property'].astype(str)
-        df_processed['version'] = df_processed['version'].astype(str)
+        df_processed['version'] = df_processed['version'].astype(str).apply(normalize_version)
         
         print(f"✓ Loaded {filename}.csv: {len(df_processed)} rows")
         
@@ -96,8 +114,66 @@ def load_and_process_csv(file_path):
         print(f"✗ Error loading {filename}.csv: {e}")
         return None, filename
 
+def filter_result_bygpt5(result_df, args):
+    """
+    If --subdataset is specified, filter the result dataframe to only include
+    properties that have a non-null value in the 'gpt-5' column.
+    
+    Args:
+        result_df (DataFrame): The merged result dataframe
+        """
+    if args.subdataset:
+        if 'gpt-5' in result_df.columns:
+            initial_count = len(result_df)
+            print(len(result_df['gpt-5']))
+            result_df = result_df[result_df['gpt-5'].notna()].reset_index(drop=True)
+            print(len(result_df['gpt-5']))
+            filtered_count = len(result_df)
+            print(f"\nFiltered dataset to subdataset based on 'gpt-5': {filtered_count} rows (from {initial_count})")
+        else:
+            print("\nWarning: 'gpt-5' column not found, cannot filter to subdataset.")
+    return result_df
 
-def merge_verification_results(csv_files, output_path):
+def determine_solcmc_best(row):
+    if row['solcmc-z3']=="FALSE":
+        res = "FALSE"
+    elif row['solcmc-eld']=="FALSE":
+        res = "FALSE"
+    elif row['solcmc-z3']=="TRUE" and row['solcmc-eld']=="TRUE":
+        res = "TRUE"
+    elif row['solcmc-z3']=="UNK" and row['solcmc-eld']=="TRUE":
+        res = "TRUE"
+    elif row['solcmc-z3']=="TRUE" and row['solcmc-eld']=="UNK":
+        res = "TRUE"
+    elif row['solcmc-z3']=="UNK" and row['solcmc-eld']=="FALSE":
+        res = "FALSE"
+    elif row['solcmc-z3']=="FALSE" and row['solcmc-eld']=="UNK":
+        res = "FALSE"
+    elif row['solcmc-z3']=="UNK" and row['solcmc-eld']=="UNK":
+        res = "UNK"
+    elif not row['solcmc-z3'] and not row['solcmc-eld']:
+        res = None
+    elif not row['solcmc-z3'] and row['solcmc-eld']:
+        print(f"✗ Warning: One entry for solcmc-eld but not for solcmc-z3")
+        res = row['solcmc-eld']
+    elif row['solcmc-z3'] and not row['solcmc-eld']:
+        print(f"✗ Warning: One entry for solcmc-z3 but not for solcmc-eld")
+        res = row['solcmc-z3']
+    else:
+        print(f"✗ Error: Unable to compute result for solcmc-best ({row}): {row['solcmc-z3']}, {row['solcmc-eld']}")
+        sys.exit(1)
+    return res
+
+def add_column_solcmc_best(result_df):
+    if 'solcmc-z3' in result_df.columns and 'solcmc-eld' in result_df.columns:
+        result_df['solcmc-best'] = result_df[['solcmc-z3', 'solcmc-eld']].apply(determine_solcmc_best, axis=1)
+    else:
+        print("\nWarning: One or both of 'solcmc-z3' and 'solcmc-eld' columns not found, cannot add 'solcmc-best'.")
+    #result_df = result_df[list(['ground', 'certora', 'solcmc-z3', 'solcmc-eld', 'solcmc-best', 'gpt-5'])]
+    return result_df
+    
+
+def merge_verification_results(csv_files, output_path, args):
     """
     Merge verification result CSV files into a union format.
     
@@ -170,11 +246,13 @@ def merge_verification_results(csv_files, output_path):
     
     # Sort by property, then version
     result_df = result_df.sort_values(['property', 'version']).reset_index(drop=True)
-    
+    result_df = filter_result_bygpt5(result_df, args)
+    result_df = add_column_solcmc_best(result_df)
+
     try:
         # Convert float columns to integers, keeping NaN as empty
-        for col in result_df.columns[2:]:  # Skip property and version columns
-            result_df[col] = result_df[col].astype('Int64')
+        #for col in result_df.columns[2:]:  # Skip property and version columns
+        #    result_df[col] = result_df[col].astype('Int64')
 			
         # Save merged file
         result_df.to_csv(output_path, index=False)
@@ -240,6 +318,14 @@ Examples:
         default='../contracts',
         help='Base path where folders are located (default: ../contracts)'
     )
+
+    parser.add_argument(
+        '--subdataset',
+        action='store_true', 
+        required=False, 
+        default=False,
+        help='Restrict to sampled subdataset'
+    )
     
     args = parser.parse_args()
     
@@ -285,7 +371,7 @@ Examples:
     output_path = os.path.abspath(output_path)
     
     # Merge files
-    success = merge_verification_results(csv_files, output_path)
+    success = merge_verification_results(csv_files, output_path, args)
     
     if success:
         print(f"\n🎉 Successfully merged verification results!")
