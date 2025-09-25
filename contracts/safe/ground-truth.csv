@@ -1,51 +1,51 @@
-property,version,truth,footnote-md
+property,version,truth,"NOTE: this file is called ground-truth.csv only for script compatibility, but it DOES NOT REPRESENT the ground truths of the properties, which cannot be reliably determined for this contract. The third entries should hence not be taken into consideration."
 guardAddressChange,v1,1,
 guardAddressChange_nodelegatecalls,v1,1
 REFINED_guardAddressChange,v1,1,
 REFINED2_guardAddressChange,v1,1,
 REFINED3_guardAddressChange,v1,1,
 setGuardReentrant,v1,1,
-setGetCorrespondenceGuard,v1,1,"todo a bit vague"
+setGetCorrespondenceGuard,v1,1,
 txnGuardCalled,v1,1
-txnGuardCalledFIX,v1,1
+txnGuardCalled_fixAssump,v1,1
 moduleGuardAddressChange,v1,1
 moduleGuardAddressChange_nodelegatecalls,v1,1
-setGetCorrespondenceModuleGuard,v1,1,"todo a bit vague"
+setGetCorrespondenceModuleGuard,v1,1,
 setModuleGuardReentrant,v1,1
 moduleGuardCalled,v1,1
-moduleGuardCalledFIX,v1,1
+moduleGuardCalled_fixAssump,v1,1
 moduleGuardCalledReturn,v1,1
 execTxnModulePermissions,v1,1
 execTxnModuleReturnDataPermissions,v1,1
 executePermissions,v1,1
-executePermissionsFIX,v1,1
-executePermissionsFIX_nodelegatecalls,v1,1
-executeThresholdMet,v1,1,"todo a bit vague"
+executePermissions_fixAssump,v1,1
+executePermissions_fixAssump_nodelegatecalls,v1,1
+executeThresholdMet,v1,1,
 executeThresholdMet_nodelegatecalls,v1,1
 executeThresholdMet_nodelegatecalls_noexecFromMod,v1,1
 executeThresholdMet_noexecFromMod,v1,1
 approvedHashesUpdate,v1,1
 approvedHashesUpdate_nodelegatecalls,v1,1
 approvedHashesSet,v1,1
-approvedHashesSetFIX,v1,1
-transactionHashCantCollide,v1,"unknown"
+approvedHashesSet_fixAssump,v1,1
+transactionHashCantCollide,v1,
 transactionHashCantCollide_assumeNoKekkakCollision,v1,1
 setupThresholdZeroAndSetsPositiveThreshold,v1,1
 setFallbackIntegrity,v1,1
-setFallbackIntegrityFIX,v1,1
+setFallbackIntegrity_fixAssump,v1,1
 fallbackHandlerNeverSelf,v1,1
 fallbackHandlerNeverSelf_nodelegatecalls,v1,1
 simulateAndRevertReverts,v1,1
 setSafeMethodSets,v1,1
 setSafeMethodRemoves,v1,1
-setSafeMethodRemovesFIX,v1,1
+setSafeMethodRemoves_fixAssump,v1,1
 setSafeMethodChanges,v1,1
-setSafeMethodChangesFIX,v1,1
+setSafeMethodChanges_fixAssump,v1,1
 handlerCallableIfSet,v1,1
 handlerCallableIfSet_assump,v1,1
 handlerCallableIfSet_assump2,v1,1
 handlerCallableIfSet_assump_dummyhandler,v1,1
-handlerCalledIfSet,v1,1,"todo vague"
+handlerCalledIfSet,v1,1,
 handlerCalledIfSet_assump2,v1,1,
 handlerCalledIfSet_assump_dummyhandler,v1,1
 MYonlyOwnersAddModule,v1,1
