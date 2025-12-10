@@ -1,0 +1,24 @@
+
+const { expect } = require("chai");
+
+describe("Vault", function() {
+  let R, A, Vault, vault, deployVault;
+
+  before(async function () {
+    const [deployer, addr1, addr2, _] = await ethers.getSigners();
+    R = addr1;
+    A = addr2;
+
+    Vault = await ethers.getContractFactory("Vault");
+    deployVault = async () => Vault.deploy(R.address, 1);
+
+    vault = await deployVault();
+  });
+
+  it("Violate the 'REQ amount' property", async function() {
+    await vault.withdraw(A.address, ethers.utils.parseEther('1')); // Sender is the contract deployer (and owner)
+    expect(await ethers.provider.getBalance(vault.address)).to.equal(0);
+    expect((await vault.amount()).toString()).to.equal(ethers.utils.parseEther('1').toString());
+  });
+});
+

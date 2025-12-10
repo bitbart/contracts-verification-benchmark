@@ -1,0 +1,40 @@
+const { loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
+const { expect } = require("chai");
+
+beforeEach(async function () {
+  this.Vault = await ethers.deployContract("Vault", [ethers.constants.AddressZero, 1]);
+});
+
+describe("Vault", function() {
+  async function deployContract() {
+    const [owner, recovery, receiver] = await ethers.getSigners();
+
+    const Vault = await ethers.deployContract("Vault", [recovery.address, 1]);
+
+    return { Vault, owner, recovery, receiver };
+  }
+
+  it("should violate the property: amount > balance while state is REQ", async function() {
+    const { Vault, owner, recovery, receiver } = await loadFixture(deployContract);
+
+    // Sending 0 ether to the contract
+    await owner.sendTransaction({
+      to: Vault.address,
+      value: 0
+    });
+
+    // Owner calls withdraw with 1 wei
+    await expect(Vault.connect(owner).withdraw(receiver.address, 1))
+      .to.not.emit(Vault, "Withdraw"); // Since contract balance is 0, we expect no event but state changes
+
+    // Check that the state is REQ and the amount exceeds the balance
+    const state = await Vault.state();
+    const amount = await Vault.amount();
+    const contractBalance = await ethers.provider.getBalance(Vault.address);
+
+    expect(state).to.equal(1); // REQ state
+    expect(amount).to.equal(1); // Amount set to 1
+    expect(contractBalance).to.equal(0); // Balance is 0, which violates the property
+  });
+});
+
