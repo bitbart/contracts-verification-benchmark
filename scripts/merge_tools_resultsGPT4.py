@@ -6,7 +6,7 @@ This script merges CSV files containing property verification results.
 Usage: python merge_tools_results.py --bank
 
 The script looks for CSV files in ../contracts/{folder_name}/
-Expected files: ground-truth.csv, certora.csv, solcmc-z3.csv, solcmc-eld.csv, gpt-5.csv
+Expected files: ground-truth.csv, certora.csv, solcmc-z3.csv, solcmc-eld.csv, gpt-4.csv
 """
 
 import argparse
@@ -43,9 +43,9 @@ def normalize_truth_value(value):
         'N': "FALSE",
         'N!': "FALSE",
         'UNK': "UNK",
+        'UNKNOWN': "UNK",
         'ERR': "UNK",
         'PARSE_ERROR' : "UNK",
-        'UNKNOWN': "UNK",
         'TRUE': "TRUE",
         'FALSE': "FALSE",
         '1': "TRUE",
@@ -118,21 +118,21 @@ def load_and_process_csv(file_path):
 def filter_result_bygpt5(result_df, args):
     """
     If --subdataset is specified, filter the result dataframe to only include
-    properties that have a non-null value in the 'gpt-5' column.
+    properties that have a non-null value in the 'gpt-4' column.
     
     Args:
         result_df (DataFrame): The merged result dataframe
         """
     if args.subdataset:
-        if 'gpt-5' in result_df.columns:
+        if 'gpt-4' in result_df.columns:
             initial_count = len(result_df)
-            print(len(result_df['gpt-5']))
-            result_df = result_df[result_df['gpt-5'].notna()].reset_index(drop=True)
-            print(len(result_df['gpt-5']))
+            print(len(result_df['gpt-4']))
+            result_df = result_df[result_df['gpt-4'].notna()].reset_index(drop=True)
+            print(len(result_df['gpt-4']))
             filtered_count = len(result_df)
-            print(f"\nFiltered dataset to subdataset based on 'gpt-5': {filtered_count} rows (from {initial_count})")
+            print(f"\nFiltered dataset to subdataset based on 'gpt-4': {filtered_count} rows (from {initial_count})")
         else:
-            print("\nWarning: 'gpt-5' column not found, cannot filter to subdataset.")
+            print("\nWarning: 'gpt-4' column not found, cannot filter to subdataset.")
     return result_df
 
 def determine_solcmc_best(row):
@@ -170,7 +170,7 @@ def add_column_solcmc_best(result_df):
         result_df['solcmc-best'] = result_df[['solcmc-z3', 'solcmc-eld']].apply(determine_solcmc_best, axis=1)
     else:
         print("\nWarning: One or both of 'solcmc-z3' and 'solcmc-eld' columns not found, cannot add 'solcmc-best'.")
-    #result_df = result_df[list(['ground', 'certora', 'solcmc-z3', 'solcmc-eld', 'solcmc-best', 'gpt-5'])]
+    #result_df = result_df[list(['ground', 'certora', 'solcmc-z3', 'solcmc-eld', 'solcmc-best', 'gpt-4'])]
     return result_df
     
 
@@ -222,7 +222,7 @@ def merge_verification_results(csv_files, output_path, args):
     })
     
     # Add columns for each CSV file
-    expected_files = ['ground-truth', 'certora', 'solcmc-z3', 'solcmc-eld', 'gpt-5']
+    expected_files = ['ground-truth', 'certora', 'solcmc-z3', 'solcmc-eld', 'gpt-4']
     
     for file_key in expected_files:
         column_name = 'ground' if file_key == 'ground-truth' else file_key
@@ -293,7 +293,7 @@ Expected CSV files in the folder:
   - certora.csv  
   - solcmc-z3.csv
   - solcmc-eld.csv
-  - gpt-5.csv
+  - gpt-4.csv
 
 Examples:
   python merge_tools_results.py --bank
@@ -348,7 +348,7 @@ Examples:
         sys.exit(1)
     
     # Get specific CSV files
-    expected_files = ['ground-truth.csv', 'certora.csv', 'solcmc-z3.csv', 'solcmc-eld.csv', 'gpt-5.csv']
+    expected_files = ['ground-truth.csv', 'certora.csv', 'solcmc-z3.csv', 'solcmc-eld.csv', 'gpt-4.csv']
     csv_files = []
     
     for filename in expected_files:
@@ -367,7 +367,7 @@ Examples:
     if args.output:
         output_path = args.output
     else:
-        output_path = f"merged_{args.folder_name}.csv"
+        output_path = f"merged_{args.folder_name}_GPT4.csv"
     
     output_path = os.path.abspath(output_path)
     
