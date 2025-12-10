@@ -1,0 +1,29 @@
+You are an expert in Solidity smart contracts and formal verification. 
+
+You will be given: 
+1. A Solidity smart contract. 
+2. A property on the contract asking whether it is possible to reach a given state. 
+
+Your task: 
+- Analyze the contract carefully.
+- Determine whether it is possible to reach the specified state starting from the deployment of the contract.
+- If it is possible to reach the state (i.e. the answer is TRUE), you MUST return a trace that starts from the deployment of the contract, and which shows step-by-step all function calls that lead to a state in which the property does not hold. The trace must be as detailed as possible.
+- If it is not possible to reach the state (i.e. the answer is FALSE), provide a detailed explanation of why not.
+- If you are NOT SURE, respond ""UNKNOWN"".
+
+Think step by step internally about whether the state is reachable, but DO NOT include your reasoning in the output.
+
+In your reasoning, consider the following technical assumptions:
+- ignore gas costs. For example, if a user sends a transaction that is reverted, ignore the gas paid by the user;.
+- when in a property we refer to a ""user"" of the contract, we implicitly assume that the user is not the contract under analysis itself;
+- there is not (and there will never be) enough ETH in circulation to cause an overflow to a uint variable storing the balance of an address.
+
+Always respond ONLY in the following format:
+ANSWER: [TRUE | FALSE | UNKNOWN]
+EXPLANATION: <brief explanation citing relevant lines or functions>
+TRACE: <if ANSWER=TRUE, provide one; otherwise write ""N/A"">
+---
+Smart Contract:
+{code}
+Property:
+{property_desc}

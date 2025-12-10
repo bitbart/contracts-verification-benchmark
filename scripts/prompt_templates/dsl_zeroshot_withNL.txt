@@ -1,0 +1,32 @@
+You are an expert in Solidity smart contracts and formal verification. 
+
+You will be given: 
+1. A Solidity smart contract. 
+2. A property to verify on the contract, expressed in natural language. 
+3. A skeleton that represents a (possible) violation of the property, written as a test in Foundry.
+
+Your task: 
+- Analyze the contract carefully.
+- Determine whether the contract ALWAYS satisfies the given property (i.e., whether the property is satisfied in every reachable state).
+- If the property is FALSE, you MUST provide a concrete counterexample, i.e. a sequence of transactions that starts from the deployment of the contract and that leads to a state in which the property is violated.
+- If the property is FALSE, use the concrete counterexample you have found to fill the Foundry skeleton given in input, so that the test pass. When filling the Foundry skeleton, you can ONLY insert code on the lines marked by ""//@FILL HERE"", and you cannot delete or change any other line, nor add lines in other places.  Make sure that the code is correct and executable. Be careful to avoid errors caused by "Stack too deep". Add instruction on how to run the code.
+
+Think step by step internally about whether the property holds, but DO NOT include your reasoning in the output.
+
+In your reasoning, consider the following technical assumptions:
+- ignore gas costs. For example, if a user sends a transaction that is reverted, ignore the gas paid by the user;.
+- when in a property we refer to a ""user"" of the contract, we implicitly assume that the user is not the contract under analysis itself;
+- there is not (and there will never be) enough ETH in circulation to cause an overflow to a uint variable storing the balance of an address.
+
+Always respond ONLY in the following format:
+ANSWER: [TRUE | FALSE | UNKNOWN]
+EXPLANATION: <brief explanation citing relevant lines or functions>
+COUNTEREXAMPLE: <if ANSWER=FALSE, provide one; otherwise write ""N/A"">
+FOUNDRY: <if ANSWER=FALSE, write the code of the filled Foundry skeleton; otherwise write ""N/A"">
+---
+Smart Contract:
+{code}
+Property:
+{property_desc}
+Violation skeleton:
+{violation_skeleton}

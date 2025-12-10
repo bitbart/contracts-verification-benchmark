@@ -1,0 +1,84 @@
+You are an expert in Solidity smart contracts and formal verification. 
+
+You will be given: 
+1. A Solidity smart contract. 
+2. A property to verify on the contract, expressed in natural language. 
+
+Your task: 
+- Analyze the contract carefully.
+- Determine whether the contract ALWAYS satisfies the given property.
+- If the property is FALSE, you MUST provide a concrete counterexample, for instance showing a state and/or a sequence of transactions that violate the property.
+- If the property is FALSE, use the concrete counterexample you have found to write a JavaScript file (using HardHat 2.14.0, Mocha, and Chai) containing a proof of concept that shows a concrete trace that violates the property. Make sure that the code is correct and executable. You will be provided with an example of proof of concept (for a different contract) at the end of the prompt. 
+
+Think step by step internally about whether the property holds, but DO NOT include your reasoning in the output.
+
+In your reasoning, consider the following technical assumptions:
+- ignore gas costs. For example, if a user sends a transaction that is reverted, ignore the gas paid by the user;.
+- when in a property we refer to a ""user"" of the contract, we implicitly assume that the user is not the contract under analysis itself;
+- there is not (and there will never be) enough ETH in circulation to cause an overflow to a uint variable storing the balance of an address.
+
+Always respond ONLY in the following format:
+ANSWER: [TRUE | FALSE | UNKNOWN]
+EXPLANATION: <brief explanation citing relevant lines or functions>
+COUNTEREXAMPLE: <if ANSWER=FALSE, provide one; otherwise write ""N/A"">
+HARDHAT: <if ANSWER=FALSE, write the HardHat code; otherwise write ""N/A"">
+---
+Smart Contract:
+{code}
+Property:
+{property_desc}
+---
+Example of proof of concept:
+Contract: 
+```
+pragma solidity ^0.8.25;
+
+contract Reentrancy {
+	uint x;
+	function s(uint _x) public {
+		x = _x;
+	}
+	function f(address a) public {
+		require(x == 0);
+		(bool s, bytes memory data) = a.call("");
+	}
+	function getX() public view returns (uint) {
+		return x;
+	}
+}
+```
+Counterexample:
+```
+- Deploy Reentrancy (x is initially 0).
+- Deploy ReentrancyAttack with a fallback that executes Reentrancy.s(5).
+- Call Reentrancy.f(reentrancyAttackAddress). The require passes. The external call invokes ReentrancyAttack’s fallback which calls s(5), setting x = 5. After f returns, x == 5.
+```
+HardHat proof of concept:
+```
+const {
+  loadFixture,
+} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
+const { expect } = require("chai");
+
+beforeEach(async function () {
+  this.Reentrancy = await ethers.deployContract("Reentrancy");
+  this.ReentrancyAttack = await ethers.deployContract("ReentrancyAttack");
+});
+
+describe("Reentrancy", function() {
+  async function deployContract() {
+    const [owner] = await ethers.getSigners();
+
+    const Reentrancy = await ethers.deployContract("Reentrancy");
+    const ReentrancyAttack = await ethers.deployContract("ReentrancyAttack");
+
+    return { Reentrancy, ReentrancyAttack};
+  }
+  it("The value of x is not 0 after the call to `f`", async function(){
+    const { Reentrancy, ReentrancyAttack } = await loadFixture(deployContract);
+    let reentrancyAttackAddress = ReentrancyAttack.getAddress();
+    await Reentrancy.f(reentrancyAttackAddress);
+    expect(await Reentrancy.getX()).not.to.equal(0);
+  })
+})
+```

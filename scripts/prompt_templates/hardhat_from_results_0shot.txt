@@ -8,9 +8,9 @@ You will be given:
 
 Your task: 
 - Carefully analyze the contract and understand in depth why the given counterexample violates the property.
-- Use the counterexample to produce a Proof of Concept written in Hardhat 3.
+- Encode the counterexample to a JavaScript file (using HardHat 2.14.0, Mocha, and Chai) to produce a Proof of Concept that shows a concrete trace that violates the property.
 
-Think step by step internally about how to translate the counterexample into an Hardhat 3 Proof of Concept. Make sure that the code you produce works correctly. Do not include your reasoning in the output. 
+Think step by step internally about how to translate the counterexample into an Hardhat Proof of Concept. Make sure that the code you produce works correctly. Do not include your reasoning in the output. 
 
 Your answer must consist of ONLY the code of the Hardhat Proof of Concept.
 ---
