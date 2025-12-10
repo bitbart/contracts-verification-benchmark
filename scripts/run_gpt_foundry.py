@@ -468,16 +468,28 @@ def run_forge(contract, prop, version, counterexample, iterations):
     with open(poc_file, "w", encoding="utf-8") as f:
         f.write(counterexample)
 
+    # save current working directory
+    current_directory = os.getcwd()
+    # change directory to run forge test
+    os.chdir(os.path.join('forge_results', contract, f'v{version}'))
+    
     # run forge test only for poc_file
-    os.system(f"cd {os.path.join('forge_results', contract, f'v{version}')} && forge test --match-path test/{prop}_test.t.sol > test_output_{prop}.txt 2>&1")
+    os.system(f"forge test --match-path test/{prop}_test.t.sol > test_output_{prop}.txt 2>&1")
 
     # check if test failed
-    with open(os.path.join(base_folder, f"test_output_{prop}.txt"), "r", encoding="utf-8") as f:
+    with open(f"test_output_{prop}.txt", "r", encoding="utf-8") as f:
         test_output = f.read()
+
+    # return to previous working directory
+    os.chdir(current_directory)
+
     if "[FAIL: " in test_output:
         return False, test_output
-    else:
+    elif "[PASS]" in test_output:
         return True, test_output
+    else:
+        print(f"Error: unexpected forge output: {test_output}", file=sys.stderr)
+        sys.exit(1)
 
 
 
@@ -594,7 +606,6 @@ def main():
             exit()
         else:
             trying_to_solve = True
-            prompt = args.prompt
             iterations = 1
             while(trying_to_solve and iterations <=3):
                 output, total_time = run_experiment(contract_folder, prop, version, prompt, args.tokens, args.model, args)
@@ -610,7 +621,7 @@ def main():
                     "tokens": args.tokens,
                     "raw_output": output
                 }
-                if result_entry["llm_answer"] == "FALSE":
+                if True or result_entry["llm_answer"] == "FALSE":
                     forge_result_ok, forge_output = run_forge(contract_folder, prop, version, counterexample, iterations)
                     # If forge test failed, requery the LLM with the forge output as hint
                     if not forge_result_ok:
@@ -634,6 +645,12 @@ def main():
                         }
                     else:
                         trying_to_solve = False
+                elif result_entry["llm_answer"] == "TRUE" or result_entry["llm_answer"] == "UNKNOWN":
+                    trying_to_solve = False
+                else:
+                    print(f"Warning: unexpected LLM answer '{result_entry['llm_answer']}' for ({prop}, {version}). Not requerying.")
+                    trying_to_solve = False
+
             results.append(result_entry)
             temp_file = f"logs_results/results_temp_{starting_time}.txt"
             write_results_to_csv(results, temp_file, temp=True)

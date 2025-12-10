@@ -257,15 +257,15 @@ def run_experiment(contract, prop, version, prompt_file, token_limit, model, arg
         prompt_text = prompt_template.replace("{code}", code).replace("{property_desc}", property_desc).replace("{explanation}", explanation).replace("{counterexample}", counterexample)
         with open(f"logs_pocs/poc_{contract}_{prop}_{version}.txt", "w", encoding="utf-8") as f: 
             f.write(prompt_text)
-    elif args.skeleton:
-        skeleton_path = os.path.join(CONTRACTS_DIR, contract, f"specs/{prop}.spec")
-        if not os.path.exists(skeleton_path):
-            print(f"Error: {skeleton_path} not found.", file=sys.stderr)
+    elif args.dsl_foundry:
+        foundry_specification_path = os.path.join(CONTRACTS_DIR, contract, f"specs/{prop}.spec")
+        if not os.path.exists(foundry_specification_path):
+            print(f"Error: {foundry_specification_path} not found.", file=sys.stderr)
             sys.exit(1)
 
-        violation_skeleton = open(skeleton_path, "r", encoding="utf-8").read()
+        foundry_specification = open(foundry_specification_path, "r", encoding="utf-8").read()
         
-        prompt_text = prompt_template.replace("{code}", code).replace("{property_desc}", property_desc).replace("{violation_skeleton}", violation_skeleton)
+        prompt_text = prompt_template.replace("{code}", code).replace("{specification}", foundry_specification)
 
     else:
         prompt_text = prompt_template.replace("{code}", code).replace("{property_desc}", property_desc)
@@ -430,10 +430,10 @@ def main():
     parser.add_argument("--hardhat", action='store_true', required=False, default=False, help="Return a textual query to ask to produce a hardhat PoC given a False result.")
     parser.add_argument("--prompt_poc", required=False, help="Prompt file for hardhat PoC (must be in scripts/prompt_templates/)")
     parser.add_argument("--model_poc", required=False, help="Model to run the PoC prompt")
-    parser.add_argument("--skeleton", action='store_true', required=False, default=False, help="Accept as input a violation skeleton.")
+    parser.add_argument("--dsl_foundry", action='store_true', required=False, default=False, help="Accept as input a specification written in a custom Foundry-based specification language.")
 
     args = parser.parse_args()
-    assert(not(args.hardhat and args.skeleton))
+    assert(not(args.hardhat and args.dsl_foundry))
 
 
     if args.use_csv_verification_tasks and args.no_sample:
