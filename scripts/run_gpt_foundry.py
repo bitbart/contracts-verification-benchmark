@@ -508,8 +508,9 @@ def run_forge(contract, prop, version, counterexample, iterations):
     elif "[PASS]" in test_output:
         return True, test_output
     else:
-        print(f"Error: unexpected forge output: {test_output}", file=sys.stderr)
-        sys.exit(1)
+        return False, test_output
+        #print(f"Error: unexpected forge output: {test_output}", file=sys.stderr)
+        #sys.exit(1)
 
 
 
