@@ -351,6 +351,10 @@ def check_all_verification_tasks_have_ground_truth(verification_tasks, ground_tr
             sys.exit(1)
 
 def write_results_to_csv(results, output_file, temp=False):
+    # if folder "llms_results/backup/" does not exist, create it
+    backup_folder = os.path.join("llms_results", "backup")
+    if not os.path.exists(backup_folder):
+        os.makedirs(backup_folder)
 
     if not temp and os.path.exists(output_file):
         output_file_backup = output_file.replace("llms_results/","llms_results/backup/").replace(".csv", f"_backup_{str(datetime.datetime.now()).replace(' ','_').replace(':','-')}.csv")
