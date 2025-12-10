@@ -372,6 +372,11 @@ def write_results_to_csv(results, output_file, temp=False):
         row = f"\"{result['contract_id']}\",\"{result['property_id']}\",\"{result['ground_truth']}\",\"{result['llm_answer']}\",\"{result['llm_explanation']}\",\"{result['llm_counterexample']}\",\"{result['time']}\",\"{result['tokens']}\",\"{result['raw_output']}\"\n"
         text = text + row        
 
+    #check if directory of output_file exists, otherwise create it
+    output_dir = os.path.dirname(output_file)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
     with open(output_file, "w", encoding="utf-8") as f: 
         f.write(text)
 
@@ -484,7 +489,7 @@ def run_forge(contract, prop, version, counterexample, iterations):
     print(f"Current directory: {os.getcwd()}")
 
     # bash command = f"forge test --match-path test/{prop}_test.t.sol > test_output_{prop}.txt 2>&1"
-    command = f"{FORGE_PATH} test --match-path test/{prop}_{iterations}_test.t.sol > test_output_{prop}.txt 2>&1"
+    command = f"{FORGE_PATH} test -vvvv --match-path test/{prop}_{iterations}_test.t.sol > test_output_{prop}.txt 2>&1"
     print(f"Running command: {command}")
     
 
@@ -524,6 +529,7 @@ def main():
     parser.add_argument("--prompt_poc", required=False, help="Prompt file for hardhat PoC (must be in scripts/prompt_templates/)")
     parser.add_argument("--model_poc", required=False, help="Model to run the PoC prompt")
     parser.add_argument("--dsl_foundry", action='store_true', required=False, default=False, help="Accept as input a specification written in a custom Foundry-based specification language.")
+    parser.add_argument("--check_with_foundry",  action='store_true', required=False, default=False, help="Check returned PoC with Foundry.")
 
     args = parser.parse_args()
     assert(not(args.hardhat and args.dsl_foundry))
@@ -620,7 +626,10 @@ def main():
             print(f"{output=}, {total_time=}")
             exit()
         else:
-            trying_to_solve = True
+            if args.check_with_foundry:
+                trying_to_solve = True
+            else:
+                trying_to_solve = False
             iterations = 1
             while(trying_to_solve and iterations <=3):
                 output, total_time = run_experiment(contract_folder, prop, version, prompt, args.tokens, args.model, args)
