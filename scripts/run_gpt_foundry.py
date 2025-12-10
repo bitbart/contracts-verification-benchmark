@@ -17,6 +17,9 @@ SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 CONTRACTS_DIR = os.path.join(BASE_DIR, "contracts")
 API_KEY_FILE = os.path.join(SCRIPTS_DIR, "openai_api_key.txt")
 
+FORGE_PATH = "/home/server/foundry/forge" 
+
+
 REFINED_PROMPT = """You had being given the following prompt:
 BEGIN PREVIOUS PROMPT
 {prompt}
@@ -473,8 +476,16 @@ def run_forge(contract, prop, version, counterexample, iterations):
     # change directory to run forge test
     os.chdir(os.path.join('forge_results', contract, f'v{version}'))
     
+    #print current directory
+    print(f"Current directory: {os.getcwd()}")
+
+    # bash command = f"forge test --match-path test/{prop}_test.t.sol > test_output_{prop}.txt 2>&1"
+    command = f"{FORGE_PATH} test --match-path test/{prop}_{iterations}_test.t.sol > test_output_{prop}.txt 2>&1"
+    print(f"Running command: {command}")
+    
+
     # run forge test only for poc_file
-    os.system(f"forge test --match-path test/{prop}_test.t.sol > test_output_{prop}.txt 2>&1")
+    os.system(command)
 
     # check if test failed
     with open(f"test_output_{prop}.txt", "r", encoding="utf-8") as f:
