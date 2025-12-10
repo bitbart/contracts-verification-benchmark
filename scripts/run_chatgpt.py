@@ -118,7 +118,7 @@ def choose_verification_tasks(prop, versions, ground_truths : dict, args):
                         print(f"Added {additional_needed} more tasks to reach at least {n} tasks for property {prop}.")
     return verification_tasks
 
-def get_verification_tasks_from_csv(filepath,):
+def get_verification_tasks_from_csvOld(filepath,):
     verification_tasks = []
     if not os.path.exists(filepath):
         print(f"Error: the file {filepath} does not exist.", file=sys.stderr)
@@ -130,6 +130,24 @@ def get_verification_tasks_from_csv(filepath,):
                 verification_tasks.append((parts[0], parts[1]))
             else:
                 print(f"Warning: malformed line in {filepath}: {line}", file=sys.stderr)
+    return verification_tasks
+
+def get_verification_tasks_from_csv(filepath):
+    verification_tasks = []
+    if not os.path.exists(filepath):
+        print(f"Error: the file {filepath} does not exist.", file=sys.stderr)
+        sys.exit(1)
+    with open(filepath, "r", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        for row in reader:
+            # Skip empty lines and header
+            if not row or (row[0].lower() in {"property", "contract_id", "id"}):
+                continue
+            # Use the first two columns as property and version/task id
+            if len(row) >= 2:
+                verification_tasks.append((row[0].strip(), row[1].strip()))
+            else:
+                print(f"Warning: malformed line in {filepath}: {row}", file=sys.stderr)
     return verification_tasks
 
 def save_verification_tasks(verification_tasks, filepath):
@@ -213,8 +231,10 @@ def parse_llm_output(text):
 
     return answer, explanation, counterexample
 
-def run_experiment(contract, prop, version, prompt_file, token_limit, model):
+def run_experiment(contract, prop, version, prompt_file, token_limit, model, args, previous_result = None):
     # Load prompt
+    if args.hardhat:
+        prompt_file = args.prompt_poc
     prompt_path = os.path.join(SCRIPTS_DIR, f"prompt_templates/{prompt_file}")
     if not os.path.exists(prompt_path):
         print(f"Error: prompt file {prompt_path} non found.", file=sys.stderr)
@@ -227,15 +247,36 @@ def run_experiment(contract, prop, version, prompt_file, token_limit, model):
     property_desc = load_property_description(contract, prop)
 
     # Replace placeholders
-    prompt_text = prompt_template.replace("{code}", code).replace("{property_desc}", property_desc)
+    if args.hardhat:
+        llm_answer = previous_result["llm_answer"]
+        if llm_answer != "FALSE":
+            print(f"Error: the result for ({prop}, {version}) is not FALSE. Cannot produce hardhat PoC without a counterexample.", file=sys.stderr)
+            sys.exit(1)
+        explanation = previous_result["llm_explanation"] 
+        counterexample = previous_result["llm_counterexample"] 
+        prompt_text = prompt_template.replace("{code}", code).replace("{property_desc}", property_desc).replace("{explanation}", explanation).replace("{counterexample}", counterexample)
+        with open(f"logs_pocs/poc_{contract}_{prop}_{version}.txt", "w", encoding="utf-8") as f: 
+            f.write(prompt_text)
+    elif args.skeleton:
+        skeleton_path = os.path.join(CONTRACTS_DIR, contract, f"specs/{prop}.spec")
+        if not os.path.exists(skeleton_path):
+            print(f"Error: {skeleton_path} not found.", file=sys.stderr)
+            sys.exit(1)
 
-    #with open(f"logs_prompt/prompt{str(datetime.datetime.now())}.txt", "w", encoding="utf-8") as f:
-    #    f.write(prompt_text)
+        violation_skeleton = open(skeleton_path, "r", encoding="utf-8").read()
+        
+        prompt_text = prompt_template.replace("{code}", code).replace("{property_desc}", property_desc).replace("{violation_skeleton}", violation_skeleton)
+
+    else:
+        prompt_text = prompt_template.replace("{code}", code).replace("{property_desc}", property_desc)
 
     start_time = time.time()
     # Inizialize client OpenAI
     client = openai.OpenAI(api_key=load_api_key())
 
+
+    print(prompt_text)
+    
     try:
         if model.startswith("gpt-4o") or model.startswith("gpt-3.5"):
             response = client.chat.completions.create(
@@ -305,7 +346,7 @@ def write_results_to_csv(results, output_file, temp=False):
         f.write(text)
 
 
-def get_results_from_csv(input_file):
+def get_results_from_csvOld(input_file):
     if not os.path.exists(input_file):
         print(f"Error: the file {input_file} does not exist.", file=sys.stderr)
         sys.exit(1)
@@ -321,8 +362,26 @@ def get_results_from_csv(input_file):
             #entry["time"] = float(entry["time"])
             results.append(entry)
         else:
-            print(f"Warning: malformed line in {input_file}: {line}", file=sys.stderr)
+            print(f"Error: malformed line in {input_file}: {line}\nlen(parts) == len(header): {len(parts)}, {len(header)}", file=sys.stderr)
+            sys.exit(1)
     return results
+
+def get_results_from_csv(input_file):
+    if not os.path.exists(input_file):
+        print(f"Error: the file {input_file} does not exist.", file=sys.stderr)
+        sys.exit(1)
+    results = []
+    with open(input_file, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            results.append(row)
+    return results
+
+def get_verification_task_result(results, contract_id, property_id):
+    for res in results:
+        if res['contract_id'] == contract_id and res['property_id'] == property_id:
+            return res
+    return None
 
 def get_previous_verification_tasks(previous_results):
     previous_verification_tasks = set()
@@ -368,9 +427,14 @@ def main():
     parser.add_argument("--use_csv_verification_tasks", required=False, default=False, help="Use verification tasks from a CSV file. ")
     parser.add_argument("--at_least_n_prop", type=int, default=0, help="Force to pick at least N verification task per property.")
     parser.add_argument("--force_overwrite", action='store_true', required=False, default=False, help="Don't run verification tasks already present in the results file.")
-
+    parser.add_argument("--hardhat", action='store_true', required=False, default=False, help="Return a textual query to ask to produce a hardhat PoC given a False result.")
+    parser.add_argument("--prompt_poc", required=False, help="Prompt file for hardhat PoC (must be in scripts/prompt_templates/)")
+    parser.add_argument("--model_poc", required=False, help="Model to run the PoC prompt")
+    parser.add_argument("--skeleton", action='store_true', required=False, default=False, help="Accept as input a violation skeleton.")
 
     args = parser.parse_args()
+    assert(not(args.hardhat and args.skeleton))
+
 
     if args.use_csv_verification_tasks and args.no_sample:
         print("Warning: --no_sample has no effect when --use_csv_verification_tasks is enabled.")
@@ -405,7 +469,7 @@ def main():
     ground_truths = get_ground_truths(base_path)
 
     output_file = f"llms_results/results_{args.model}_{args.prompt}_{args.contract}_{args.tokens}tok.csv".replace(".txt","")
-    print(f"Results will be saved to {output_file}")
+    print(f"Output file: {output_file}")
 
     if os.path.exists(output_file):
         previous_results = get_results_from_csv(output_file)
@@ -428,7 +492,7 @@ def main():
     print(f"Verification tasks: {verification_tasks}")
     print(len(verification_tasks))
 
-    if not args.force_overwrite:
+    if not args.force_overwrite and not args.hardhat:
         verification_tasks = [vt for vt in verification_tasks if vt not in previous_verification_tasks]
         print(f"After skipping already done tasks, {len(verification_tasks)} tasks remain.")
 
@@ -452,32 +516,42 @@ def main():
     for verification_task in verification_tasks:
         prop, version = verification_task
         ground_truth = ground_truths[(prop,version)]
-        output, total_time = run_experiment(contract_folder, prop, version, args.prompt, args.tokens, args.model)
-        answer, explanation, counterexample = parse_llm_output(output)
-        result_entry = {
-            "contract_id": version,
-            "property_id": prop,
-            "ground_truth": ground_truth,
-            "llm_answer": answer,
-            "llm_explanation": explanation,
-            "llm_counterexample": counterexample,
-            "time": total_time,
-            "tokens": args.tokens,
-            "raw_output": output
-        }
-        results.append(result_entry)
-        temp_file = f"logs_results/results_temp_{starting_time}.txt"
-        write_results_to_csv(results, temp_file, temp=True)
+
+        if args.hardhat:
+            print(f"{previous_results=}")
+            previous_result = get_verification_task_result(previous_results, version, prop)
+            if not previous_result:
+                print(f"Error: no previous result found for ({prop}, {version}). Cannot produce hardhat PoC without a counterexample.", file=sys.stderr)
+                continue
+            output, total_time = run_experiment(contract_folder, prop, version, args.prompt, args.tokens, args.model_poc, args, previous_result)
+            print(f"{output=}, {total_time=}")
+            exit()
+        else:
+            output, total_time = run_experiment(contract_folder, prop, version, args.prompt, args.tokens, args.model, args)
+            answer, explanation, counterexample = parse_llm_output(output)
+            result_entry = {
+                "contract_id": version,
+                "property_id": prop,
+                "ground_truth": ground_truth,
+                "llm_answer": answer,
+                "llm_explanation": explanation,
+                "llm_counterexample": counterexample,
+                "time": total_time,
+                "tokens": args.tokens,
+                "raw_output": output
+            }
+            results.append(result_entry)
+            temp_file = f"logs_results/results_temp_{starting_time}.txt"
+            write_results_to_csv(results, temp_file, temp=True)
         
 
     #print(results)
     results_df = pd.DataFrame(results)
     
     if os.path.exists(output_file):
-        previous_results = get_results_from_csv(output_file)
+        #previous_results = get_results_from_csv(output_file)
         #for res in previous_results:
         #    print(res)
-
         results = merge_results(previous_results, results)
 
     write_results_to_csv(results, output_file)
