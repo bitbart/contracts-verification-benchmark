@@ -531,6 +531,8 @@ def main():
     parser.add_argument("--model_poc", required=False, help="Model to run the PoC prompt")
     parser.add_argument("--dsl_foundry", action='store_true', required=False, default=False, help="Accept as input a specification written in a custom Foundry-based specification language.")
     parser.add_argument("--check_with_foundry",  action='store_true', required=False, default=False, help="Check returned PoC with Foundry.")
+    parser.add_argument("--iteration_limit", type=int, default=3, help="Maximum number of iterations.")
+
 
     args = parser.parse_args()
     assert(not(args.hardhat and args.dsl_foundry))
@@ -632,7 +634,7 @@ def main():
             else:
                 trying_to_solve = False
             iterations = 1
-            while(trying_to_solve and iterations <=3):
+            while(trying_to_solve and iterations <= args.iteration_limit):
                 output, total_time = run_experiment(contract_folder, prop, version, prompt, args.tokens, args.model, args)
                 answer, explanation, counterexample = parse_llm_output(output)
                 result_entry = {
