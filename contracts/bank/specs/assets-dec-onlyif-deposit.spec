@@ -30,6 +30,6 @@ contract BankTest is Test {
 
         uint256 user_balance_after = address(user).balance;
 
-        assertLe(user_balance_after, user_balance_before, "user balance did not decrease");
+        assertLt(user_balance_after, user_balance_before, "user balance did not decrease");
     }
 }
