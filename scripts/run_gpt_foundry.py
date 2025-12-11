@@ -472,6 +472,13 @@ def run_forge(contract, prop, version, counterexample, iterations):
     # Create (if not already existing) a folder ./forge_results/{contract}/{version}/test
     base_folder = os.path.join("forge_results", contract, f"v{version}", "test")
     os.makedirs(base_folder, exist_ok=True)
+
+    # Copy contract code to ./forge_results/{contract}/{version}/ without version in the filename
+    contract_code = load_contract_code(contract, version)
+    contract_file = os.path.join("forge_results", contract, f"v{version}", f"{contract}.sol")
+    with open(contract_file, "w", encoding="utf-8") as f:
+        f.write(contract_code)
+
     # Save Foundry PoC in a file ./forge_results/{contract}/{version}/test/{prop}_test.t.sol
     poc_file = os.path.join(base_folder, f"{prop}_{iterations}_test.t.sol")
     # Sanitize counterexample
