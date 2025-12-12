@@ -516,7 +516,7 @@ def run_forge(contract, prop, version, counterexample, iterations):
     print(f"Current directory: {os.getcwd()}")
 
     # bash command = f"forge init --force ; forge test --match-path test/{prop}_test.t.sol > test_output_{prop}.txt 2>&1"
-    command = f"{FORGE_PATH} test -vvvv --match-path test/{prop}_{iterations}_test.t.sol > test_output_{prop}.txt 2>&1"
+    command = f"{FORGE_PATH} init --force ; {FORGE_PATH} test -vvvv --match-path test/{prop}_{iterations}_test.t.sol > test_output_{prop}.txt 2>&1"
     print(f"Running command: {command}")
     
 
