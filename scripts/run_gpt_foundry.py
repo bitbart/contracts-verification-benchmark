@@ -532,7 +532,7 @@ def main():
     parser.add_argument("--no_sample", action='store_true', required=False, default=False, help="Disable verification tasks sampling. ")
     parser.add_argument("--use_csv_verification_tasks", required=False, default=False, help="Use verification tasks from a CSV file. ")
     parser.add_argument("--at_least_n_prop", type=int, default=0, help="Force to pick at least N verification task per property.")
-    parser.add_argument("--force_overwrite", action='store_true', required=False, default=False, help="Don't run verification tasks already present in the results file.")
+    parser.add_argument("--force_overwrite", action='store_true', required=False, default=False, help="Overwrite verification tasks already present in the results file.")
     parser.add_argument("--hardhat", action='store_true', required=False, default=False, help="Return a textual query to ask to produce a hardhat PoC given a False result.")
     parser.add_argument("--prompt_poc", required=False, help="Prompt file for hardhat PoC (must be in scripts/prompt_templates/)")
     parser.add_argument("--model_poc", required=False, help="Model to run the PoC prompt")
@@ -659,10 +659,15 @@ def main():
                     forge_result_ok, forge_output = run_forge(contract_folder, prop, version, counterexample, iterations)
                     # If forge test failed, requery the LLM with the forge output as hint
                     if not forge_result_ok:
-                        print(f"Forge test failed for ({prop}, {version}). Requerying LLM with forge output as hint.")
+                        print(f"Forge test failed for ({prop}, {version}).")
+                        iterations += 1
+                        if iterations > args.iteration_limit:
+                            print(f"Reached iteration limit ({args.iteration_limit}) for ({prop}, {version}). Not requerying LLM anymore.")
+                            break
+                        else:
+                            print(f"Requerying LLM with forge output as hint (iteration num. {iterations})")
                         new_prompt = REFINED_PROMPT.replace("{prompt}", prompt).replace("{output}", output).replace("{forge_output}", forge_output)
                         prompt = new_prompt
-                        iterations += 1
                         # run gpt again with the new prompt
                         output, total_time = run_experiment(contract_folder, prop, version, prompt, args.tokens, args.model, args)
                         answer, explanation, counterexample = parse_llm_output(output)
