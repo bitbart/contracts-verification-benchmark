@@ -212,6 +212,24 @@ def load_contract_code(contract, version):
 
 
 
+def get_contract_name(contract, version):
+    version_folder = os.path.join(CONTRACTS_DIR, contract, "versions")
+
+    target = f"{normalize_name(contract)}v{normalize_name(version)}"
+
+    for fname in os.listdir(version_folder):
+        if fname.endswith(".sol"):
+            candidate = normalize_name(fname.replace(".sol", ""))
+            if candidate == target:
+                name = fname
+                name = name.replace(f"_v{version}","")
+                return name
+    else:
+        print(f"Error: no solidity file found for {contract} v{version} in {version_folder}", file=sys.stderr)
+        sys.exit(1)
+
+
+
 def load_property_description(contract, property_name):
     skeleton_path = os.path.join(CONTRACTS_DIR, contract, "skeleton.json")
     if not os.path.exists(skeleton_path):
@@ -270,6 +288,7 @@ def run_experiment(contract, prop, version, prompt_template, token_limit, model,
 
     # Load  Solidity code and property description
     code = load_contract_code(contract, version)
+
     property_desc = load_property_description(contract, prop)
 
     # Replace placeholders
@@ -475,7 +494,8 @@ def run_forge(contract, prop, version, counterexample, iterations):
 
     # Copy contract code to ./forge_results/{contract}/{version}/ without version in the filename
     contract_code = load_contract_code(contract, version)
-    contract_file = os.path.join("forge_results", contract, f"v{version}", f"{contract}.sol")
+    contract_name = get_contract_name(contract, version)
+    contract_file = os.path.join("forge_results", contract, f"v{version}", f"{contract_name}")
     with open(contract_file, "w", encoding="utf-8") as f:
         f.write(contract_code)
 
@@ -495,7 +515,7 @@ def run_forge(contract, prop, version, counterexample, iterations):
     #print current directory
     print(f"Current directory: {os.getcwd()}")
 
-    # bash command = f"forge test --match-path test/{prop}_test.t.sol > test_output_{prop}.txt 2>&1"
+    # bash command = f"forge init --force ; forge test --match-path test/{prop}_test.t.sol > test_output_{prop}.txt 2>&1"
     command = f"{FORGE_PATH} test -vvvv --match-path test/{prop}_{iterations}_test.t.sol > test_output_{prop}.txt 2>&1"
     print(f"Running command: {command}")
     
@@ -636,10 +656,7 @@ def main():
             print(f"{output=}, {total_time=}")
             exit()
         else:
-            if args.check_with_foundry:
-                trying_to_solve = True
-            else:
-                trying_to_solve = False
+            trying_to_solve = True
             iterations = 1
             while(trying_to_solve and iterations <= args.iteration_limit):
                 output, total_time = run_experiment(contract_folder, prop, version, prompt, args.tokens, args.model, args)
@@ -655,7 +672,7 @@ def main():
                     "tokens": args.tokens,
                     "raw_output": output
                 }
-                if True or result_entry["llm_answer"] == "FALSE":
+                if args.check_with_foundry and result_entry["llm_answer"] == "FALSE":
                     forge_result_ok, forge_output = run_forge(contract_folder, prop, version, counterexample, iterations)
                     # If forge test failed, requery the LLM with the forge output as hint
                     if not forge_result_ok:
