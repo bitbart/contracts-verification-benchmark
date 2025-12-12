@@ -12,30 +12,30 @@ contract BankTest is Test {
     //@FILL HERE <…>
 
     function test_deposit_additivity_violated() public {
-        // Snapshot initial state
         uint256 snapshot = vm.snapshotState();
 
+        address user = //@FILL HERE <…>;
+        
         uint256 n1 = //@FILL HERE <…>;
         uint256 n2 = //@FILL HERE <…>;
         
-        // Perform deposit actions
         vm.prank(sender);
         bank.deposit{value: n1}();
         vm.prank(sender);
         bank.deposit{value: n2}();
 
-        address user = //@FILL HERE <…>;
 
-        // Get the state of the credits mapping before revert
-        uint256 creditsBeforeRevert = bank.credits(user);
+        uint256 credits_slot = uint256(0);
+        bytes32 user_credits_slot = keccak256(abi.encode(user, credits_slot));
+        uint256 user_creditsBefore = uint256(vm.load(address(bank), user_credits_slot));
 
-        // Revert to the snapshot
         vm.revertToState(snapshot);
 
-        // After revert, verify the credits mapping has not changed for the sender
-        uint256 creditsAfterRevert = bank.credits(user);
+        vm.prank(sender);
+        bank.deposit{value: n1+n2}();
 
-        // Assert that the state is different than what it was before revert 
-        assertNotEq(creditsAfterRevert, creditsBeforeRevert, "Credits are equal");
+        uint256 user_creditsAfter = uint256(vm.load(address(bank), user_credits_slot));
+
+        assertNotEq(user_creditsAfter, user_creditsBefore, "Credits are equal");
     }
 }
