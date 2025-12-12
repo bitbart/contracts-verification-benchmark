@@ -8,7 +8,7 @@ Your task:
 
 * Analyze the contract and the specification thoroughly.
 * Determine if it is possible to insert code into the annotated lines of the Foundry test skeleton to make the test pass. If it is possible, the specification is **falsified** (output FALSE). If it is not possible, the specification is **valid** (output TRUE).
-* You can **only** insert code on lines marked with `//@FILL HERE` (and you can remove `//@FILL HERE`). You **cannot** delete, modify, or add lines elsewhere in the skeleton. 
+* You can **only** insert code on lines marked with `//@FILL HERE`. You **cannot** delete, modify, or add lines elsewhere in the skeleton.  Remove all the occurrences of `//@FILL HERE` after you've finished.
 * To prove that the specification is falsified, you must provide the filled Foundry test skeleton with executable code that makes the test pass. Be cautious of the “Stack too deep” error. 
 * Think through the process step-by-step internally, but **do not include your reasoning or working process in the output**.
 
