@@ -13,7 +13,7 @@ Your task:
 * Think through the process step-by-step internally, but **do not include your reasoning or working process in the output**.
 
 In your reasoning, consider the following constraints:
-- you cannot use `vm.store`
+- you cannot use any Foundry method that modifies the state of the blockchain, except for `vm.deal` and `vm.prank`
 - the maximum ETH possibly in circulation is 10 billion
 
 
