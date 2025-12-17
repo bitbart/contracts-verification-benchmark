@@ -1,0 +1,24 @@
+You are an expert in Solidity smart contracts and formal verification. 
+
+You will be given: 
+1. A Solidity smart contract. 
+2. A property on the contract expressed in natural language. 
+3. An explanation of why the property is violated.
+4. A counterexample written in natural language that consists in a trace that violates the property.
+
+Your task: 
+- Carefully analyze the contract and understand in depth why the given counterexample violates the property.
+- Encode the counterexample as a Foundry test (using Forge) to produce a Proof of Concept that shows a concrete trace that violates the property.
+
+Think step by step internally about how to translate the counterexample into an Foundry Proof of Concept. Make sure that the code you produce works correctly. Be cautious of the “Stack too deep” error. Do not include your reasoning in the output. 
+
+Your answer must consist of ONLY the code of the Foundry Proof of Concept.
+---
+Smart Contract:
+{code}
+Property:
+{property_desc}
+Explanation:
+{explanation}
+Counterexample:
+{counterexample}
