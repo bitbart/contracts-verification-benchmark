@@ -17,8 +17,8 @@ SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 CONTRACTS_DIR = os.path.join(BASE_DIR, "contracts")
 API_KEY_FILE = os.path.join(SCRIPTS_DIR, "openai_api_key.txt")
 
-FORGE_PATH = "/home/server/foundry/forge" 
-
+#FORGE_PATH = "/home/server/foundry/forge" 
+FORGE_PATH = "/home/enrico/.foundry/bin/forge"
 
 REFINED_PROMPT = """You had being given the following prompt:
 BEGIN PREVIOUS PROMPT
@@ -247,7 +247,7 @@ def load_property_description(contract, property_name):
     return props[property_name]
 
 def get_prompt_template(prompt_file):
-    prompt_path = os.path.join(SCRIPTS_DIR, f"prompt_templates/{prompt_file}")
+    prompt_path = os.path.join(SCRIPTS_DIR, f"{prompt_file}")
     if not os.path.exists(prompt_path):
         print(f"Error: prompt file {prompt_path} not found.", file=sys.stderr)
         sys.exit(1)
@@ -277,9 +277,9 @@ def parse_llm_output(text):
 
 def run_experiment(contract, prop, version, prompt_template, token_limit, model, args, previous_result = None):
     # Load prompt
-    if args.hardhat:
+    if args.produce_poc:
         prompt_file = args.prompt_poc
-        prompt_path = os.path.join(SCRIPTS_DIR, f"prompt_templates/{prompt_file}")
+        prompt_path = os.path.join(SCRIPTS_DIR, f"{prompt_file}")
         if not os.path.exists(prompt_path):
             print(f"Error: prompt file {prompt_path} non found.", file=sys.stderr)
             sys.exit(1)
@@ -292,10 +292,10 @@ def run_experiment(contract, prop, version, prompt_template, token_limit, model,
     property_desc = load_property_description(contract, prop)
 
     # Replace placeholders
-    if args.hardhat:
+    if args.produce_poc:
         llm_answer = previous_result["llm_answer"]
         if llm_answer != "FALSE":
-            print(f"Error: the result for ({prop}, {version}) is not FALSE. Cannot produce hardhat PoC without a counterexample.", file=sys.stderr)
+            print(f"Error: the result for ({prop}, {version}) is not FALSE. Cannot produce PoC without a counterexample.", file=sys.stderr)
             sys.exit(1)
         explanation = previous_result["llm_explanation"] 
         counterexample = previous_result["llm_counterexample"] 
@@ -515,8 +515,7 @@ def run_forge(contract, prop, version, counterexample, iterations):
     #print current directory
     print(f"Current directory: {os.getcwd()}")
 
-    # bash command = f"forge init --force ; forge test --match-path test/{prop}_test.t.sol > test_output_{prop}.txt 2>&1"
-    command = f"{FORGE_PATH} init --force ; {FORGE_PATH} test -vvvv --match-path test/{prop}_{iterations}_test.t.sol > test_output_{prop}.txt 2>&1"
+    command = f"{FORGE_PATH} init --force --empty --no-git; {FORGE_PATH} test -vvvv --match-path test/{prop}_{iterations}_test.t.sol > test_output_{prop}.txt 2>&1"
     print(f"Running command: {command}")
     
 
@@ -546,15 +545,15 @@ def main():
     parser.add_argument("--contract", required=True, help="Contract name (i.e. name of folder in contracts/)")
     parser.add_argument("--property", help="Property name (optional)")
     parser.add_argument("--version", help="Version number (optional)")
-    parser.add_argument("--prompt", required=True, help="Prompt file (must be in scripts/prompt_templates/)")
+    parser.add_argument("--prompt", required=True, help="Prompt file (must be in scripts/)")
     parser.add_argument("--tokens", type=int, default=500, help="Token limit (optional)")
     parser.add_argument("--model", default="gpt-4o", help="Model (default gpt-4o)")
     parser.add_argument("--no_sample", action='store_true', required=False, default=False, help="Disable verification tasks sampling. ")
     parser.add_argument("--use_csv_verification_tasks", required=False, default=False, help="Use verification tasks from a CSV file. ")
     parser.add_argument("--at_least_n_prop", type=int, default=0, help="Force to pick at least N verification task per property.")
     parser.add_argument("--force_overwrite", action='store_true', required=False, default=False, help="Overwrite verification tasks already present in the results file.")
-    parser.add_argument("--hardhat", action='store_true', required=False, default=False, help="Return a textual query to ask to produce a hardhat PoC given a False result.")
-    parser.add_argument("--prompt_poc", required=False, help="Prompt file for hardhat PoC (must be in scripts/prompt_templates/)")
+    parser.add_argument("--produce_poc", action='store_true', required=False, default=False, help="Return a textual query to ask to produce a PoC given a False result.")
+    parser.add_argument("--prompt_poc", required=False, help="Prompt file for PoC (must be in scripts/)")
     parser.add_argument("--model_poc", required=False, help="Model to run the PoC prompt")
     parser.add_argument("--dsl_foundry", action='store_true', required=False, default=False, help="Accept as input a specification written in a custom Foundry-based specification language.")
     parser.add_argument("--check_with_foundry",  action='store_true', required=False, default=False, help="Check returned PoC with Foundry.")
@@ -562,8 +561,11 @@ def main():
 
 
     args = parser.parse_args()
-    assert(not(args.hardhat and args.dsl_foundry))
+    assert(not(args.produce_poc and args.dsl_foundry))
 
+
+    if args.dsl_foundry:
+        args.check_with_foundry = True
 
     if args.use_csv_verification_tasks and args.no_sample:
         print("Warning: --no_sample has no effect when --use_csv_verification_tasks is enabled.")
@@ -580,6 +582,8 @@ def main():
         args.no_sample = True
         print("Warning: --no_sample is automatically enabled when --version is specified.")
 
+    if not args.model_poc:
+        args.model_poc = args.model
 
     # Find contract folder ignoring cases and special chars
     contract_folder = find_contract_folder(args.contract)
@@ -597,15 +601,29 @@ def main():
 
     ground_truths = get_ground_truths(base_path)
 
-    output_file = f"llms_results/results_{args.model}_{args.prompt}_{args.contract}_{args.tokens}tok.csv".replace(".txt","")
-    print(f"Output file: {output_file}")
+    if args.produce_poc:
+        output_file = f"llms_results/results_{args.model_poc}_{args.prompt_poc}_PoCfrom_{args.model_poc}_{args.prompt_poc}_{args.contract}_{args.tokens}tok.csv".replace(".txt","").replace("prompt_templates/","")
+        print(f"Output file: {output_file}")
+        
+        previous_output_file = f"llms_results/results_{args.model}_{args.prompt}_{args.contract}_{args.tokens}tok.csv".replace(".txt","").replace("prompt_templates/","")
+        print(f"Previous output file: {previous_output_file}")
 
-    if os.path.exists(output_file):
-        previous_results = get_results_from_csv(output_file)
+        if os.path.exists(previous_output_file):
+            previous_results = get_results_from_csv(output_file)
+        else:
+            previous_results = []
+
+        previous_verification_tasks = get_previous_verification_tasks(previous_results)
     else:
-        previous_results = []
+        output_file = f"llms_results/results_{args.model}_{args.prompt}_{args.contract}_{args.tokens}tok.csv".replace(".txt","").replace("prompt_templates/","")
+        print(f"Output file: {output_file}")
 
-    previous_verification_tasks = get_previous_verification_tasks(previous_results)
+        if os.path.exists(output_file):
+            previous_results = get_results_from_csv(output_file)
+        else:
+            previous_results = []
+
+        previous_verification_tasks = get_previous_verification_tasks(previous_results)
 
     verification_tasks = []
     for prop in properties:
@@ -621,7 +639,7 @@ def main():
     print(f"Verification tasks: {verification_tasks}")
     print(len(verification_tasks))
 
-    if not args.force_overwrite and not args.hardhat:
+    if not args.force_overwrite and not args.produce_poc:
         verification_tasks = [vt for vt in verification_tasks if vt not in previous_verification_tasks]
         print(f"After skipping already done tasks, {len(verification_tasks)} tasks remain.")
 
@@ -646,15 +664,21 @@ def main():
         prop, version = verification_task
         ground_truth = ground_truths[(prop,version)]
         prompt = get_prompt_template(args.prompt)
-        if args.hardhat:
+        if args.produce_poc:
             print(f"{previous_results=}")
             previous_result = get_verification_task_result(previous_results, version, prop)
             if not previous_result:
-                print(f"Error: no previous result found for ({prop}, {version}). Cannot produce hardhat PoC without a counterexample.", file=sys.stderr)
+                print(f" no previous result found for ({prop}, {version})... checking saved results from csv", file=sys.stderr)
+
+                
+                print(f"Error: no previous result found for ({prop}, {version}). Cannot produce PoC without a counterexample.", file=sys.stderr)
+
                 continue
             output, total_time = run_experiment(contract_folder, prop, version, prompt, args.tokens, args.model_poc, args, previous_result)
             print(f"{output=}, {total_time=}")
-            exit()
+            results.append(result_entry)
+            temp_file = f"logs_results/results_temp_{starting_time}.txt"
+            write_results_to_csv(results, temp_file, temp=True)
         else:
             trying_to_solve = True
             iterations = 1
