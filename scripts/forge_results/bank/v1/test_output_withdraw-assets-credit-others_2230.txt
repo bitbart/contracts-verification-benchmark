@@ -1,0 +1,35 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 392.44ms
+Compiler run successful!
+
+Ran 1 test for test/withdraw-assets-credit-others_1_test.t.sol:BankTest
+[FAIL: EvmError: Revert] test_withdraw_assets_credit_others_violation() (gas: 326710)
+Traces:
+  [326710] BankTest::test_withdraw_assets_credit_others_violation()
+    ├─ [73121] → new Other@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
+    │   └─ ← [Return] 365 bytes of code
+    ├─ [174762] → new Attacker@0x2e234DAe75C793f67A35089C9d99245E1C58470b
+    │   └─ ← [Return] 648 bytes of code
+    ├─ [0] VM::deal(BankTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 1)
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(Attacker: [0x2e234DAe75C793f67A35089C9d99245E1C58470b])
+    │   └─ ← [Return]
+    ├─ [0] Bank::deposit{value: 1}()
+    │   └─ ← [OutOfFunds] EvmError: OutOfFunds
+    └─ ← [Revert] EvmError: Revert
+
+Backtrace:
+  at Bank.deposit
+  at BankTest.test_withdraw_assets_credit_others_violation
+
+Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 328.04µs (72.71µs CPU time)
+
+Ran 1 test suite in 22.17ms (328.04µs CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/withdraw-assets-credit-others_1_test.t.sol:BankTest
+[FAIL: EvmError: Revert] test_withdraw_assets_credit_others_violation() (gas: 326710)
+
+Encountered a total of 1 failing tests, 0 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test

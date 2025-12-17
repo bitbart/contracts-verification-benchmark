@@ -1,0 +1,39 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 406.98ms
+Compiler run successful!
+
+Ran 1 test for test/withdraw-assets-credit-others_1_test.t.sol:BankTest
+[PASS] test_withdraw_assets_credit_others_violation() (gas: 428270)
+Traces:
+  [448170] BankTest::test_withdraw_assets_credit_others_violation()
+    ├─ [75321] → new User@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
+    │   └─ ← [Return] 376 bytes of code
+    ├─ [201176] → new Attacker@0x2e234DAe75C793f67A35089C9d99245E1C58470b
+    │   └─ ← [Return] 892 bytes of code
+    ├─ [22679] Attacker::setUser(User: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Stop]
+    ├─ [0] VM::deal(Attacker: [0x2e234DAe75C793f67A35089C9d99245E1C58470b], 1000000000000000000 [1e18])
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(Attacker: [0x2e234DAe75C793f67A35089C9d99245E1C58470b])
+    │   └─ ← [Return]
+    ├─ [22515] Bank::deposit{value: 1000000000000000000}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::load(Bank: [0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d], 0x996b860ef646da948c7d745162e3851398cba818db7bc8c7a4d9d465a54dfa11) [staticcall]
+    │   └─ ← [Return] 0x0000000000000000000000000000000000000000000000000000000000000000
+    ├─ [0] VM::prank(Attacker: [0x2e234DAe75C793f67A35089C9d99245E1C58470b])
+    │   └─ ← [Return]
+    ├─ [43945] Bank::withdraw(1000000000000000000 [1e18])
+    │   ├─ [35732] Attacker::receive{value: 1000000000000000000}()
+    │   │   ├─ [28002] User::doDeposit{value: 1000000000000000000}(Bank: [0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d])
+    │   │   │   ├─ [20515] Bank::deposit{value: 1000000000000000000}()
+    │   │   │   │   └─ ← [Stop]
+    │   │   │   └─ ← [Stop]
+    │   │   └─ ← [Stop]
+    │   └─ ← [Stop]
+    ├─ [0] VM::load(Bank: [0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d], 0x996b860ef646da948c7d745162e3851398cba818db7bc8c7a4d9d465a54dfa11) [staticcall]
+    │   └─ ← [Return] 0x0000000000000000000000000000000000000000000000000de0b6b3a7640000
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 402.44µs (170.97µs CPU time)
+
+Ran 1 test suite in 6.41ms (402.44µs CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
