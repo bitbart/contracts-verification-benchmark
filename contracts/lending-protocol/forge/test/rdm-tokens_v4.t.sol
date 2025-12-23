@@ -32,8 +32,8 @@ contract LPTest is Test {
 		assert(tok0.totalSupply() == 1000);
 		assert(tok0.balanceOf(address(this)) == 1000);
 
-		vm.assume(a != address(0));
-		vm.assume(b != address(0));
+		vm.assume(a != address(0) && a != address(this) && a != address(lp));
+		vm.assume(b != address(0) && b != address(this) && b != address(lp));
 		vm.assume(a != b);
 
 		tok0.transfer(a, 100);
