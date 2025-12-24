@@ -8,7 +8,7 @@ fair-split-eq,v6,0,"see v1"
 fair-split-eq,v7,0,"see v1"
 fair-split-eq,v8,0,"see v1"
 fair-split-eq,v9,0,"see v1; payees can have 0 shares, so `(totalReceived * shares[a]) / totalShares` can throw a division by zero error"
-fair-split-eq,v10,1,
+fair-split-eq,v10,1,"no overflow: shares capped at 10000, refuses more than 999_999_999_999_999 wei"
 fair-split-eq-no-overflow,v1,1,
 fair-split-eq-no-overflow,v2,1,
 fair-split-eq-no-overflow,v3,1,
