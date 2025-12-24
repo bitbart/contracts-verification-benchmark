@@ -35,7 +35,7 @@ contract LPTest is Test {
 	// 	 - XR_post = floor((reserves' + sum_debits')*1e6 / sum_credits') = floor(1,003,002,000e6 / 1,002,001,001), which is strictly less than 1,000,999 (the pre-state XR), because the minted credits exceeded the ideal amount by 1 due to rounding.
 	// Thus, deposit decreases XR(T), violating the property."
 
-    function test_rdm_xr_eq(address a, address b) public {
+    function test_xr_increasing(address a, address b) public {
 	
 		vm.assume(a != address(0) && a != address(this) && a != address(lp));
 		vm.assume(b != address(0) && b != a && b != address(this) && b != address(lp));
@@ -76,6 +76,7 @@ contract LPTest is Test {
 
 		uint xr0_after = lp.XR(address(tok0));
 		assertEq(xr0_after, 1_000_999);
+
 		// This PoC fails, since XR does not decrease!
 		assertLt(xr0_after, xr0_before);
     }

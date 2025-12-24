@@ -16,6 +16,11 @@ contract LPTest is Test {
         lp = new LendingProtocol(tok0,tok1);
     }
 
+	// dep-xr-eq: 
+	// the exchange rate XR(T) of any token handled by the LendingProtocol is preserved 
+	// by any transaction deposit(amount,T). 
+	// Assume that T is a standard ERC20 token that do not charge fees on transfers.
+
     // - Setup with tok0 as the token under test and tok1 as collateral token; prices are prices[tok0]=1, prices[tok1]=2.
     // 1) LP deposits 3 units of tok0:
     //    - reserves[tok0]=3, sum_credits[tok0]=3, XR(tok0)=1e6.
