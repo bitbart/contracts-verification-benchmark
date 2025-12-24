@@ -37,44 +37,37 @@ contract LPTest is Test {
 		vm.assume(a != address(0) && a != address(this) && a != address(lp));
 		vm.assume(b != address(0) && b != a && b != address(this) && b != address(lp));
 			  
-		tok1.transfer(a, 100);
-		tok0.transfer(b, 1_003_000_998 + 1001);
+		tok1.transfer(a, 105);
 		
-		// Bob: deposit(1001,tok0)	
-		vm.prank(address(b));
-		tok0.approve(address(lp), 1001);
-		vm.prank(address(b));
-		lp.deposit(1001, address(tok0));
-
 		// Alice: deposit(100,tok1)	
 		vm.prank(address(a));
 		tok1.approve(address(lp), 100);	
 		vm.prank(address(a));
 		lp.deposit(100, address(tok1));
 		
-		// Alice: borrow(10,tok0)	
+		// Alice: borrow(50,tok1)	
 		vm.prank(address(a));
-		lp.borrow(10, address(tok0));
-	
-		assertEq(tok0.balanceOf(a), 10);
-	
+		lp.borrow(50, address(tok1));
+		
 		lp.accrueInt();
 
-		uint xr0_before = lp.XR(address(tok0));
-		assertEq(xr0_before, 1_000_999);
+		// Alice: repay(55,tok1)	
+		vm.prank(address(a));
+		tok1.approve(address(lp), 55);	
+		vm.prank(address(a));
+		lp.repay(55, address(tok1));
 
-		// Bob: deposit(1_003_000_998,tok0)
-		vm.prank(address(b));
-		tok0.approve(address(lp), 1_003_000_998);
-		vm.prank(address(b));
-		lp.deposit(1_003_000_998, address(tok0));
-		
-		assertEq(lp.reserves(address(tok0)), 1_003_000_998 + 1001 - 10);
+		uint xr1_before = lp.XR(address(tok1));
+		assertEq(xr1_before, 1_050_000);
 
-		uint xr0_after = lp.XR(address(tok0));
-		assertEq(xr0_after, 1_000_999);
+		// Alice: redeem(100,tok1)
+		vm.prank(address(a));
+		lp.redeem(100, address(tok1));
 		
+		uint xr1_after = lp.XR(address(tok1));
+		assertEq(xr1_after, 1_000_000);
+
 		// This PoC fails, since XR does not decrease!
-		assertLt(xr0_after, xr0_before);
+		assertLt(xr1_after, xr1_before);
     }
 }
