@@ -17,17 +17,22 @@ contract LPTest is Test {
         lp = new LendingProtocol(tok0,tok1);
     }
 
-	// "- Setup (token T = tok0):
+    // dep-additivity: if a sender A can perform two (non-reverting) `deposit` of n1 and n2 token units
+    // (of the same token T), then A can always obtain an equivalent effect (on the state of the
+    // contract and on its own token balance) through a single `deposit` of n1+n2 units of token T.
+    // Here equivalence neglects transaction fees.
+    // Assume that T is a standard ERC20 token that do not charge fees on transfers.
+
+	// - Setup (token T = tok0):
 	//  1) User B: deposit 100 T. Now reserves[T]=100, sum_credits[T]=100, XR(T)=1e6.
 	//  2) User L: deposit 100 tok1 as collateral, then borrow 50 T. Now reserves[T]=50, sum_debits[T]=50; last_global_update set.
 	//  3) Wait some blocks so XR reflects interest (without calling borrow/repay). Suppose XR(T) = (reserves + updated_debt) * 1e6 / sum_credits = (50 + 55) * 1e6 / 100 = 1,050,000.
 	// - Two deposits by A in the same block:
-	//  - First: deposit(1, T): amount_credit = floor(1,000,000 / 1,050,000) = 0. State: reserves+=1; credits[A]+=0; sum_credits unchanged.
-	//  - Second: deposit(1, T): XR is ≥ previous; amount_credit = 0 again. End: reserves increased by 2; credits[A] increased by 0; sum_credits unchanged.
+	//   - First: deposit(1, T): amount_credit = floor(1,000,000 / 1,050,000) = 0. State: reserves+=1; credits[A]+=0; sum_credits unchanged.
+	//   - Second: deposit(1, T): XR is ≥ previous; amount_credit = 0 again. End: reserves increased by 2; credits[A] increased by 0; sum_credits unchanged.
 	// - Single deposit alternative:
-	//  - deposit(2, T) at that time: amount_credit = floor(2,000,000 / 1,050,000) = 1. End: reserves increased by 2; credits[A] increased by 1; sum_credits increased by 1.
+	//   - deposit(2, T) at that time: amount_credit = floor(2,000,000 / 1,050,000) = 1. End: reserves increased by 2; credits[A] increased by 1; sum_credits increased by 1.
 	// States differ (credit[A] and sum_credits), while A’s token outflow is the same (2 T). Hence the property is false.
-	// "
 
     function test_dep_additivity(uint256 blocknum1_input, uint256 blocknum2_input) public {
 		assert(tok0.totalSupply() == 1000);

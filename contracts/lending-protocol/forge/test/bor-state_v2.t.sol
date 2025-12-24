@@ -15,19 +15,6 @@ contract LPTest is Test {
 		tok1 = new ERC20(2000);
         lp = new LendingProtocol(tok0,tok1);
     }
-
-    // - Setup with tok0 as the token under test and tok1 as collateral token; prices are prices[tok0]=1, prices[tok1]=2.
-    // 1) LP deposits 3 units of tok0:
-    //    - reserves[tok0]=3, sum_credits[tok0]=3, XR(tok0)=1e6.
-    // 2) Borrower deposits 1 unit of tok1 (to pass collateral checks).
-    // 3) Borrower borrows 2 units of tok0 in block N:
-    //    - reserves[tok0]=1, sum_debits[tok0]=2, sum_debits_index[tok0]=1e6, last_global_update=N, global_borrow_index=1e6.
-    // 4) Advance 10,000,000 blocks (elapsed = 10 periods). XR(tok0) now uses virtual accrual:
-    //    - multiplier = 1e6 + (100,000*10,000,000)/1,000,000 = 2,000,000\n   - _global_borrow_index = 2,000,000
-    //    - tot_debt = 2*2,000,000/1,000,000 = 4\n   - XR_pre = ((reserves + tot_debt) * 1e6) / sum_credits = ((1 + 4) * 1e6) / 3 = 1,666,666
-    // 5) LP calls deposit(1, tok0):
-    //    - amount_credit = (1*1e6)/1,666,666 = 0 (floored)
-    //    - Post-state: reserves[tok0]=2, sum_credits[tok0]=3\n   - XR_post = ((2 + 4) * 1e6) / 3 = 2,000,000 Since XR_post ≠ XR_pre, the exchange rate is not preserved by the deposit transaction.
        
     // bor-state: if a user A performs a non-reverting `borrow(amount,T)`, then after the transaction:
     // (1) the reserves of T in the `LendingProtocol` are decreased by `amt`;

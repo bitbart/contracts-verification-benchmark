@@ -16,6 +16,20 @@ contract LPTest is Test {
         lp = new LendingProtocol(tok0,tok1);
     }
 
+	// dep-xr-eq: 
+	// the exchange rate XR(T) of any token handled by the LendingProtocol is preserved 
+	// by any transaction deposit(amount,T). 
+	// Assume that T is a standard ERC20 token that do not charge fees on transfers.
+
+	// PoC produced by GPT-5:
+	// - Let T = tok0. Start from fresh deployment (all zeros).
+	// - Alice: deposit(100, tok0) → reserves[tok0]=100, sum_credits[tok0]=100, XR(tok0)=1e6.
+	// - Bob: deposit(1, tok1) → gives Bob collateral (XR(tok1)=1e6; price(tok1)=2).
+	// - Bob: borrow(10, tok0) → reserves[tok0]=90, sum_debits[tok0]=10, Bob collateralized.
+	// - Owner: accrueInt() → debit[tok0][Bob] increases by 1 (10% of 10 with 1e6 scaling), so sum_debits[tok0]=11. Now XR(tok0) = (90 + 11) * 1e6 / 100 = 1,010,000.
+	// - Carol: deposit(1, tok0). Pre-state xr = 1,010,000, so amount_credit = floor(1*1e6 / 1,010,000) = 0. Reserves[tok0] increases to 91; sum_credits[tok0] stays 100. XR(tok0) becomes (91 + 11) * 1e6 / 100 = 1,020,000.
+	// Thus, XR(tok0) changed during a deposit, contradicting the property."
+
     function test_dep_xr_eq(address a, address b, address c) public {
 		assert(tok0.totalSupply() == 1000);
 		assert(tok0.balanceOf(address(this)) == 1000);
