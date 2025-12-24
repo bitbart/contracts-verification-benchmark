@@ -11,7 +11,7 @@ contract LPTest is Test {
     ERC20 public tok0;
     ERC20 public tok1;
     
-    function test_dep_additivity() public {
+    function test_rdm_additivity() public {
 		tok0 = new ERC20(10000000000);
 		tok1 = new ERC20(10000000000);
 		address owner = address(0x04834);
