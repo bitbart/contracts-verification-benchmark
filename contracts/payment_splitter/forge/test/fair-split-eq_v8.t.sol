@@ -27,10 +27,10 @@ contract PaymentSplitterTest is Test {
     // Hence the property “released[A] + releasable(A) == (totalReceived * shares[A]) / totalShares” is violated (releasable(A) cannot be computed).
 
     function test_fair_split_eq(address o,address a, address b) public {
-        vm.assume(o != address(0) && o != address(this));
-        vm.assume(a != address(0) && a != address(this));
-        vm.assume(b != address(0) && b != address(this));
-        vm.assume(o != a && o != b && a != b );
+
+        address o = address(0x1);
+        address a = address(0x2);
+        address b = address(0x3);
 
         address[] memory payees = new address[](2);        
         payees[0] = address(o);
