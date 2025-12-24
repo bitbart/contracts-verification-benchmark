@@ -1,0 +1,9 @@
+Compiler run failed:
+Error (6275): Source "src/lib/ERC20.sol" not found: File not found. Searched the following locations: "/home/enrico/Desktop/gitlab/contracts-verification-benchmark_bart/scripts/forge_results/lending-protocol/v2".
+ParserError: Source "src/lib/ERC20.sol" not found: File not found. Searched the following locations: "/home/enrico/Desktop/gitlab/contracts-verification-benchmark_bart/scripts/forge_results/lending-protocol/v2".
+ --> test/test_intermediate_dep_additivity_1_test.t.sol:5:1:
+  |
+5 | import {ERC20} from "../src/lib/ERC20.sol";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Compilation failed
