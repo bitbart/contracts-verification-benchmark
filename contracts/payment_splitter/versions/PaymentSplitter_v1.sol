@@ -133,4 +133,8 @@ contract PaymentSplitter {
     function getTotalShares() public view returns (uint) {
         return totalShares;
     }
+    
+    function getTotalReleased() public view returns (uint) {
+        return totalReleased;
+    }
 }
