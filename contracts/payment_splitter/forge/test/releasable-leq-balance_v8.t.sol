@@ -23,7 +23,7 @@ contract PaymentSplitterTest is Test {
     //   and computes (1*1)/2 - released[owner] = 0 - 1, which underflows and reverts. 
     // Thus the property fails for this payee."
 
-    function test_releasable_leq_balance(address o,address a, address b) public {
+    function test_releasable_leq_balance() public {
 
         address o = address(0x1);
         address a = address(0x2);

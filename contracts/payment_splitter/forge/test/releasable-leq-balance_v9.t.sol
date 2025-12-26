@@ -22,7 +22,7 @@ contract PaymentSplitterTest is Test {
     //   sending 1 wei to owner each time. Do this 1000 times to drain the balance to 0. Note: totalReleased stays 1000 throughout.
     // - Now, releasable(A) = ((balance + totalReleased) * 50 / 100) - released[A] = ((0 + 1000) * 50 / 100) - 0 = 500 > balance (0).
 
-    function test_releasable_leq_balance(address a, address b, address c) public {
+    function test_releasable_leq_balance() public {
 
         address a = address(0x1);
         address b = address(0x2);
