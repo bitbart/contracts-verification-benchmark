@@ -23,7 +23,7 @@ contract PaymentSplitterTest is Test {
     // - Then releasable(A) = (3 + 0) / 3 - 0 = 1 > 0.
     // - Any call to release(A) reverts at require(shares[A] > 0) or require(isPayee(A)), so no ETH can be transferred to A from the contract.
 
-    function test_release_release_revert() public {
+    function test_tx_transfer_releasable_receive() public {
 
         // Deploy
         address p1 = address(0x1);
