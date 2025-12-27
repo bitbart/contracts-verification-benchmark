@@ -25,6 +25,7 @@ The contract follows a pull payment model. This means that payments are not auto
 - **release-not-revert**: for all addresses `a` in `payees`, if `releasable(a) > 0`, then `release(a)` does not revert.
 - **release-not-revert-receive**: if the address `a` is in `payees`, and its `receive` method just accepts all ETH, and `releasable(a) > 0`, then `release(a)` does not revert
 - **release-release-revert**: two consecutive calls to `release` for the same address `a`, without there being any ETH transfer to the contract in-between calls, revert on the second call.
+- **release-release-revert-receive**: if the `receive` method of the address `a` just accepts all ETH, two consecutive calls to `release` for `a`, without there being any ETH transfer to the contract in-between calls, revert on the second call.
 - **swappable-call-order**: given two `payees` `a` and `b`, with `a != b`, calling `release(a)` and `release(b)`, independently of the order of the calls, yields the same contract state.
 - **tx-transfer-balance-receive**: if the contract balance is non-zero and all payees are EOAs, then eventually someone can perform a transaction on PaymentSplitter that decreases the contract balance.
 - **tx-transfer-releasable-receive**: if `releasable(a) > 0` and the address `a` has a `receive` method that just accepts all ETH, then someone can perform a transaction on PaymentSplitter that transfers ETH from the contract to `a`.

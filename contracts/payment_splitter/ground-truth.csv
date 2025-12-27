@@ -161,7 +161,7 @@ tx-transfer-balance-receive,v9,0,"all payees can have zero shares"
 tx-transfer-balance-receive,v10,0,
 tx-transfer-releasable-receive,v1,1,
 tx-transfer-releasable-receive,v2,1,
-tx-transfer-releasable-receive,v3,1,
+tx-transfer-releasable-receive,v3,0,"a is not a payee, yet releasable(a) > 0"
 tx-transfer-releasable-receive,v4,1,
 tx-transfer-releasable-receive,v5,1,
 tx-transfer-releasable-receive,v6,1,"also address(0) can receive ETH"
