@@ -12,7 +12,7 @@ fair-split-eq,v10,1,"no overflow: shares capped at 10000, refuses more than 999_
 fair-split-eq-no-overflow,v1,1,
 fair-split-eq-no-overflow,v2,1,
 fair-split-eq-no-overflow,v3,1,
-fair-split-eq-no-overflow,v4,4,"Although `release()` can succeed without actually transferring funds, this invariant is preserved."
+fair-split-eq-no-overflow,v4,1,"Although `release()` can succeed without actually transferring funds, this invariant is preserved."
 fair-split-eq-no-overflow,v5,0,
 fair-split-eq-no-overflow,v6,1,
 fair-split-eq-no-overflow,v7,1,
@@ -32,7 +32,7 @@ fair-split-geq,v10,1,
 fair-split-geq-no-overflow,v1,1,
 fair-split-geq-no-overflow,v2,1,
 fair-split-geq-no-overflow,v3,1,
-fair-split-geq-no-overflow,v4,0,"Although `release()` can succeed without actually transferring funds, this invariant is preserved."
+fair-split-geq-no-overflow,v4,1,"Although `release()` can succeed without actually transferring funds, this invariant is preserved."
 fair-split-geq-no-overflow,v5,1,
 fair-split-geq-no-overflow,v6,1,
 fair-split-geq-no-overflow,v7,1,
