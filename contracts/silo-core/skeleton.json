@@ -1,6 +1,0 @@
-{
-    "name": "SiloCore",
-    "properties": {
-        "maxWithdraw_noGreaterThanLiquidity" : "The result of maxWithdraw() should never be more than the liquidity of the Silo"
-        }
-}
