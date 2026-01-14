@@ -19,10 +19,10 @@
     OK
 
 # "deposit-assets-credit": "after a non-reverting `deposit()`, the credits of `msg.sender` are increased by `msg.value`.",
-    TODO (check how to assert "non-reverting")
+    similar to "deposit-revert"
 
 # "deposit-assets-credit-others": "after a non-reverting `deposit()`, the credit of any user but the sender is preserved.",
-    TODO
+    similar to "withdraw-assets-credit-others"
 
 # "deposit-assets-transfer-others": "after a non-reverting `deposit()`, the ETH balance of any user but the sender are preserved.",
     similar to "deposit-assets-credit-others"
@@ -34,7 +34,7 @@
     TODO check
 
 # "deposit-not-revert": "a `deposit` transaction never reverts",
-    TODO check if interesting
+    OK (prob needs assumption that sender has enough eth? Actually no: "Any attempt to force a revert via insufficient balance causes an EVM OutOfFunds error before entering deposit, which Foundry’s vm.expectRevert does not catch as a revert at a lower call depth (as shown in the Forge output)")
 
 # "deposit-revert": "a `deposit` transaction reverts if `msg.value` plus the current credits of `msg.sender` overflows.",
     OK
@@ -43,7 +43,7 @@
     NO (forall on addresses)
 
 # "exists-unique-asset-change": "after a non-reverting `deposit` or `withdraw` transaction to the Bank contract, the ETH balance of exactly one account (except the contract's) have changed",
-    TODO
+    NO-ish: if it was "exists *at most one* asset change, it would be possible (see exists-at-most-one-asset-change.spec); however, it is not possible to express the *at least* part (due to forall on addresses)
 
 # "exists-unique-credit-change": "after a non-reverting `deposit` or `withdraw` transaction to the Bank contract, the credit of exactly one user have changed",
     similar to "exists-unique-asset-change"
@@ -58,7 +58,7 @@
     similar to "deposit-additivity"
 
 # "withdraw-assets-credit-others": "after a non-reverting `withdraw(amount)`, the credit of any user (except, possibly, the sender) is preserved.",
-    similar to "deposit-assets-credit-others"
+    OK
 
 # "withdraw-assets-transfer-others": "after a non-reverting `withdraw(amount)`, the ETH balance of any user (except, possibly, the sender) are preserved.",
     similar to "deposit-assets-transfer-others"
@@ -76,10 +76,10 @@
     similar to "deposit-assets-credit":
 
 # "withdraw-sender-rcv": "after a non-reverting `withdraw(amount)`, the ETH balance of `msg.sender` is increased by `amount` wei.",
-    TODO
+    similar to "deposit-not-revert"
 
 # "withdraw-sender-rcv-EOA": "after a non-reverting `withdraw(amount)` originated by an EOA, the ETH balance of the `msg.sender` is increased by `amount` wei."
-    TODO
+    TODO check
 
 
 
