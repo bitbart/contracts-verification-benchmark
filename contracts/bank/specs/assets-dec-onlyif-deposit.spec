@@ -6,26 +6,23 @@ import "../Bank.sol";
 
 /* @fill here with type `contract` */
 
-
 contract BankTest is Test {       
     address immutable bank_deployer;      
     Bank immutable bank;
-    address immutable user;
     
     constructor() {
-    
         // deploying a Bank contract
         bank_deployer = /* @fill here with type `address` */;
         vm.prank(bank_deployer);
-
         bank = new Bank();
-
-        user = /* @fill here with type `address` */;
     }
     
     function test_assets_dec_onlyif_deposit_violation() public {
 
         /* @fill here with type `tx_sequence` */
+
+        address user = /* @fill here with type `address` */;
+        assertNotEq(user, address(bank), "user address equal to bank address");
 
         uint256 user_balance_before = address(user).balance;
 

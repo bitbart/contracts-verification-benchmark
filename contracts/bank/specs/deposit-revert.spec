@@ -4,18 +4,27 @@ import "forge-std/Test.sol";
 import "../Bank.sol";
 
 
-//@FILL HERE <…>
+/* @fill here with type `contract` */
 
 
 contract BankTest is Test {
-    Bank bank;
-    address user;
+    address immutable bank_deployer;      
+    Bank immutable bank;
+    
+    constructor() {
+        // deploying a Bank contract
+        bank_deployer = /* @fill here with type `address` */;
+        vm.prank(bank_deployer);
+        bank = new Bank();
+    }
 
     function test_depositDoesNotRevert() public {
-        //@FILL HERE <…>
+        /* @fill here with type `tx_sequence` */
+
+        address user = /* @fill here with type `address` */;
         
         vm.prank(user);
-        uint256 msg_value =  //@FILL HERE <…>;
+        uint256 msg_value =  /* @fill here with type `uint256` */;
 
         uint256 credits_slot = uint256(0);
         bytes32 user_credits_slot = keccak256(abi.encode(user, credits_slot));
