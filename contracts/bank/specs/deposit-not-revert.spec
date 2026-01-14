@@ -18,7 +18,7 @@ contract BankTest is Test {
         bank = new Bank();
     }
 
-    function test_deposit_revert_violation() public {
+    function test_not_deposit_revert_violation() public {
         /* @fill here with type `tx_sequence` */
 
         address user = /* @fill here with type `address` */;
@@ -30,9 +30,8 @@ contract BankTest is Test {
         bytes32 user_credits_slot = keccak256(abi.encode(user, credits_slot));
         uint256 user_creditsBefore = uint256(vm.load(address(bank), user_credits_slot));
 
-        assertGt(user_creditsBefore, type(uint256).max - msg_value, "credits plus msg.value do not overflow");
-        
-        bank.deposit{value: msg_value}(); // should not revert
+        vm.expectRevert();
+        bank.deposit{value: msg_value}();
     }
 }
 
