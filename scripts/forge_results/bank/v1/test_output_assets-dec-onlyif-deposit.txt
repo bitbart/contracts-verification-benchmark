@@ -1,0 +1,37 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 565.64ms
+Compiler run successful with warnings:
+Warning (9302): Return value of low-level calls not used.
+  --> test/assets-dec-onlyif-deposit_1_test.t.sol:58:9:
+   |
+58 |         address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Ran 1 test for test/assets-dec-onlyif-deposit_1_test.t.sol:BankTest
+[PASS] test_assets_dec_onlyif_deposit_violation() (gas: 276908)
+Traces:
+  [276908] BankTest::test_assets_dec_onlyif_deposit_violation()
+    ├─ [166546] → new Attacker@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
+    │   └─ ← [Return] 719 bytes of code
+    ├─ [0] VM::deal(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 1000000000000000000 [1e18])
+    │   └─ ← [Return]
+    ├─ [22493] Attacker::setOnReceiveDeposit(1000)
+    │   └─ ← [Stop]
+    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [22515] Bank::deposit{value: 10000}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [16285] Bank::withdraw(32)
+    │   ├─ [8072] Attacker::receive{value: 32}()
+    │   │   ├─ [615] Bank::deposit{value: 1000}()
+    │   │   │   └─ ← [Stop]
+    │   │   └─ ← [Stop]
+    │   └─ ← [Stop]
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.64ms (323.93µs CPU time)
+
+Ran 1 test suite in 38.99ms (2.64ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

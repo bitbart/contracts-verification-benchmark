@@ -1,0 +1,43 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 609.83ms
+Compiler run successful with warnings:
+Warning (2072): Unused local variable.
+  --> test/deposit-not-revert_1_test.t.sol:32:9:
+   |
+32 |         uint256 user_creditsBefore = uint256(vm.load(address(bank), user_credits_slot));
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Ran 1 test for test/deposit-not-revert_1_test.t.sol:BankTest
+[FAIL: call didn't revert at a lower depth than cheatcode call depth] test_not_deposit_revert_violation() (gas: 13361)
+Traces:
+  [13361] BankTest::test_not_deposit_revert_violation()
+    ├─ [0] VM::deal(BankTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 0)
+    │   └─ ← [Return]
+    ├─ [0] VM::deal(0x0000000000000000000000000000000000123456, 0)
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000123456)
+    │   └─ ← [Return]
+    ├─ [0] VM::load(Bank: [0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d], 0x3b4c5aa050dcae265579f90aa1b27489db2fb3529874a5aadb9ec536675d6616) [staticcall]
+    │   └─ ← [Return] 0x0000000000000000000000000000000000000000000000000000000000000000
+    ├─ [0] VM::expectRevert(custom error 0xf4844814)
+    │   └─ ← [Return]
+    ├─ [0] Bank::deposit{value: 1000000000000000000}()
+    │   └─ ← [OutOfFunds] EvmError: OutOfFunds
+    └─ ← [Revert] call didn't revert at a lower depth than cheatcode call depth
+
+Backtrace:
+  at Bank.deposit
+  at BankTest.test_not_deposit_revert_violation
+
+Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 2.91ms (319.13µs CPU time)
+
+Ran 1 test suite in 33.14ms (2.91ms CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/deposit-not-revert_1_test.t.sol:BankTest
+[FAIL: call didn't revert at a lower depth than cheatcode call depth] test_not_deposit_revert_violation() (gas: 13361)
+
+Encountered a total of 1 failing tests, 0 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test
