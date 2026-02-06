@@ -41,7 +41,8 @@ contract BankTest is Test {
         
         // A deposits 1 wei
         vm.prank(address(A));
-        b.deposit{value: 1}();
+        (bool success,) = address(b).call{value: 1}(abi.encodeWithSignature("deposit()"));
+        assert(success);                                       // Ensuring deposit() does not revert
         
         bytes32 slot_2 = keccak256(abi.encode(address(owner), uint256(0)));
         uint owner_credits_after = uint256(vm.load(address(b), slot_2));
