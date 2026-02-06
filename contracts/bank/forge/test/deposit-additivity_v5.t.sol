@@ -36,8 +36,10 @@ contract BankTest is Test {
         // Scenario 1: A deposits 1 wei & 2 wei consecutively
         uint256 snapshot = vm.snapshot();
         vm.startPrank(address(A));
-        b.deposit{value: 1}();
-        b.deposit{value: 2}();
+        (bool success1,) = address(b).call{value: 1}(abi.encodeWithSignature("deposit()"));
+        assert(success1);                                       // Ensuring deposit() does not revert
+        (bool success2,) = address(b).call{value: 2}(abi.encodeWithSignature("deposit()"));
+        assert(success2);                                       // Ensuring deposit() does not revert
         vm.stopPrank();
 
         bytes32 slot_1 = keccak256(abi.encode(address(A), uint256(0)));
@@ -47,7 +49,8 @@ contract BankTest is Test {
         // Scenario 2: A deposits 3 wei at once
         vm.revertTo(snapshot);
         vm.prank(address(A));
-        b.deposit{value: 3}();
+        (bool success3,) = address(b).call{value: 3}(abi.encodeWithSignature("deposit()"));
+        assert(success3);                                       // Ensuring deposit() does not revert
         
         bytes32 slot_2 = keccak256(abi.encode(address(A), uint256(0)));
         uint A_credits_scenario2 = uint256(vm.load(address(b), slot_2));
