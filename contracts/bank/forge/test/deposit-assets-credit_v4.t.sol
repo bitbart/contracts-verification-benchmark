@@ -39,7 +39,8 @@ contract BankTest is Test {
         uint user_credits_before = uint256(vm.load(address(b), slot1));
 
         uint deposit_value = 1;
-        b.deposit{value: deposit_value}();
+        (bool success,) = address(b).call{value: deposit_value}(abi.encodeWithSignature("deposit()"));
+        assert(success);                                       // Ensuring deposit() does not revert
         
         bytes32 slot2 = keccak256(abi.encode(address(user), uint256(0)));
         uint user_credits_after = uint256(vm.load(address(b), slot2));
