@@ -2,8 +2,11 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version conforming to specification.
-contract Crowdfund {
+/// @custom:version `donate` and `withdraw` are non-reentrant.
+
+import "../../../lib/ReentrancyGuard.sol";
+
+contract Crowdfund is ReentrancyGuard {
     uint immutable end_donate;    // last block in which users can donate
     uint immutable goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
     address immutable owner;      // receiver of the donated funds
@@ -15,12 +18,12 @@ contract Crowdfund {
 	    goal = goal_;	
     }
     
-    function donate() public payable {
+    function donate() public payable nonReentrant() {
         require (block.number <= end_donate);
         donation[msg.sender] += msg.value;
     }
 
-    function withdraw() public {
+    function withdraw() public nonReentrant {
         require (block.number > end_donate);
         require (address(this).balance >= goal);
 

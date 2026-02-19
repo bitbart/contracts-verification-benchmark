@@ -2,7 +2,7 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version conforming to specification.
+/// @custom:version `donate` transfers part of `msg.value` to the owner.
 contract Crowdfund {
     uint immutable end_donate;    // last block in which users can donate
     uint immutable goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
@@ -17,7 +17,14 @@ contract Crowdfund {
     
     function donate() public payable {
         require (block.number <= end_donate);
-        donation[msg.sender] += msg.value;
+        if (msg.value > 1) {
+            payable(owner).transfer(1);
+            donation[msg.sender] += (msg.value - 1);
+        }
+        else {
+            donation[msg.sender] += msg.value;
+        }
+
     }
 
     function withdraw() public {
@@ -40,4 +47,3 @@ contract Crowdfund {
         require(succ);
     }
 }
-

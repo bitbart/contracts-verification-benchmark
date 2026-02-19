@@ -2,7 +2,10 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version conforming to specification.
+/// @custom:version
+/// no `donation[msg.sender] += msg.value` check &
+///`donate` returns (msg.value - 1) while claiming "donation reverted".
+
 contract Crowdfund {
     uint immutable end_donate;    // last block in which users can donate
     uint immutable goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
@@ -17,7 +20,16 @@ contract Crowdfund {
     
     function donate() public payable {
         require (block.number <= end_donate);
-        donation[msg.sender] += msg.value;
+
+        if (msg.value > 1) {
+            (bool succ,) = msg.sender.call{value: msg.value - 1}("");
+            require(succ, "Donation reverted");
+        }
+        else {
+            (bool succ,) = msg.sender.call{value: msg.value}("");
+            require(succ, "Donation reverted");
+        }
+        
     }
 
     function withdraw() public {
@@ -40,4 +52,3 @@ contract Crowdfund {
         require(succ);
     }
 }
-

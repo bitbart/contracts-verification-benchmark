@@ -2,19 +2,22 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version conforming to specification.
+/// @custom:version `owner` not immutable & `setOwner` allows any user to set itself as owner.
 contract Crowdfund {
     uint immutable end_donate;    // last block in which users can donate
     uint immutable goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
-    address immutable owner;      // receiver of the donated funds
+    address private owner;      // receiver of the donated funds
     mapping(address => uint) public donation;
 
-    constructor (address payable owner_, uint end_donate_, uint256 goal_) {
-        owner = owner_;
+    constructor (uint end_donate_, uint256 goal_) {
         end_donate = end_donate_;
 	    goal = goal_;	
     }
     
+    function setOwner(address payable user) public {
+        owner = user;
+    }
+
     function donate() public payable {
         require (block.number <= end_donate);
         donation[msg.sender] += msg.value;
@@ -40,4 +43,3 @@ contract Crowdfund {
         require(succ);
     }
 }
-
