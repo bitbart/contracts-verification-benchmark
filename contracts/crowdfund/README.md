@@ -21,9 +21,32 @@ The contract implements the following methods:
 - **reclaim-not-revert**: a transaction `reclaim` is not reverted if the goal amount is not reached and the deposit phase has ended, and the sender has donated funds that they have not reclaimed yet.
 - **wd-not-revert**: a transaction `withdraw` is not reverted if the contract balance is greater than or equal to the goal and the donation phase has ended.
 - **wd-not-revert-EOA**: a transaction `withdraw` is not reverted if the contract balance is greater than or equal to the goal, the donation phase has ended, and the `receiver` is an EOA.
+- **donation-inc-onlyif-donate**:  if `donation[A]` is increased after a transaction (of the Crowdfund contract), then that transaction must be a `donate` where A is the sender.
+- **donate-bal-inc**: a non-reverting call to `donate` does not decrease the balance of the contract.
+- **wd-full-balance**: after a non-reverting `withdraw`, the whole balance of the contract is sent to `owner`.
+- **exists-unique-donation-change**: after a non-reverting `donate` transaction to the Crowdfund contract, the donation of exactly one user has changed.
+- **donate-not-dec-donation**:  after a non-reverting `donate` transaction by user A, `donation[A]` is not decreased.
+- **donation-dec-onlyif-reclaim**: if `donation[A]` decreases after a transaction (of the Crowdfund contract), then that transaction must be a `reclaim` where A is the sender.
+- **reclaim-own-funds**: after a non-reverting `reclaim`, the balance of the `msg.sender` A is increased by `donation[A]`
+
 
 ## Versions
 - **v1**: conforming to specification.
+- **v2**: donation period never ends, i.e end_donate = type(uint256).max.
+- **v3**: no `require (block.number > end_donate)` check.
+- **v4**: `donate` transfers part of `msg.value` to the owner.
+- **v5**: uint goal not immutable.
+- **v6**: no `require (address(this).balance >= goal)` check.
+- **v7**: `require(succ)` replaced with `require(!succ)`, i.e funds frozen within contract.
+- **v8**: `reclaim` witholds 1 wei from the donor.
+- **v9**: no `donation[msg.sender] += msg.value` and `donate()` returns (msg.value - 1) while claiming that donation failed.
+- **v10**: `owner` not immutable and setOwner allows any user to set itself as owner.
+- **v11**: `withdraw` allows any user to withdraw.
+- **v12**: no `require (block.number > end_donate)` check, i.e any user can reclaim before `end_donate`.
+- **v13**: `withdraw` is non-reentrant.
+- **v14**: `donate` and `withdraw` are non-reentrant.
+- **v15**: `donate`, `withdraw` and `reclaim` are non-reentrant. `owner_.code.length == 0` check. `goal_ > 0` check. `end_donate_ > block.number` check.
+
 
 ## Ground truth
 |        | bal-decr-onlyif-wd-reclaim | donate-not-revert          | donate-not-revert-overflow | no-donate-after-deadline   | no-receive-after-deadline  | no-wd-if-no-goal           | owner-only-recv            | reclaim-not-revert         | wd-not-revert              | wd-not-revert-EOA          |
