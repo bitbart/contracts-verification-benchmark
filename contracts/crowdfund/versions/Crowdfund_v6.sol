@@ -2,7 +2,7 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version conforming to specification.
+/// @custom:version no `require (address(this).balance >= goal)` check.
 contract Crowdfund {
     uint immutable end_donate;    // last block in which users can donate
     uint immutable goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
@@ -22,8 +22,7 @@ contract Crowdfund {
 
     function withdraw() public {
         require (block.number > end_donate);
-        require (address(this).balance >= goal);
-
+        
         (bool succ,) = owner.call{value: address(this).balance}("");
         require(succ);
     }
@@ -40,4 +39,3 @@ contract Crowdfund {
         require(succ);
     }
 }
-

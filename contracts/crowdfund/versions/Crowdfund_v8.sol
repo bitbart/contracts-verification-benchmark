@@ -2,7 +2,7 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version conforming to specification.
+/// @custom:version `reclaim` witholds 1 wei from the donor.
 contract Crowdfund {
     uint immutable end_donate;    // last block in which users can donate
     uint immutable goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
@@ -33,11 +33,16 @@ contract Crowdfund {
         require (address(this).balance < goal);
         require (donation[msg.sender] > 0);
 
-        uint amount = donation[msg.sender];
+        uint amount;
+        if (donation[msg.sender] > 1) {
+            amount = donation[msg.sender] - 1;
+        }
+        else {
+            amount = donation[msg.sender];
+        }
         donation[msg.sender] = 0;
 
         (bool succ,) = msg.sender.call{value: amount}("");
         require(succ);
     }
 }
-

@@ -2,7 +2,7 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version conforming to specification.
+/// @custom:version `require(succ)` replaced with `require(!succ)`, i.e funds frozen within contract.
 contract Crowdfund {
     uint immutable end_donate;    // last block in which users can donate
     uint immutable goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
@@ -25,7 +25,7 @@ contract Crowdfund {
         require (address(this).balance >= goal);
 
         (bool succ,) = owner.call{value: address(this).balance}("");
-        require(succ);
+        require(!succ);
     }
     
     function reclaim() public { 
@@ -37,7 +37,6 @@ contract Crowdfund {
         donation[msg.sender] = 0;
 
         (bool succ,) = msg.sender.call{value: amount}("");
-        require(succ);
+        require(!succ);
     }
 }
-
