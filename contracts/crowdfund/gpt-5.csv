@@ -16,3 +16,8 @@ reclaim-own-funds,1,FALSE
 wd-transfer-to-owner,1,FALSE
 wd-not-revert-EOA,1,TRUE
 wd-not-revert,1,FALSE
+goal-not-change,1,TRUE
+owner-not-change,1,TRUE
+msgvalue-not-negative,1,TRUE
+reclaim-even-if-msgvalue,1,FALSE
+wd-empties-balance,1,FALSE
