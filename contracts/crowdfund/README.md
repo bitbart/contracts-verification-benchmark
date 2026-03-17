@@ -33,8 +33,6 @@ The contract implements the following methods:
 - **owner-not-change**: The address `owner` does not change after its value is initialized in the constructor.
 - **msgvalue-not-negative**: The `msg.value` for a call to `donate` should not be negative.
 - **reclaim-even-if-msgvalue**: For a call to `reclaim` by `msg.sender` A, the call executes as expected even if `msg.value` is non-zero.
-- **if-succ-then-transfer**: if a low-level call to a `receiver` with value `amount` succeeds, then the ETH balance of address `receiver` should increase by value `amount`.
-
 
 
 ## Versions
