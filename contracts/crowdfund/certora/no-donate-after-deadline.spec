@@ -10,5 +10,3 @@ rule no_donate_after_deadline {
     donate@withrevert(e);    
     assert lastReverted;
 }
-
-

@@ -1,7 +1,7 @@
 
 /// reclaim-own-funds:
-/// after a non-reverting `reclaim`,
-/// the balance of the `msg.sender` A is increased by `donation[A]`
+/// after a non-reverting `reclaim` by `msg.sender` A,
+/// the ETH balance of A is increased by an amount equal to `donation[A]` before `reclaim` was called.
 
 rule reclaim_own_funds {
     env e;
