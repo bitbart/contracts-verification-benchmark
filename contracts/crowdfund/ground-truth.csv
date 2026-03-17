@@ -11,8 +11,14 @@ wd-not-revert,v1,0,"Receiver of the funds may revert the transaction."
 wd-not-revert-EOA,v1,1,
 donation-inc-onlyif-donate,v1,1,
 donate-bal-inc,v1,1,
-wd-full-balance,v1,0,"This property should always be false, since during the external call in `withdraw`, ether can be forcibly sent to Crowdfund. This leaves a positive balance in the Crowdfund contract after `withdraw` executes."
+wd-empties-balance,v1,0,"This property should always be false, since during the external call in `withdraw`, ether can be forcibly sent to Crowdfund. This leaves a positive balance in the Crowdfund contract after `withdraw` executes."
+wd-transfer-to-owner,v1,0,"This property is false, since `owner` can be a contract which can redirect the received funds to another address."
 exists-unique-donation-change,v1,0,"This property should always be false, since `donate` does not require `msg.value > 0`. Hence, if a user donates with a `msg.value == 0`, then the `donation` map of no user changes."
 donate-not-dec-donation,v1,1
 donation-dec-onlyif-reclaim,v1,1,
-reclaim-own-funds,v1,1,
+reclaim-own-funds,v1,0,"This property is false since since the `msg.sender` can be a contract that redirects the funds received from Crowdfund to another address."
+goal-not-change,v1,1,
+owner-not-change,v1,1,
+msgvalue-not-negative,v1,1,
+reclaim-even-if-msgvalue,v1,1,
+if-succ-then-transfer,v1,1,
