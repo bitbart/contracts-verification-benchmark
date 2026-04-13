@@ -2,16 +2,15 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version conforming to specification.
+/// @custom:version end_donate = type(uint256).max i.e donation period never ends and no `require (block.number > end_donate)` check in `withdraw`.
 contract Crowdfund {
-    uint immutable end_donate;    // last block in which users can donate
+    uint immutable end_donate = type(uint).max;    // last block in which users can donate
     uint immutable goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
     address immutable owner;      // receiver of the donated funds
     mapping(address => uint) public donation;
 
-    constructor (address payable owner_, uint end_donate_, uint256 goal_) {
+    constructor (address payable owner_, uint256 goal_) {
         owner = owner_;
-        end_donate = end_donate_;
 	    goal = goal_;	
     }
     
@@ -21,7 +20,6 @@ contract Crowdfund {
     }
 
     function withdraw() public {
-        require (block.number > end_donate);
         require (address(this).balance >= goal);
 
         (bool succ,) = owner.call{value: address(this).balance}("");
@@ -40,4 +38,3 @@ contract Crowdfund {
         require(succ);
     }
 }
-

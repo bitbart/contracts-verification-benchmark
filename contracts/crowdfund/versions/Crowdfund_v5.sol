@@ -2,10 +2,10 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version conforming to specification.
+/// @custom:version uint goal not immutable and no `require (address(this).balance >= goal)` check in `withdraw`.
 contract Crowdfund {
     uint immutable end_donate;    // last block in which users can donate
-    uint immutable goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
+    uint private goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
     address immutable owner;      // receiver of the donated funds
     mapping(address => uint) public donation;
 
@@ -13,6 +13,11 @@ contract Crowdfund {
         owner = owner_;
         end_donate = end_donate_;
 	    goal = goal_;	
+    }
+
+    function setGoal(uint newGoal) public {
+        require(msg.sender == owner);
+        goal = newGoal;
     }
     
     function donate() public payable {
@@ -22,7 +27,6 @@ contract Crowdfund {
 
     function withdraw() public {
         require (block.number > end_donate);
-        require (address(this).balance >= goal);
 
         (bool succ,) = owner.call{value: address(this).balance}("");
         require(succ);
@@ -40,4 +44,3 @@ contract Crowdfund {
         require(succ);
     }
 }
-
