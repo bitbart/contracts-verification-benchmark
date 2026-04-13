@@ -2,9 +2,7 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version
-/// no `donation[msg.sender] += msg.value` check &
-///`donate` returns (msg.value - 1) while claiming "donation reverted".
+/// @custom:version no `donation[msg.sender] += msg.value` check & `donate` returns (msg.value - 1) while claiming "donation reverted".
 
 contract Crowdfund {
     uint immutable end_donate;    // last block in which users can donate
