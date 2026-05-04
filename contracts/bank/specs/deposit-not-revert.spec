@@ -4,7 +4,7 @@ import "forge-std/Test.sol";
 import "../Bank.sol";
 
 
-/* @fill here with type `contract` */
+abstract contracts[] cs;
 
 
 contract BankTest is Test {
@@ -13,18 +13,18 @@ contract BankTest is Test {
     
     constructor() {
         // deploying a Bank contract
-        bank_deployer = /* @fill here with type `address` */;
+        abstract address bank_deployer;
         vm.prank(bank_deployer);
-        bank = new Bank();
+        bank = new Bank(abstract constructor_params);
     }
 
     function test_not_deposit_revert_violation() public {
-        /* @fill here with type `tx_sequence` */
+        abstract transaction[] txs;
 
-        address user = /* @fill here with type `address` */;
+        abstract address user;
         
         vm.prank(user);
-        uint256 msg_value =  /* @fill here with type `uint256` */;
+        abstract uint256 msg_value;
 
         uint256 credits_slot = uint256(0);
         bytes32 user_credits_slot = keccak256(abi.encode(user, credits_slot));

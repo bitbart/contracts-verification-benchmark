@@ -3,27 +3,29 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "../Bank.sol";
 
-/* @fill here with type `contract` */
+abstract contracts[] cs;
 
 contract BankTest is Test {
-    address immutable bank_deployer;      
+    address immutable bank_deployer;      // TODO check
     Bank immutable bank;
     
     constructor() {
         // deploying a Bank contract
-        bank_deployer = /* @fill here with type `address` */;
+        abstract address bank_deployer;
         vm.prank(bank_deployer);
         bank = new Bank();
     }
 
-    function test_deposit_additivity_violated() public {
-        address sender = /* @fill here with type `address` */;
+    function test_deposit_additivity_violation() public {
+        abstract transaction[] txs;
+
+        abstract address sender;
         uint256 snapshot = vm.snapshotState();
 
-        address user = /* @fill here with type `address` */;
+        abstract address user;
         
-        uint256 n1 = /* @fill here with type `uint256` */;
-        uint256 n2 = /* @fill here with type `uint256` */;
+        abstract uint256 n1;
+        abstract uint256 n2;
         
         vm.prank(sender);
         bank.deposit{value: n1}();
