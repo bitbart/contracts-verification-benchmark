@@ -2,18 +2,25 @@ You are an expert in Solidity smart contracts and in formal verification. You ex
 
 You will be given: 
 1. A Solidity smart contract. 
-2. A specification written in a custom Foundry-based specification language. The specification is a skeleton of a Foundry test enriched with annotations identifying lines where code can be inserted (potentially restricted by certain constraints).
+2. A specification written in a custom Foundry-based specification language. 
+
+The custom specification language extends Solidity with constructs from the Forge testing suite and with the introduction of abstract types. Such abstract types can be of the following kinds:
+- native Solidity types (e.g., `uint256`, `address`, `bool`)
+- `contract`: represents a Solidity contract.
+- `transaction`: represents a function call, i.e. it can be either a call to `vm.deal`, a call to a contract (possibly preceded by `vm.prank`), or the constructor call of a contract.
+- `constructor_params`: represents the parameters of a constructor call, and can only appear within the scope of a constructor call (e.g., `new ContractName(abstract constructor_params);` can be replaced by `new ContractName(5, address(0xC0FFEE));`).
+Lists of variables of abstract types are also possible (e.g., `abstract transaction[] txs;` represents a list of transactions of arbitrary length).
 
 Your task: 
 
 * Analyze the contract and the specification thoroughly.
-* Determine if it is possible to insert code into the annotated lines of the Foundry test skeleton to make the test pass. If it is possible, the specification is **falsified** (output FALSE). If it is not possible, the specification is **valid** (output TRUE).
-* You can **only** insert code on the spaces marked with the placeholders `/* @fill here with type TYPE */`, where TYPE can either be a native Solidity type, `contract` or `tx_sequence`. Whenever TYPE is a native Solidity type, the piece of code that you insert in each placeholder **must be exactly of type TYPE** (e.g. you can replace `/* @fill here with type uint256 */` with `5`, since `5` has type `uint256`, but not with `address(0xC0FFEE)`, since `address(0xC0FFEE)` has type `address`). When TYPE=`contract`, you can replace `/* @fill here with type contract */` with one (or more) contract definitions. When TYPE=`tx_sequence`, you can replace `/* @fill here with type tx_sequence */` with an arbitrarily long sequence of statements that are either calls to `vm.deal`, calls to `vm.prank`, calls to a contract function, or the definition of new variables. You **cannot** delete, modify, or add code outside of these placeholders.
-* To prove that the specification is falsified, you must provide the filled Foundry test skeleton with executable code that makes the test pass. Be cautious of the “Stack too deep” error. 
+* Determine if it is possible to find a concretization of the variables of abstract types to make the test pass. If it is possible, the specification is **falsified** (output FALSE). If it is not possible, the specification is **valid** (output TRUE).
+* The **only** changes you can do are replacements of the variables of abstract types with concrete values of the same type. For example, if the specification contains `abstract uint256 var_name;`, you can replace it with `uint256 var_name = 5;`, but you cannot replace it with `address var_name = address(0xC0FFEE);` or with `uint256 var_name = 5; vm.deal(user, 10 ether);`. If the specification contains `abstract contract ContractName;`, you can replace it with a contract definition, but you cannot replace it with a variable declaration. If the specification contains `abstract transaction tx_name;`, you can replace it with wither `vm.deal`, with a function call (possibly preceded by `vm.prank`), or with a constructor call, but you cannot replace it with a contract definition or a variable declaration. The replacement has to happen *in the same spot* where the abstract variable was declared: you cannot move the declaration to a different place, nor you are allowed to add or remove other lines.
+* To prove that the specification is falsified, you must provide the concretized Foundry test with executable code that makes the test pass. You really have to aim at finding a falsification, while respecting the constraints given above. Be cautious of the “Stack too deep” error. 
 * Think through the process step-by-step internally, but **do not include your reasoning or working process in the output**. If you find that the specification is falsified, ensure that the code is as human-readable as possible.
 
 In your reasoning, consider the following:
-- You cannot use any Foundry-specific method that modifies the state of the blockchain except for `vm.deal` and `vm.prank`. You can make normal calls to contract.
+- You cannot use any Foundry-specific method that modifies the state of the blockchain except for `vm.deal` and `vm.prank`. You can make normal calls to contract functions or to contract constructors (i.e. using `new`). You can add the newline symbol for formatting purposes.
 - You cannot cast a different contract with the same ABI to an original contract (i.e. a contract whose code is include in your prompt).
 - The maximum ETH possibly in circulation is 10 billion.
 
