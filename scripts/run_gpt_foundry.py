@@ -11,6 +11,7 @@ random.seed(42)
 import time
 import pandas as pd
 import csv
+import shutil
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # root del progetto
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
@@ -499,6 +500,148 @@ def sanitize_PoC_for_forge(counterexample):
     if last_closing_brace_index != -1:
         sanitized_code = sanitized_code[:last_closing_brace_index + 1]  
     return sanitized_code
+
+
+def get_contract_filepath(contract, version):
+    version_folder = os.path.join(CONTRACTS_DIR, contract, "versions")
+    target = f"{normalize_name(contract)}v{normalize_name(version)}"
+    for fname in os.listdir(version_folder):
+        if fname.endswith(".sol"):
+            candidate = normalize_name(fname.replace(".sol", ""))
+            if candidate == target:
+                return os.path.join(version_folder, fname)
+    print(f"Error: no solidity file found for {contract} v{version} in {version_folder}", file=sys.stderr)
+    sys.exit(1)
+
+
+def find_imports_in_source(source_text):
+    # Matches: import "..."; import '...'; import something from "...";
+    imports = re.findall(r"import\s+(?:[^\"']*?)[\"']([^\"']+)[\"']\s*;", source_text)
+    return imports
+
+
+def resolve_import_source(import_path, orig_file_path, contract_folder):
+    # Try resolving the import against several candidate locations.
+    # 1) relative to the original file
+    orig_dir = os.path.dirname(orig_file_path)
+    candidates = []
+
+    try:
+        candidates.append(os.path.normpath(os.path.join(orig_dir, import_path)))
+    except Exception:
+        pass
+
+    # 2) relative to the contract folder (contracts/<contract>/)
+    try:
+        candidates.append(os.path.normpath(os.path.join(CONTRACTS_DIR, contract_folder, import_path)))
+    except Exception:
+        pass
+
+    # 3) relative to project root
+    try:
+        candidates.append(os.path.normpath(os.path.join(BASE_DIR, import_path)))
+    except Exception:
+        pass
+
+    # 4) try common locations: contracts/*/solcmc/lib, contracts/*/lib, top-level lib
+    basename = os.path.basename(import_path)
+    # check top-level lib
+    candidates.append(os.path.normpath(os.path.join(BASE_DIR, 'lib', basename)))
+    # contract-specific lib
+    candidates.append(os.path.normpath(os.path.join(CONTRACTS_DIR, contract_folder, 'lib', basename)))
+
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+
+    # 5) fallback: search the repository for matching file (prefer exact suffix match)
+    matches = []
+    for root, dirs, files in os.walk(BASE_DIR):
+        for f in files:
+            if f == basename:
+                full = os.path.join(root, f)
+                # prefer files that have the import_path as suffix
+                rel = os.path.relpath(full, BASE_DIR)
+                norm_rel = os.path.normpath(rel)
+                if norm_rel.endswith(os.path.normpath(import_path).lstrip(os.sep)):
+                    matches.insert(0, full)
+                else:
+                    matches.append(full)
+
+    if matches:
+        # prefer matches within the same contract folder
+        for m in matches:
+            if os.path.normpath(os.path.join('contracts', contract_folder)) in os.path.normpath(m):
+                return m
+        return matches[0]
+
+    return None
+
+
+def copy_imports_to_forge(contract, version):
+    """Recursively copy Solidity imports referenced by the contract into the forge_results folder.
+
+    Preserves the import relative paths (so imports like "lib/X.sol" will be available
+    under the same relative path from the v<version> directory).
+    """
+    src_contract_path = get_contract_filepath(contract, version)
+    forge_dir = os.path.join('forge_results', contract, f'v{version}')
+    os.makedirs(forge_dir, exist_ok=True)
+
+    visited = set()
+    to_process = [src_contract_path]
+
+    while to_process:
+        src = to_process.pop()
+        src = os.path.normpath(src)
+        if src in visited:
+            continue
+        visited.add(src)
+
+        if not os.path.exists(src):
+            continue
+
+        try:
+            with open(src, 'r', encoding='utf-8') as f:
+                content = f.read()
+        except Exception:
+            continue
+
+        imports = find_imports_in_source(content)
+        orig_dir = os.path.dirname(src)
+
+        for imp in imports:
+            norm_imp = os.path.normpath(imp)
+            # Destination path inside forge results (preserve relative path)
+            dest = os.path.normpath(os.path.join(forge_dir, norm_imp))
+            dest_dir = os.path.dirname(dest)
+            if not os.path.exists(dest_dir):
+                os.makedirs(dest_dir, exist_ok=True)
+
+            # If destination already exists, skip copying but still process it for nested imports
+            if os.path.exists(dest):
+                # find corresponding source in repo for further scanning
+                resolved_src = resolve_import_source(imp, src, contract)
+                if resolved_src and resolved_src not in visited:
+                    to_process.append(resolved_src)
+                continue
+
+            resolved = resolve_import_source(imp, src, contract)
+            if not resolved:
+                print(f"Warning: could not resolve import '{imp}' referenced in {src}", file=sys.stderr)
+                continue
+
+            try:
+                shutil.copyfile(resolved, dest)
+                print(f"Copied import {resolved} -> {dest}")
+            except Exception as e:
+                print(f"Warning: failed to copy {resolved} -> {dest}: {e}", file=sys.stderr)
+                continue
+
+            # enqueue the resolved source to scan its own imports
+            if resolved not in visited:
+                to_process.append(resolved)
+
     
 
 def run_forge(contract, prop, version, counterexample, iterations, model, prompt_name):
@@ -525,6 +668,12 @@ def run_forge(contract, prop, version, counterexample, iterations, model, prompt
     
     with open(poc_file, "w", encoding="utf-8") as f:
         f.write(counterexample)
+
+    # Ensure Solidity import dependencies are copied into the forge_results folder
+    try:
+        copy_imports_to_forge(contract, version)
+    except Exception as e:
+        print(f"Warning: error while copying imports for forge: {e}", file=sys.stderr)
 
     # save current working directory
     current_directory = os.getcwd()
