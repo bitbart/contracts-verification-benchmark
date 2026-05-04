@@ -354,6 +354,20 @@ def normalize_name(name: str) -> str:
     """Uniform name: lower case, no special characters."""
     return re.sub(r'[^a-z0-9]', '', name.lower())
 
+
+def sanitize_filename_component(s: str) -> str:
+    """Return a filesystem-safe, lowercase component for filenames.
+
+    - If `s` looks like a path, use its basename and strip extension.
+    - Replace spaces with underscores and remove unsafe characters.
+    """
+    s = str(s)
+    s = os.path.basename(s)
+    s = os.path.splitext(s)[0]
+    s = s.replace(' ', '_')
+    s = re.sub(r'[^A-Za-z0-9_.-]', '', s)
+    return s.lower()
+
 def find_contract_folder(contract_arg: str) -> str:
     target = normalize_name(contract_arg)
     for folder in os.listdir(CONTRACTS_DIR):
@@ -487,7 +501,7 @@ def sanitize_PoC_for_forge(counterexample):
     return sanitized_code
     
 
-def run_forge(contract, prop, version, counterexample, iterations):
+def run_forge(contract, prop, version, counterexample, iterations, model, prompt_name):
     # Create (if not already existing) a folder ./forge_results/{contract}/{version}/test
     base_folder = os.path.join("forge_results", contract, f"v{version}", "test")
     os.makedirs(base_folder, exist_ok=True)
@@ -499,8 +513,13 @@ def run_forge(contract, prop, version, counterexample, iterations):
     with open(contract_file, "w", encoding="utf-8") as f:
         f.write(contract_code)
 
-    # Save Foundry PoC in a file ./forge_results/{contract}/{version}/test/{prop}_test.t.sol
-    poc_file = os.path.join(base_folder, f"{prop}_{iterations}_test.t.sol")
+    # Build a filename that includes model and prompt used
+    model_comp = sanitize_filename_component(model)
+    prompt_comp = sanitize_filename_component(prompt_name)
+    prop_comp = sanitize_filename_component(prop)
+    test_filename = f"{model_comp}_{prompt_comp}_{prop_comp}_{iterations}_test.t.sol"
+
+    poc_file = os.path.join(base_folder, test_filename)
     # Sanitize counterexample
     counterexample = sanitize_PoC_for_forge(counterexample)
     
@@ -515,9 +534,15 @@ def run_forge(contract, prop, version, counterexample, iterations):
     #print current directory
     print(f"Current directory: {os.getcwd()}")
 
-    command = f"{FORGE_PATH} init --force --empty --no-git; {FORGE_PATH} test -vvvv --match-path test/{prop}_{iterations}_test.t.sol > test_output_{prop}.txt 2>&1"
+    # Only run `forge init` if the project hasn't been initialized yet (foundry.toml absent).
+    # This avoids a hang caused by forge trying to fetch forge-std via SSH on first init.
+    if not os.path.exists("foundry.toml"):
+        init_command = f"{FORGE_PATH} init --force --empty --no-git"
+        print(f"Running init: {init_command}")
+        os.system(init_command)
+
+    command = f"{FORGE_PATH} test -vvvv --match-path test/{test_filename} > test_output_{prop}.txt 2>&1"
     print(f"Running command: {command}")
-    
 
     # run forge test only for poc_file
     os.system(command)
@@ -529,14 +554,64 @@ def run_forge(contract, prop, version, counterexample, iterations):
     # return to previous working directory
     os.chdir(current_directory)
 
-    if "[FAIL: " in test_output:
-        return False, test_output
-    elif "[PASS]" in test_output:
+    if "[PASS]" in test_output and "[FAIL: " not in test_output and "Error: Compiler" not in test_output:
         return True, test_output
-    else:
+    elif "[FAIL: " in test_output or "Error: Compiler" in test_output:
+        # Attempt to rename any test files referenced in the forge output to indicate failure.
+        # This is more robust than assuming the generated poc_file path always matches the
+        # file mentioned by the compiler/test runner (handles different sanitizations).
+        try:
+            base_test_dir = os.path.join("forge_results", contract, f"v{version}", "test")
+
+            # Find occurrences like "test/<filename>.t.sol" in forge output
+            found = re.findall(r'(?:test/)([^\s:]+?\.t\.sol)', test_output)
+            renamed_any = False
+
+            for fname in set(found):
+                src = os.path.join(base_test_dir, fname)
+                src_abs = os.path.abspath(src)
+                if os.path.exists(src_abs):
+                    dst = src_abs[:-len('.t.sol')] + '_failed.txt'
+                    try:
+                        os.rename(src_abs, dst)
+                        print(f"Renamed failing test {src_abs} -> {dst}")
+                        renamed_any = True
+                    except Exception as e:
+                        print(f"Warning: failed to rename test file {src_abs}: {e}", file=sys.stderr)
+                else:
+                    # fallback: maybe only basename is present (avoid duplicated 'test/' path)
+                    alt = os.path.join(base_test_dir, os.path.basename(fname))
+                    alt_abs = os.path.abspath(alt)
+                    if os.path.exists(alt_abs):
+                        dst = alt_abs[:-len('.t.sol')] + '_failed.txt'
+                        try:
+                            os.rename(alt_abs, dst)
+                            print(f"Renamed failing test {alt_abs} -> {dst}")
+                            renamed_any = True
+                        except Exception as e:
+                            print(f"Warning: failed to rename test file {alt_abs}: {e}", file=sys.stderr)
+
+            if not renamed_any:
+                # final fallback: rename the poc_file that we created earlier if present
+                poc_abs = os.path.abspath(poc_file)
+                if os.path.exists(poc_abs):
+                    if poc_abs.endswith('.t.sol'):
+                        dst = poc_abs[:-len('.t.sol')] + '_failed.txt'
+                    else:
+                        dst = poc_abs + '_failed.txt'
+                    try:
+                        os.rename(poc_abs, dst)
+                        print(f"Renamed generated test {poc_abs} -> {dst}")
+                    except Exception as e:
+                        print(f"Warning: failed to rename test file {poc_abs}: {e}", file=sys.stderr)
+                else:
+                    print(f"Warning: could not find test file to rename: {poc_abs}", file=sys.stderr)
+        except Exception as e:
+            print(f"Warning: error while renaming failing tests: {e}", file=sys.stderr)
         return False, test_output
-        #print(f"Error: unexpected forge output: {test_output}", file=sys.stderr)
-        #sys.exit(1)
+    else:
+        # Ambiguous output (neither clear pass nor known failure pattern)
+        return False, test_output
 
 
 
@@ -697,7 +772,7 @@ def main():
                     "raw_output": output
                 }
                 if args.check_with_foundry and result_entry["llm_answer"] == "FALSE":
-                    forge_result_ok, forge_output = run_forge(contract_folder, prop, version, counterexample, iterations)
+                    forge_result_ok, forge_output = run_forge(contract_folder, prop, version, counterexample, iterations, args.model, args.prompt)
                     # If forge test failed, requery the LLM with the forge output as hint
                     if not forge_result_ok:
                         print(f"Forge test failed for ({prop}, {version}).")
