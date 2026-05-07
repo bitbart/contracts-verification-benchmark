@@ -4,6 +4,7 @@ import os
 import sys
 import json
 import openai
+import anthropic
 import re
 import datetime 
 import random
@@ -15,7 +16,8 @@ import csv
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # root del progetto
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 CONTRACTS_DIR = os.path.join(BASE_DIR, "contracts")
-API_KEY_FILE = os.path.join(SCRIPTS_DIR, "openai_api_key.txt")
+OPENAI_API_KEY_FILE = os.path.join(SCRIPTS_DIR, "openai_api_key.txt")
+ANTHROPIC_API_KEY_FILE = os.path.join(SCRIPTS_DIR, "claude_api_key.txt")
 
 # Ensures text does not contain excessively long sequence of quotes
 def remove_repeated_quotes(text):
@@ -33,7 +35,7 @@ def sanitize_for_csv(text):
     text = remove_repeated_quotes(text)
     return text
 
-def load_api_key(path=API_KEY_FILE):
+def load_api_key(path=OPENAI_API_KEY_FILE):
     if not os.path.exists(path):
         print(f"Error: file {path} does not exists.", file=sys.stderr)
         sys.exit(1)
@@ -271,14 +273,23 @@ def run_experiment(contract, prop, version, prompt_file, token_limit, model, arg
         prompt_text = prompt_template.replace("{code}", code).replace("{property_desc}", property_desc)
 
     start_time = time.time()
-    # Inizialize client OpenAI
-    client = openai.OpenAI(api_key=load_api_key())
 
 
     print(prompt_text)
     
     try:
-        if model.startswith("gpt-4o") or model.startswith("gpt-3.5"):
+        if model.startswith("claude-"):
+            # Anthropic / Claude models (streaming required for long requests)
+            client = anthropic.Anthropic(api_key=load_api_key(ANTHROPIC_API_KEY_FILE))
+            with client.messages.stream(
+                model=model,
+                max_tokens=token_limit or 500,
+                messages=[{"role": "user", "content": prompt_text}]
+            ) as stream:
+                output_text = stream.get_final_text()
+        elif model.startswith("gpt-4o") or model.startswith("gpt-3.5"):
+            # Legacy OpenAI chat models
+            client = openai.OpenAI(api_key=load_api_key(OPENAI_API_KEY_FILE))
             response = client.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt_text}],
@@ -286,7 +297,8 @@ def run_experiment(contract, prop, version, prompt_file, token_limit, model, arg
             )
             output_text = response.choices[0].message.content
         else:
-            # New models (gpt-5, gpt-4.1, ecc.)
+            # New OpenAI models (gpt-5, gpt-4.1, ecc.)
+            client = openai.OpenAI(api_key=load_api_key(OPENAI_API_KEY_FILE))
             response = client.responses.create(
                 model=model,
                 input=[{"role": "user", "content": prompt_text}],
@@ -296,9 +308,6 @@ def run_experiment(contract, prop, version, prompt_file, token_limit, model, arg
         end_time = time.time()
         total_time = end_time - start_time
         return output_text, total_time
-        #print(f"=== {contract} / {prop} / v{version} ===")
-        #print(output_text)
-        #print("\n")
 
     except Exception as e:
         print(f"Error during API call: {e}", file=sys.stderr)
