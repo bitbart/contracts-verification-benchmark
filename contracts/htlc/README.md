@@ -26,53 +26,13 @@ After contract creation, the HTLC allows the following actions:
 - **v4**: `timeout` transfers balance to `msg.sender` instead of verifier.
 - **v5**: removed check that `commit` can only be called by `owner`.
 - **v6**: removed check that `reveal` can only be called by `owner`.
+- **v7**: `reveal` and `timeout` reset `isCommitted` to `false`. 
+- **v8**: removed check that hash of string argument of `reveal` equals saved hash
+- **v9**: removed check that `commit`should be called with a `msg.value` of at least 1 ETH.
 
-## Ground truth
-|        | commit-auth-owner           | reveal-auth-owner           | reveal-timeout-after-commit | sent-le-init-bal            | timeout-deadline            |
-|--------|-----------------------------|-----------------------------|-----------------------------|-----------------------------|-----------------------------|
-| **v1** | 1                           | 1                           | 1                           | 0[^1]                       | 1                           |
-| **v2** | 1                           | 1                           | 0                           | 0                           | 1                           |
-| **v3** | 1                           | 1                           | 1                           | 0                           | 0                           |
-| **v4** | 1                           | 1                           | 1                           | 0                           | 1                           |
-| **v5** | 0                           | 1                           | 1                           | 0                           | 1                           |
-| **v6** | 1                           | 0[^2]                       | 1                           | 0                           | 1                           |
- 
-[^1]: This property should always be false, since a contract can receive ETH when its address is specified in a coinbase transaction or in a `selfdestruct`.
-[^2]: Since the `reveal` transaction is broadcast in the mempool before the transaction is finalized, anyone can read the secret from the mempool and play its own `reveal` transaction.
+## Verification data
 
-## Experiments
-### SolCMC
-#### Z3
-|        | commit-auth-owner           | reveal-auth-owner           | reveal-timeout-after-commit | sent-le-init-bal            | timeout-deadline            |
-|--------|-----------------------------|-----------------------------|-----------------------------|-----------------------------|-----------------------------|
-| **v1** | TP!                         | TP!                         | TP!                         | TN!                         | TP!                         |
-| **v2** | TP!                         | TP!                         | TN!                         | TN!                         | TP!                         |
-| **v3** | TP!                         | TP!                         | TP!                         | TN!                         | TN!                         |
-| **v4** | TP!                         | TP!                         | TP!                         | TN!                         | TP!                         |
-| **v5** | TN!                         | TP!                         | TP!                         | TN!                         | TP!                         |
-| **v6** | TP!                         | TN!                         | TP!                         | TN!                         | TP!                         |
- 
-
-#### Eldarica
-|        | commit-auth-owner           | reveal-auth-owner           | reveal-timeout-after-commit | sent-le-init-bal            | timeout-deadline            |
-|--------|-----------------------------|-----------------------------|-----------------------------|-----------------------------|-----------------------------|
-| **v1** | TP!                         | TP!                         | TP!                         | TN!                         | TP!                         |
-| **v2** | TP!                         | TP!                         | UNK                         | UNK                         | TP!                         |
-| **v3** | TP!                         | TP!                         | TP!                         | TN!                         | TN!                         |
-| **v4** | TP!                         | TP!                         | TP!                         | TN!                         | TP!                         |
-| **v5** | TN!                         | TP!                         | TP!                         | UNK                         | TP!                         |
-| **v6** | TP!                         | TN!                         | TP!                         | TN!                         | TP!                         |
- 
-
-
-### Certora
-|        | commit-auth-owner           | reveal-auth-owner           | reveal-timeout-after-commit | sent-le-init-bal            | timeout-deadline            |
-|--------|-----------------------------|-----------------------------|-----------------------------|-----------------------------|-----------------------------|
-| **v1** | TP!                         | FN                          | FN                          | TN                          | TP!                         |
-| **v2** | TP!                         | FN                          | TN                          | TN                          | TP!                         |
-| **v3** | TP!                         | FN                          | FN                          | TN                          | TN                          |
-| **v4** | TP!                         | FN                          | FN                          | TN                          | TP!                         |
-| **v5** | TN                          | FN                          | FN                          | TN                          | TP!                         |
-| **v6** | TP!                         | TN                          | FN                          | TN                          | TP!                         |
- 
-
+- [Ground truth](ground-truth.csv)
+- [Solcmc/z3](solcmc-z3.csv)
+- [Solcmc/Eldarica](solcmc-eld.csv)
+- [Certora](certora.csv)

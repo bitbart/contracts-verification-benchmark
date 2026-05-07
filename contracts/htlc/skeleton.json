@@ -6,6 +6,11 @@
         "reveal-auth-owner": "If `reveal` is successfully called, then the sender must be the owner.",
         "reveal-timeout-after-commit": "`reveal` and `timeout` can only be called after `commit`.",
         "sent-le-init-bal": "The overall sent amount does not exceed the initial deposit.",
-        "timeout-deadline": "If `timeout` is called, then at least 1000 blocks have passed since the contract was deployed."
+        "timeout-deadline": "If `timeout` is called, then at least 1000 blocks have passed since the contract was deployed.",
+        "cant-uncommit": "Once `isCommitted` is set to true, no call to function can unset it",
+        "commit-minimum": "If `commit` is called successfully, then msg.value should be at least `fee`",
+        "commit-twice-reverts": "Calling `commit` after a successful call should revert",
+        "reveal-preimage": "If `reveal` does not revert, then the revealed string is a preimage of the committed hash",
+        "timeout-transfer": "When `timeout` is successfully called, then all the balance should be transferred to the verifier"
     }
 }

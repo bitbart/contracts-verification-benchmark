@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 ghost mathint total_sent {
     init_state axiom total_sent == 0;
 } 

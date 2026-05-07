@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.18;
 
-/// @custom:version removed check that `commit` can only be called by `owner`.
+/// @custom:version conformant to specification.
 contract Htlc {
     address payable public owner;  
     address payable public verifier;
@@ -21,10 +21,10 @@ contract Htlc {
     }
 
     function commit(bytes32 h) public payable {
-        // require(msg.sender == owner);
-        require(msg.value >= 1 ether);
+        require(msg.sender == owner);
+        // require(msg.value >= fee);
         require(!isCommitted);
-
+    
         hash = h;
         isCommitted = true;
     }
@@ -36,7 +36,7 @@ contract Htlc {
 
         uint _to_send = address(this).balance;       
         (bool success,) = owner.call{value: _to_send}("");
-        require(success, "Transfer failed.");           
+        require(success, "Transfer failed.");
     }
 
     function timeout() public {
@@ -45,10 +45,9 @@ contract Htlc {
 
         uint _to_send = address(this).balance;
         (bool success,) = verifier.call{value: _to_send}("");
-        require(success, "Transfer failed.");
-    
+        require(success, "Transfer failed.");    
     }
-
+    
     function hashing(string memory s) public pure returns (bytes32){
         return keccak256(abi.encodePacked(s));
     }
