@@ -1,39 +1,41 @@
-Compiling 1 files with Solc 0.8.30
-Solc 0.8.30 finished in 559.44ms
+Compiling 21 files with Solc 0.8.30
+Solc 0.8.30 finished in 640.37ms
 Compiler run successful with warnings:
+Warning (5159): "selfdestruct" has been deprecated. Note that, starting from the Cancun hard fork, the underlying opcode no longer deletes the code and data associated with an account and only transfers its Ether to the beneficiary, unless executed in the same transaction in which the contract was created (see EIP-6780). Any use in newly deployed contracts is strongly discouraged even if the new behavior is taken into account. Future changes to the EVM might further reduce the functionality of the opcode.
+ --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_1_test.t.sol:8:9:
+  |
+8 |         selfdestruct(payable(address(0xBEEF)));
+  |         ^^^^^^^^^^^^
+
 Warning (9302): Return value of low-level calls not used.
-  --> test/assets-dec-onlyif-deposit_2_test.t.sol:52:9:
+  --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_1_test.t.sol:44:9:
    |
-52 |         address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
+44 |         address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-Ran 1 test for test/assets-dec-onlyif-deposit_2_test.t.sol:BankTest
-[PASS] test_assets_dec_onlyif_deposit_violation() (gas: 238679)
+Ran 1 test for test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_1_test.t.sol:BankTest
+[PASS] test_assets_dec_onlyif_deposit_violation() (gas: 139549)
 Traces:
-  [238679] BankTest::test_assets_dec_onlyif_deposit_violation()
-    ├─ [134715] → new Attacker@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
-    │   └─ ← [Return] 560 bytes of code
-    ├─ [0] VM::deal(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 101)
+  [139549] BankTest::test_assets_dec_onlyif_deposit_violation()
+    ├─ [0] VM::deal(BankTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 10000000000000000000 [1e19])
     │   └─ ← [Return]
-    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    ├─ [18643] → new Attack@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
+    │   └─ ← [Return] 93 bytes of code
+    ├─ [0] VM::prank(Attack: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
     │   └─ ← [Return]
     ├─ [32161] Bank::deposit{value: 100}()
-    │   ├─ [0] 0x000000000000000000000000000000000000bEEF::fallback{value: 1}()
+    │   ├─ [0] 0x0000000000000000000000000000000000000B0b::fallback{value: 1}()
     │   │   └─ ← [Stop]
     │   └─ ← [Stop]
-    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    ├─ [0] VM::prank(Attack: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
     │   └─ ← [Return]
-    ├─ [23380] Bank::withdraw(32)
-    │   ├─ [15167] Attacker::receive{value: 32}()
-    │   │   ├─ [7761] Bank::deposit{value: 33}()
-    │   │   │   ├─ [0] 0x000000000000000000000000000000000000bEEF::fallback{value: 1}()
-    │   │   │   │   └─ ← [Stop]
-    │   │   │   └─ ← [Stop]
-    │   │   └─ ← [Stop]
+    ├─ [40855] Bank::withdraw(32)
+    │   ├─ [32642] Attack::receive{value: 32}()
+    │   │   └─ ← [SelfDestruct]
     │   └─ ← [Stop]
     └─ ← [Stop]
 
-Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 561.60µs (163.61µs CPU time)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.78ms (365.96µs CPU time)
 
-Ran 1 test suite in 8.34ms (561.60µs CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
+Ran 1 test suite in 53.04ms (2.78ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

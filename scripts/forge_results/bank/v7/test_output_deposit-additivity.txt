@@ -1,0 +1,35 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 591.80ms
+Compiler run successful!
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_deposit-additivity_3_test.t.sol:BankTest
+[PASS] test_deposit_additivity_violation() (gas: 126283)
+Traces:
+  [126283] BankTest::test_deposit_additivity_violation()
+    ├─ [0] VM::deal(0x0000000000000000000000000000000000001234, 10000000000000000000 [1e19])
+    │   └─ ← [Return]
+    ├─ [0] VM::snapshotState()
+    │   └─ ← [Return] 0
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000001234)
+    │   └─ ← [Return]
+    ├─ [45120] Bank::deposit{value: 1000000000000000000}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000001234)
+    │   └─ ← [Return]
+    ├─ [1320] Bank::deposit{value: 2000000000000000000}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::load(Bank: [0x2fB4bEC86aBEB9724c036c544313F58a535F1af4], 0xf3f00ab703b87ba8b65e1fbf147cda608927ab8fd3d225c2a15738b8edfbecc9) [staticcall]
+    │   └─ ← [Return] 0x00000000000000000000000000000000000000000000000029a2241af62bfffe
+    ├─ [0] VM::revertToState(0)
+    │   └─ ← [Return] true
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000001234)
+    │   └─ ← [Return]
+    ├─ [45120] Bank::deposit{value: 3000000000000000000}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::load(Bank: [0x2fB4bEC86aBEB9724c036c544313F58a535F1af4], 0xf3f00ab703b87ba8b65e1fbf147cda608927ab8fd3d225c2a15738b8edfbecc9) [staticcall]
+    │   └─ ← [Return] 0x00000000000000000000000000000000000000000000000029a2241af62bffff
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 445.60µs (166.57µs CPU time)
+
+Ran 1 test suite in 8.53ms (445.60µs CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

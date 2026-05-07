@@ -1,0 +1,27 @@
+Compiling 21 files with Solc 0.8.30
+Solc 0.8.30 finished in 484.12ms
+Compiler run successful!
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_deposit-revert_1_test.t.sol:BankTest
+[PASS] test_deposit_revert_violation() (gas: 72087)
+Traces:
+  [72087] BankTest::test_deposit_revert_violation()
+    ├─ [0] VM::prank(ECRecover: [0x0000000000000000000000000000000000000001])
+    │   └─ ← [Return]
+    ├─ [54903] Bank::withdraw(1)
+    │   ├─ [0] PRECOMPILES::ecrecover{value: 1}(0x)
+    │   │   └─ ← [OutOfFunds] 0x
+    │   └─ ← [Return] false
+    ├─ [0] VM::deal(ECRecover: [0x0000000000000000000000000000000000000001], 1)
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(ECRecover: [0x0000000000000000000000000000000000000001])
+    │   └─ ← [Return]
+    ├─ [0] VM::load(Bank: [0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d], 0xada5013122d395ba3c54772283fb069b10426056ef8ca54750cb9bb552a59e7d) [staticcall]
+    │   └─ ← [Return] 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+    ├─ [800] Bank::deposit{value: 1}()
+    │   └─ ← [Stop]
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.22ms (262.94µs CPU time)
+
+Ran 1 test suite in 41.50ms (2.22ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

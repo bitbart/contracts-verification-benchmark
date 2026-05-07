@@ -1,0 +1,43 @@
+pragma solidity ^0.8.13;
+import "forge-std/Test.sol";
+import "../Bank.sol";
+
+contract Dummy {}
+
+contract BankTest is Test {
+    address immutable bank_deployer;
+    Bank immutable bank;
+    
+    constructor() {
+        // deploying a Bank contract
+        address bank_deployer = address(0xB0B);
+        vm.prank(bank_deployer);
+        bank = new Bank();
+    }
+    
+    function test_assets_dec_onlyif_deposit_violation() public {
+
+        vm.deal(address(this), 100 ether);
+
+        address user = address(this);
+        assertNotEq(user, address(bank), "user address equal to bank address");
+
+        uint256 user_balance_before = address(user).balance;
+
+        address sender = address(0xBEEF);
+        vm.prank(sender);
+
+        bytes4 function_selector = Bank.deposit.selector;
+        uint256 msg_value = 1 ether;
+        bytes memory params = hex"";
+
+        // Dynamically call the function with function_selector selector and passed parameters
+        address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
+	
+        assert(function_selector != bank.deposit.selector || sender != user);
+
+        uint256 user_balance_after = address(user).balance;
+
+        assertLt(user_balance_after, user_balance_before, "user balance did not decrease");
+    }
+}

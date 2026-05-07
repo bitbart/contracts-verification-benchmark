@@ -1,0 +1,19 @@
+Compiler run failed:
+Warning (2519): This declaration shadows an existing declaration.
+  --> test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:13:9:
+   |
+13 |         address bank_deployer = address(0xBEEF);
+   |         ^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+ --> test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:8:5:
+  |
+8 |     address immutable bank_deployer;      
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error (6160): Wrong argument count for function call: 1 arguments given but expected 0.
+  --> test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:16:16:
+   |
+16 |         bank = new Bank(construct_params);
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Compilation failed

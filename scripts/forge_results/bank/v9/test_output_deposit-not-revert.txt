@@ -1,0 +1,50 @@
+Compiling 22 files with Solc 0.8.30
+Solc 0.8.30 finished in 632.24ms
+Compiler run successful with warnings:
+Warning (2519): This declaration shadows an existing declaration.
+  --> test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:13:9:
+   |
+13 |         address bank_deployer = address(0xB0B);
+   |         ^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+ --> test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:8:5:
+  |
+8 |     address immutable bank_deployer;      
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (2072): Unused local variable.
+  --> test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:27:9:
+   |
+27 |         uint256 user_creditsBefore = uint256(vm.load(address(bank), user_credits_slot));
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:BankTest
+[FAIL: call didn't revert at a lower depth than cheatcode call depth] test_not_deposit_revert_violation() (gas: 11848)
+Traces:
+  [11848] BankTest::test_not_deposit_revert_violation()
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000C0FFEE)
+    │   └─ ← [Return]
+    ├─ [0] VM::load(Bank: [0xb26A686857588E358a35048b832A937F61BC6574], 0x4f5e5294f88ab28c6c68274d6fe128542ffd68330e27bdaae417b7f767dd5447) [staticcall]
+    │   └─ ← [Return] 0x0000000000000000000000000000000000000000000000000000000000000000
+    ├─ [0] VM::expectRevert(custom error 0xf4844814)
+    │   └─ ← [Return]
+    ├─ [0] Bank::deposit{value: 115792089237316195423570985008687907853269984665640564039457584007913129639935}()
+    │   └─ ← [OutOfFunds] EvmError: OutOfFunds
+    └─ ← [Revert] call didn't revert at a lower depth than cheatcode call depth
+
+Backtrace:
+  at Bank.deposit
+  at BankTest.test_not_deposit_revert_violation
+
+Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 3.39ms (490.22µs CPU time)
+
+Ran 1 test suite in 45.40ms (3.39ms CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:BankTest
+[FAIL: call didn't revert at a lower depth than cheatcode call depth] test_not_deposit_revert_violation() (gas: 11848)
+
+Encountered a total of 1 failing tests, 0 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test

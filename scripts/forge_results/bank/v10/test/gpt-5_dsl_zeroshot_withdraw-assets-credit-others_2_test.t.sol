@@ -1,0 +1,71 @@
+pragma solidity ^0.8.13;
+import "forge-std/Test.sol";
+import "../Bank.sol";
+
+// property: after a successful withdraw(amount), the balances of any user but the sender are preserved.
+
+contract Helper {
+    Bank public bank;
+    constructor(Bank _bank) { bank = _bank; }
+    function depositToBank() external payable {
+        bank.deposit{value: msg.value}();
+    }
+}
+
+contract Attacker {
+    Helper public helper;
+    constructor(Helper _helper) { helper = _helper; }
+    receive() external payable {
+        // Reentrantly deposit all received ETH into the Bank via the helper,
+        // crediting the helper (a different user) instead of the sender.
+        helper.depositToBank{value: address(this).balance}();
+    }
+}
+
+contract BankTest is Test {       
+    address immutable bank_deployer;      
+    Bank immutable bank;
+    
+    constructor() {
+        // deploying a Bank contract
+        bank_deployer = address(0xBEEF);
+        vm.prank(bank_deployer);
+        bank = new Bank();
+    }
+    
+    
+    function test_withdraw_assets_credit_others_violation() public {
+        // Setup attacker and helper
+        Helper helper = new Helper(bank);
+        Attacker attacker = new Attacker(helper);
+
+        // Fund attacker so that the pranked deposit can send value
+        vm.deal(address(attacker), 1 ether);
+
+        // Attacker deposits into the bank to build its credit
+        vm.prank(address(attacker));
+        bank.deposit{value: 1 ether}();
+
+        // Observe helper's credit before withdraw
+	    address user = address(helper);
+        uint256 credits_slot = uint256(0);
+        bytes32 user_credits_slot = keccak256(abi.encode(user, credits_slot));
+        uint256 user_creditsBefore = uint256(vm.load(address(bank), user_credits_slot));
+
+        // Withdraw as attacker; during the external call to attacker,
+        // the attacker reentrantly causes helper to deposit into the bank.
+        uint256 amount = 1 ether;
+        address sender = address(attacker);
+        vm.prank(sender);
+        bank.withdraw(amount); // should not revert
+	
+        // Observe helper's credit after withdraw
+        uint256 user_creditsAfter = uint256(vm.load(address(bank), user_credits_slot));
+
+        // Ensure we indeed picked a different user than the sender
+        assertNotEq(sender, user, "user equal to sender");
+
+        // The helper's credits changed during the sender's withdraw => property violated
+        assertNotEq(user_creditsBefore, user_creditsAfter, "user credits did not change");
+    }
+}

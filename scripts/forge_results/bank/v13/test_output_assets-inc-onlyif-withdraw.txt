@@ -1,0 +1,27 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 568.26ms
+Compiler run successful with warnings:
+Warning (9302): Return value of low-level calls not used.
+  --> test/gpt-5_dsl_zeroshot_assets-inc-onlyif-withdraw_1_test.t.sol:43:9:
+   |
+43 |         address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_assets-inc-onlyif-withdraw_1_test.t.sol:BankTest
+[PASS] test_assets_dec_onlyif_deposit_violation() (gas: 47048)
+Traces:
+  [47048] BankTest::test_assets_dec_onlyif_deposit_violation()
+    ├─ [0] VM::deal(0x000000000000000000000000000000000000cafE, 1000000000000000000 [1e18])
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(0x000000000000000000000000000000000000cafE)
+    │   └─ ← [Return]
+    ├─ [29661] Bank::deposit{value: 2}()
+    │   ├─ [0] 0x000000000000000000000000000000000000bEEF::fallback{value: 1}()
+    │   │   └─ ← [Stop]
+    │   └─ ← [Stop]
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 309.34µs (64.12µs CPU time)
+
+Ran 1 test suite in 8.22ms (309.34µs CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

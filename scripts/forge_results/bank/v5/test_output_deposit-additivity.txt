@@ -1,33 +1,46 @@
-Compiling 21 files with Solc 0.8.30
-Solc 0.8.30 finished in 658.52ms
-Compiler run successful!
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 540.56ms
+Compiler run successful with warnings:
+Warning (2519): This declaration shadows an existing declaration.
+  --> test/gpt-5_dsl_zeroshot_deposit-additivity_2_test.t.sol:13:9:
+   |
+13 |         address bank_deployer = address(0xB0B);
+   |         ^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+ --> test/gpt-5_dsl_zeroshot_deposit-additivity_2_test.t.sol:8:5:
+  |
+8 |     address immutable bank_deployer;      // TODO check
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Ran 1 test for test/deposit-additivity_1_test.t.sol:BankTest
-[PASS] test_deposit_additivity_violated() (gas: 59980)
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_deposit-additivity_2_test.t.sol:BankTest
+[PASS] test_deposit_additivity_violation() (gas: 80923)
 Traces:
-  [59980] BankTest::test_deposit_additivity_violated()
+  [80923] BankTest::test_deposit_additivity_violation()
+    ├─ [0] VM::deal(0x000000000000000000000000000000000000bEEF, 3)
+    │   └─ ← [Return]
     ├─ [0] VM::snapshotState()
     │   └─ ← [Return] 0
-    ├─ [0] VM::prank(0x00000000000000000000000000000000000000AA)
+    ├─ [0] VM::prank(0x000000000000000000000000000000000000bEEF)
     │   └─ ← [Return]
-    ├─ [22700] Bank::deposit()
+    ├─ [22700] Bank::deposit{value: 1}()
     │   └─ ← [Stop]
-    ├─ [0] VM::prank(0x00000000000000000000000000000000000000AA)
+    ├─ [0] VM::prank(0x000000000000000000000000000000000000bEEF)
     │   └─ ← [Return]
-    ├─ [800] Bank::deposit()
+    ├─ [800] Bank::deposit{value: 2}()
     │   └─ ← [Stop]
-    ├─ [0] VM::load(Bank: [0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d], 0xd6f751104ddfead9549c96fabdbd4d2fc6876c8cd9a49ea4a821de938f71a011) [staticcall]
-    │   └─ ← [Return] 0x0000000000000000000000000000000000000000000000000000000000000002
+    ├─ [0] VM::load(Bank: [0xb26A686857588E358a35048b832A937F61BC6574], 0xf795696b84ec505a06e455ed35745d482b1c95debff7502f2dfa10a8a8820138) [staticcall]
+    │   └─ ← [Return] 0x0000000000000000000000000000000000000000000000000000000000000005
     ├─ [0] VM::revertToState(0)
     │   └─ ← [Return] true
-    ├─ [0] VM::prank(0x00000000000000000000000000000000000000AA)
+    ├─ [0] VM::prank(0x000000000000000000000000000000000000bEEF)
     │   └─ ← [Return]
-    ├─ [22700] Bank::deposit()
+    ├─ [22700] Bank::deposit{value: 3}()
     │   └─ ← [Stop]
-    ├─ [0] VM::load(Bank: [0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d], 0xd6f751104ddfead9549c96fabdbd4d2fc6876c8cd9a49ea4a821de938f71a011) [staticcall]
-    │   └─ ← [Return] 0x0000000000000000000000000000000000000000000000000000000000000001
+    ├─ [0] VM::load(Bank: [0xb26A686857588E358a35048b832A937F61BC6574], 0xf795696b84ec505a06e455ed35745d482b1c95debff7502f2dfa10a8a8820138) [staticcall]
+    │   └─ ← [Return] 0x0000000000000000000000000000000000000000000000000000000000000004
     └─ ← [Stop]
 
-Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.00ms (517.94µs CPU time)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 430.66µs (146.96µs CPU time)
 
-Ran 1 test suite in 53.87ms (3.00ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
+Ran 1 test suite in 8.72ms (430.66µs CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

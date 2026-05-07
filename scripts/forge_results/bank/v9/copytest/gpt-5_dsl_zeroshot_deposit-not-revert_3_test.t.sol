@@ -3,7 +3,14 @@ import "forge-std/Test.sol";
 import "../Bank.sol";
 
 
-contract Dummy {}
+// File: lib/ReentrancyGuard.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity >=0.8.2;
+abstract contract ReentrancyGuard {
+    modifier nonReentrant() virtual {
+        _;
+    }
+}
 
 
 contract BankTest is Test {
@@ -12,17 +19,16 @@ contract BankTest is Test {
     
     constructor() {
         // deploying a Bank contract
-        bank_deployer = address(0xBEEF);
+        address bank_deployer = address(0xB0B);
         vm.prank(bank_deployer);
         bank = new Bank();
     }
 
     function test_not_deposit_revert_violation() public {
-        address u = address(0x123456);
-        vm.deal(address(this), 0);
-        vm.deal(u, 0);
+        // Transactions setup (ensure chosen user has zero balance)
+        vm.deal(address(0xCAFE), 0);
 
-        address user = address(0x123456);
+        address user = address(0xCAFE);
         
         vm.prank(user);
         uint256 msg_value = 1 ether;

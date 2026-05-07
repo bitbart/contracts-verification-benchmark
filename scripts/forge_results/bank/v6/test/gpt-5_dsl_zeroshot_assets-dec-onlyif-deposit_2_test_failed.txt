@@ -1,0 +1,55 @@
+pragma solidity ^0.8.13;
+import "forge-std/Test.sol";
+import "../Bank.sol";
+
+contract Dummy {}
+
+contract BankTest is Test {
+    address immutable bank_deployer;
+    Bank immutable bank;
+
+    // On receiving ETH, forward the entire balance away to reduce this contract's balance
+    receive() external payable {
+        (bool, ) = payable(address(0xDEAD)).call{value: address(this).balance}("");
+    }
+
+    constructor() {
+        // deploying a Bank contract
+        address bank_deployer = address(0xB0B);
+        vm.prank(bank_deployer);
+        bank = new Bank();
+    }
+    
+    function test_assets_dec_onlyif_deposit_violation() public {
+
+        // Setup: fund this contract, deposit 32 wei as this contract (crediting it),
+        // and add 1 wei liquidity from another address so withdraw can pay amount+1.
+        vm.deal(address(this), 100 wei);
+        bank.deposit{value: 32 wei}();
+        vm.deal(address(0xA11CE), 1 wei);
+        vm.prank(address(0xA11CE));
+        bank.deposit{value: 1 wei}();
+
+        address user = address(this);
+        assertNotEq(user, address(bank), "user address equal to bank address");
+
+        uint256 user_balance_before = address(user).balance;
+
+        address sender = address(this);
+        vm.prank(sender);
+
+        // Call withdraw with params encoded as bytes; withdraw(uint) will read the first word (0x20) => amount = 32
+        bytes4 function_selector = Bank.withdraw.selector;
+        uint256 msg_value = 0;
+        bytes memory params = hex"";
+
+        // Dynamically call the function with function_selector selector and passed parameters
+        address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
+	
+        assert(function_selector != bank.deposit.selector || sender != user);
+
+        uint256 user_balance_after = address(user).balance;
+
+        assertLt(user_balance_after, user_balance_before, "user balance did not decrease");
+    }
+}

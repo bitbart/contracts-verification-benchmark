@@ -1,0 +1,54 @@
+Compiler run failed:
+Warning (2519): This declaration shadows an existing declaration.
+  --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_2_test.t.sol:18:9:
+   |
+18 |         address bank_deployer = address(0xB0B);
+   |         ^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+ --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_2_test.t.sol:8:5:
+  |
+8 |     address immutable bank_deployer;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (2519): This declaration shadows an existing declaration.
+  --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_3_test.t.sol:19:9:
+   |
+19 |         address bank_deployer = address(0xB0B);
+   |         ^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+ --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_3_test.t.sol:9:5:
+  |
+9 |     address immutable bank_deployer;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error (4247): Expression has to be an lvalue.
+  --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_2_test.t.sol:13:10:
+   |
+13 |         (bool, ) = payable(address(0xDEAD)).call{value: address(this).balance}("");
+   |          ^^^^
+
+Error (7407): Type tuple(bool,bytes memory) is not implicitly convertible to expected type tuple(type(bool),).
+  --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_2_test.t.sol:13:20:
+   |
+13 |         (bool, ) = payable(address(0xDEAD)).call{value: address(this).balance}("");
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (9302): Return value of low-level calls not used.
+  --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_2_test.t.sol:47:9:
+   |
+47 |         address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (9302): Return value of low-level calls not used.
+  --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_3_test.t.sol:14:9:
+   |
+14 |         payable(address(0xDEAD)).call{value: address(this).balance}("");
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (9302): Return value of low-level calls not used.
+  --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_3_test.t.sol:54:9:
+   |
+54 |         address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Compilation failed

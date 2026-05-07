@@ -4,29 +4,21 @@ import "../Bank.sol";
 
 // property: after a successful withdraw(amount), the balances of any user but the sender are preserved.
 
-contract User {
-    function doDeposit(Bank bank) external payable {
+contract Helper {
+    Bank public bank;
+    constructor(Bank _bank) { bank = _bank; }
+    function depositToBank() external payable {
         bank.deposit{value: msg.value}();
     }
-    receive() external payable {}
 }
 
 contract Attacker {
-    Bank public bank;
-    User public user;
-
-    constructor(Bank _bank) {
-        bank = _bank;
-    }
-
-    function setUser(User _user) external {
-        user = _user;
-    }
-
-    // When receiving ETH from Bank.withdraw, forward it to User,
-    // which deposits into Bank, crediting the User.
+    Helper public helper;
+    constructor(Helper _helper) { helper = _helper; }
     receive() external payable {
-        user.doDeposit{value: msg.value}(bank);
+        // Reentrantly deposit all received ETH into the Bank via the helper,
+        // crediting the helper (a different user) instead of the sender.
+        helper.depositToBank{value: address(this).balance}();
     }
 }
 
@@ -37,27 +29,26 @@ contract BankTest is Test {
     constructor() {
         // deploying a Bank contract
         bank_deployer = address(0xBEEF);
-	    vm.prank(bank_deployer);	    
-	    bank = new Bank();
+        vm.prank(bank_deployer);
+        bank = new Bank();
     }
     
     
     function test_withdraw_assets_credit_others_violation() public {
 
-        User u = new User();
-        Attacker a = new Attacker(bank);
-        a.setUser(u);
-        vm.deal(address(a), 1 ether);
-        vm.prank(address(a));
+        vm.deal(address(this), 2 ether);
+        Helper helper = new Helper(bank);
+        Attacker attacker = new Attacker(helper);
+        vm.prank(address(attacker));
         bank.deposit{value: 1 ether}();
 
-	    address user = address(u);
+	    address user = address(helper);
         uint256 credits_slot = uint256(0);
         bytes32 user_credits_slot = keccak256(abi.encode(user, credits_slot));
         uint256 user_creditsBefore = uint256(vm.load(address(bank), user_credits_slot));
 
         uint256 amount = 1 ether;
-        address sender = address(a);
+        address sender = address(attacker);
         vm.prank(sender);
         bank.withdraw(amount); // should not revert
 	

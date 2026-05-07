@@ -1,0 +1,39 @@
+pragma solidity ^0.8.13;
+import "forge-std/Test.sol";
+import "../Bank.sol";
+
+// Replacement for `abstract contracts[] cs;`
+contract Dummy {}
+
+contract BankTest is Test {
+    address immutable bank_deployer;      
+    Bank immutable bank;
+    
+    constructor() {
+        // deploying a Bank contract
+        // Replacement for `abstract address bank_deployer;`
+        bank_deployer = address(0xBEEF);
+        vm.prank(bank_deployer);
+        // Replacement for `abstract constructor_params`
+        bank = new Bank();
+    }
+
+    function test_not_deposit_revert_violation() public {
+        // Replacement for `abstract transaction[] txs;`
+        vm.deal(address(0xCAFE), 1 ether);
+
+        // Replacement for `abstract address user;`
+        address user = address(0xB0B);
+        
+        vm.prank(user);
+        // Replacement for `abstract uint256 msg_value;`
+        uint256 msg_value = 1 ether;
+
+        uint256 credits_slot = uint256(0);
+        bytes32 user_credits_slot = keccak256(abi.encode(user, credits_slot));
+        uint256 user_creditsBefore = uint256(vm.load(address(bank), user_credits_slot));
+
+        vm.expectRevert();
+        bank.deposit{value: msg_value}();
+    }
+}

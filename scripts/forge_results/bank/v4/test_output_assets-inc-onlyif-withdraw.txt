@@ -1,0 +1,58 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 540.29ms
+Compiler run successful with warnings:
+Warning (2519): This declaration shadows an existing declaration.
+  --> test/gpt-5_dsl_zeroshot_assets-inc-onlyif-withdraw_1_test.t.sol:26:9:
+   |
+26 |         address bank_deployer = address(0xBEEF);
+   |         ^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> test/gpt-5_dsl_zeroshot_assets-inc-onlyif-withdraw_1_test.t.sol:21:5:
+   |
+21 |     address immutable bank_deployer;      
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (9302): Return value of low-level calls not used.
+  --> test/gpt-5_dsl_zeroshot_assets-inc-onlyif-withdraw_1_test.t.sol:13:9:
+   |
+13 |         beneficiary.call{value: msg.value}("");
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (9302): Return value of low-level calls not used.
+  --> test/gpt-5_dsl_zeroshot_assets-inc-onlyif-withdraw_1_test.t.sol:16:9:
+   |
+16 |         beneficiary.call{value: msg.value}("");
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (9302): Return value of low-level calls not used.
+  --> test/gpt-5_dsl_zeroshot_assets-inc-onlyif-withdraw_1_test.t.sol:82:9:
+   |
+82 |         address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_assets-inc-onlyif-withdraw_1_test.t.sol:BankTest
+[PASS] test_assets_dec_onlyif_deposit_violation() (gas: 241733)
+Traces:
+  [261633] BankTest::test_assets_dec_onlyif_deposit_violation()
+    ├─ [140479] → new Forwarder@0xb9E178946b1a09E5Fa1CAB14E5953dda5Cb02503
+    │   └─ ← [Return] 589 bytes of code
+    ├─ [0] VM::deal(Forwarder: [0xb9E178946b1a09E5Fa1CAB14E5953dda5Cb02503], 33)
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(Forwarder: [0xb9E178946b1a09E5Fa1CAB14E5953dda5Cb02503])
+    │   └─ ← [Return]
+    ├─ [22700] Bank::deposit{value: 33}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::prank(Forwarder: [0xb9E178946b1a09E5Fa1CAB14E5953dda5Cb02503])
+    │   └─ ← [Return]
+    ├─ [40263] Bank::withdraw(32)
+    │   ├─ [32262] Forwarder::receive{value: 32}()
+    │   │   ├─ [0] 0x0000000000000000000000000000000000000B0b::fallback{value: 32}()
+    │   │   │   └─ ← [Stop]
+    │   │   └─ ← [Stop]
+    │   └─ ← [Stop]
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.06ms (195.49µs CPU time)
+
+Ran 1 test suite in 37.33ms (2.06ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

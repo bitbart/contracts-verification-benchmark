@@ -1,37 +1,46 @@
-Compiling 1 files with Solc 0.8.30
-Solc 0.8.30 finished in 565.64ms
+Compiling 21 files with Solc 0.8.30
+Solc 0.8.30 finished in 616.97ms
 Compiler run successful with warnings:
-Warning (9302): Return value of low-level calls not used.
-  --> test/assets-dec-onlyif-deposit_1_test.t.sol:58:9:
+Warning (2519): This declaration shadows an existing declaration.
+  --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_1_test.t.sol:25:9:
    |
-58 |         address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
+25 |         address bank_deployer = address(0xBEEF);
+   |         ^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_1_test.t.sol:20:5:
+   |
+20 |     address immutable bank_deployer;      
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (9302): Return value of low-level calls not used.
+  --> test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_1_test.t.sol:47:9:
+   |
+47 |         address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-Ran 1 test for test/assets-dec-onlyif-deposit_1_test.t.sol:BankTest
-[PASS] test_assets_dec_onlyif_deposit_violation() (gas: 276908)
+Ran 1 test for test/gpt-5_dsl_zeroshot_assets-dec-onlyif-deposit_1_test.t.sol:BankTest
+[PASS] test_assets_dec_onlyif_deposit_violation() (gas: 176185)
 Traces:
-  [276908] BankTest::test_assets_dec_onlyif_deposit_violation()
-    ├─ [166546] → new Attacker@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
-    │   └─ ← [Return] 719 bytes of code
-    ├─ [0] VM::deal(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 1000000000000000000 [1e18])
+  [176185] BankTest::test_assets_dec_onlyif_deposit_violation()
+    ├─ [88873] → new Attacker@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
+    │   └─ ← [Return] 331 bytes of code
+    ├─ [0] VM::deal(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 200)
     │   └─ ← [Return]
-    ├─ [22493] Attacker::setOnReceiveDeposit(1000)
+    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [22515] Bank::deposit{value: 100}()
     │   └─ ← [Stop]
     ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
     │   └─ ← [Return]
-    ├─ [22515] Bank::deposit{value: 10000}()
-    │   └─ ← [Stop]
-    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
-    │   └─ ← [Return]
-    ├─ [16285] Bank::withdraw(32)
-    │   ├─ [8072] Attacker::receive{value: 32}()
-    │   │   ├─ [615] Bank::deposit{value: 1000}()
+    ├─ [16431] Bank::withdraw(32)
+    │   ├─ [8218] Attacker::receive{value: 32}()
+    │   │   ├─ [615] Bank::deposit{value: 33}()
     │   │   │   └─ ← [Stop]
     │   │   └─ ← [Stop]
     │   └─ ← [Stop]
     └─ ← [Stop]
 
-Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.64ms (323.93µs CPU time)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.54ms (285.68µs CPU time)
 
-Ran 1 test suite in 38.99ms (2.64ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
+Ran 1 test suite in 56.02ms (2.54ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
