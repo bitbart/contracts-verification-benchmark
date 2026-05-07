@@ -2,7 +2,7 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version conforming to specification.
+/// @custom:version no `require (block.number > end_donate)` check, i.e any user can reclaim before `end_donate`.
 contract Crowdfund {
     uint immutable end_donate;    // last block in which users can donate
     uint immutable goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
@@ -29,7 +29,6 @@ contract Crowdfund {
     }
     
     function reclaim() public { 
-        require (block.number > end_donate);
         require (address(this).balance < goal);
         require (donation[msg.sender] > 0);
 
@@ -40,4 +39,3 @@ contract Crowdfund {
         require(succ);
     }
 }
-
