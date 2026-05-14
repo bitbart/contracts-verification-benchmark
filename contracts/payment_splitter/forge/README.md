@@ -16,15 +16,16 @@ From the `payment_splitter` folder, initialize a forge project:
 forge init forge --force --empty
 ```
 
-Copy the contract sources in the `src` folder: 
+Copy the contract sources in the `forge/src` folder: 
 ```bash
-cp -r ../versions/* src/
+cp -r versions/* forge/src/
 ```
 
 ## Usage
 
 To run the PoCs:
 ```bash
+cd forge/test
 forge test
 ```
 
