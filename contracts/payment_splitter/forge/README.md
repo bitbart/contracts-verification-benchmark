@@ -1,31 +1,66 @@
-## Forge PoCs 
+## Foundry
 
-The [test](test) directory contains Forge implementations of the PoCs produced by GPT-5.
+**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
 
-## Setup
+Foundry consists of:
 
-Install [Foundry](https://getfoundry.sh/introduction/installation/#installation):
-```bash
-curl -L https://foundry.paradigm.xyz | bash
+- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
+- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
+- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
+- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
 
-foundryup
-```
+## Documentation
 
-From the `payment_splitter` folder, initialize a forge project:
-```bash
-forge init forge --force --empty
-```
-
-Copy the contract sources in the `src` folder: 
-```bash
-cp -r ../versions/* src/
-```
+https://book.getfoundry.sh/
 
 ## Usage
 
-To run the PoCs:
-```bash
-forge test
+### Build
+
+```shell
+$ forge build
 ```
 
-Incorrect PoCs (not showing a property violation) will result in assertion violations, and displayed in red.  
+### Test
+
+```shell
+$ forge test
+```
+
+### Format
+
+```shell
+$ forge fmt
+```
+
+### Gas Snapshots
+
+```shell
+$ forge snapshot
+```
+
+### Anvil
+
+```shell
+$ anvil
+```
+
+### Deploy
+
+```shell
+$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+```
+
+### Cast
+
+```shell
+$ cast <subcommand>
+```
+
+### Help
+
+```shell
+$ forge --help
+$ anvil --help
+$ cast --help
+```
