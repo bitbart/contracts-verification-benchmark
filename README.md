@@ -2,22 +2,21 @@
 
 This is an open project to construct a benchmark of Solidity contracts for evaluating and comparing formal verification tools.
 
-The benchmark currently comprises 323 verification tasks, which have been used to compare two leading verification tools, SolCMC and Certora, and to evaluate their completeness, soundness and expressiveness limitations.
-
-Details on the construction of the benchmark and on the comparison between SolCMC and Certora are available in the following research paper:
+Details on the construction of the benchmark and on the comparison between SolCMC and Certora are available in the following research papers:
 - M. Bartoletti, F. Fioravanti, G. Matricardi, R. Pettinau and F. Sainas. [Towards Benchmarking of Solidity verification tools](https://arxiv.org/abs/2402.10750). In [FMBC 2024](https://fmbc.gitlab.io/2024/)
 
-## Contracts
 
-> We are currently updating the contracts to the standard described in the "[extending the benchmark](#extending-the-benchmark)" section. Up-to-date contracts are marked with :white_check_mark:.
+## Use cases
 
-The benchmark currently comprises several versions (correct or bugged) of the following use cases:
+We are currently updating the contracts to the standard described in the "[extending the benchmark](#extending-the-benchmark)" section. Up-to-date contracts are marked with :white_check_mark:.
+
 - [Call Wrapper](contracts/call-wrapper/) 
 - [Bet (tokenless)](contracts/zerotoken_bet/)
 - [Deposit (ETH)](contracts/deposit_eth/) 
 - [Deposit (ERC20)](contracts/deposit_erc20/)
 - [Bank (tokenless)](contracts/zerotoken_bank/)
-- [Bank (ETH)](contracts/bank/) :white_check_mark: 
+- [Bank (ETH)](contracts/bank/) :white_check_mark:
+- [Constant-product AMM](contracts/amm/)
 - [Escrow](contracts/escrow/) 
 - [Vault](contracts/vault/) :white_check_mark:
 - [Price Bet](contracts/price-bet) :white_check_mark:
@@ -25,7 +24,6 @@ The benchmark currently comprises several versions (correct or bugged) of the fo
 - [Hash Timed Locked Contract](contracts/htlc/) 
 - [Vesting Wallet](contracts/vesting_wallet/) 
 - [Lottery](contracts/lottery/)
-- [Constant-product AMM](contracts/tinyamm/)
 - [Lending Protocol](contracts/lending-protocol) :white_check_mark:
 - [Payment Splitter](contracts/payment_splitter/) :white_check_mark:
 - [Social Recovery Wallet](contracts/social_recovery_wallet/)
@@ -33,9 +31,43 @@ The benchmark currently comprises several versions (correct or bugged) of the fo
 
 ## Verification tools
 
-Currently the benchmark supports the following verification tools:
+The benchmark contains formal specifications for the following verification tools:
 - [SolCMC](https://verify.inf.usi.ch/publications/2022/solcmc-solidity-compiler%E2%80%99s-model-checker)
 - [Certora](https://www.certora.com/)
+
+
+## Violation witnesses 
+
+Violation witnesses are included in the `test` folder of each use casse as Forge PoCs.
+
+### Setup
+
+Install [Foundry](https://getfoundry.sh/introduction/installation/#installation):
+```bash
+curl -L https://foundry.paradigm.xyz | bash
+
+foundryup
+```
+
+From the folder corresponding to a use case (e.g., `bank`), initialize a forge project:
+```bash
+forge init forge --force --empty
+```
+
+Copy the contract sources in the `src` folder: 
+```bash
+cp -r ../versions/* src/
+```
+
+### Usage
+
+To run the PoCs:
+```bash
+forge test
+```
+
+Incorrect PoCs (not showing a property violation) will result in assertion violations, and displayed in red.  
+
 
 ## Evaluating a verification tool
 
@@ -138,6 +170,7 @@ where `sat` is 1 when the property holds on the given version, and 0 when it
 does not hold. The ground truth is established manually and, in some cases,
 confirmed by the verification tools. Furthermore, there is the option to append
 footnotes, which will be displayed in the readme file of the use case.
+
 
 #### Versions Directory
 

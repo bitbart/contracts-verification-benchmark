@@ -21,16 +21,17 @@ contract AMM {
     Tx _lastTx;
     uint public _prevSupply;
     
-    constructor(address t0_, address t1_) {
-        t0 = IERC20(t0_);
-        t1 = IERC20(t1_);
+    constructor(IERC20 _t0, IERC20 _t1) {
+        t0 = IERC20(_t0);
+        t1 = IERC20(_t1);
+        require(t0 != t1);
     }
 
     function deposit(uint x0, uint x1) public {
         require (x0>0 && x1>0);
 
-	// ghost code	
-	_prevSupply = supply;
+    	// ghost code	
+    	_prevSupply = supply;
 	
         t0.transferFrom(msg.sender, address(this), x0);
         t1.transferFrom(msg.sender, address(this), x1);
@@ -54,11 +55,11 @@ contract AMM {
         r0 += x0;
         r1 += x1;
            
-        require(t0.balanceOf(address(this)) == r0);
-        require(t1.balanceOf(address(this)) == r1);
+        // require(t0.balanceOf(address(this)) == r0);
+        // require(t1.balanceOf(address(this)) == r1);
 
-	// ghost code
-	_lastTx = Tx.Dep;	
+    	// ghost code
+    	_lastTx = Tx.Dep;	
     }
 
     function redeem(uint x) public {
