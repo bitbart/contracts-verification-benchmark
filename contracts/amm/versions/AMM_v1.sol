@@ -24,7 +24,7 @@ contract AMM {
     constructor(IERC20 _t0, IERC20 _t1) {
         t0 = IERC20(_t0);
         t1 = IERC20(_t1);
-        require(t0 != t1);
+        require(address(t0) != address(t1));
     }
 
     function deposit(uint x0, uint x1) public {
