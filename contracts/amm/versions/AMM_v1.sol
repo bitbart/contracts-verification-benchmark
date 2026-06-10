@@ -73,8 +73,8 @@ contract AMM {
         uint x0 = (x * r0) / supply;
         uint x1 = (x * r1) / supply;
             
-        t0.transferFrom(address(this), msg.sender, x0);
-        t1.transferFrom(address(this), msg.sender, x1);
+        t0.transfer(msg.sender, x0);
+        t1.transfer(msg.sender, x1);
 
         r0 -= x0;
         r1 -= x1;
@@ -102,7 +102,7 @@ contract AMM {
 	
         t_in.transferFrom(msg.sender, address(this), x_in);
 	
-        uint x_out = x_in * r_out * (r_in + x_in);
+        uint x_out = (x_in * r_out) / (r_in + x_in);
 
         require(x_out >= x_out_min);
 	
@@ -117,5 +117,19 @@ contract AMM {
 
 	// ghost code
 	_lastTx = Tx.Swap;	
+    }
+
+    // TODO remove?
+    /// @notice price of a token in terms of the other token, scaled by 1e18
+    /// @dev price(address(t0)) returns price of t0 in units of t1 (t1 per t0) * 1e18
+    function price(address token) external view returns (uint) {
+        if (token == address(t0)) {
+            require(r0 > 0, "no reserves");
+            return (r1 * 1e18) / r0;
+        } else if (token == address(t1)) {
+            require(r1 > 0, "no reserves");
+            return (r0 * 1e18) / r1;
+        }
+        revert("invalid token");
     }
 }
