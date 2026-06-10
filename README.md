@@ -51,7 +51,7 @@ foundryup
 
 From the folder corresponding to a use case (e.g., `bank`), initialize a forge project:
 ```bash
-forge init forge --force --empty
+forge init forge --force --empty --no-git
 ```
 
 Copy the contract sources in the `src` folder: 
