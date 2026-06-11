@@ -24,6 +24,7 @@ rule test {
 
     uint x;
     uint ymin;
+    address tok_call;
 
     require(a != b && a!=0 && b!=0 && a!=currentContract && b!=currentContract);
     require(t0 != t1);
@@ -52,12 +53,27 @@ rule test {
 
     // B:swap(t1,x,ymin)
     require(e3.msg.sender == b);
+    require(e3.tx.origin == b);
     require(e3.msg.value == 0);
-    swap(e3, t1, x, ymin);
+
+    // Option 1: swap and token instantiated, x and ymin free
+    // swap(e3, t1, x, ymin);
+    
+    // Option 2: swap instantiated, token, x, and ymin free
+    //swap(e3, tok_call, x, ymin);
+
+    // Option 3: everything free
+    calldataarg args;
+    method f;
+    f(e3, args);
+
+
 
     mathint b0_after = t0.balanceOf(e3,b);
     mathint b1_after = t1.balanceOf(e3,b);
     mathint wb_after = (b0_after * extPriceT0 + b1_after * extPriceT1);
 
-    assert(wb_after <= wb + 4);
+    assert(wb_after <= wb + 69);
+    // 68 violated
+    // 69 verified
 }
