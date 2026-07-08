@@ -10,3 +10,14 @@
 **/llms_results/
 
 .vscode/
+**/forge/out/
+**/forge/cache/
+**/forge/lib/
+**/forge/foundry.lock
+**/forge/README.md
+
+# Halmos artifacts
+**/halmos/out/
+**/halmos/cache/
+
+.gitmodules

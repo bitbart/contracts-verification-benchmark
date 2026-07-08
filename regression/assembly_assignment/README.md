@@ -43,3 +43,10 @@ The property `f-return-correct-x` should pass since we know the return value.
 | **v1** | TP!                |
  
 
+
+### Halmos
+|        | f-return-correct-x |
+|--------|--------------------|
+| **v1** | TP!                |
+ 
+
