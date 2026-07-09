@@ -11,6 +11,7 @@ The properties `call-failure` and `call-success` should both fail since we canno
 
 The property `ex-call-is-made` checks if an external call appened.
 
+
 ## Properties
 - **call-failure**: the external call fails
 - **call-success**: the external call succeeds
@@ -41,5 +42,12 @@ The property `ex-call-is-made` checks if an external call appened.
 |        | call-failure    | call-success    | ex-call-is-made |
 |--------|-----------------|-----------------|-----------------|
 | **v1** | TN              | TN              | TP!             |
+ 
+
+
+### Halmos
+|        | call-failure    | call-success    | ex-call-is-made |
+|--------|-----------------|-----------------|-----------------|
+| **v1** | TN!             | TN!             | TP!             |
  
 

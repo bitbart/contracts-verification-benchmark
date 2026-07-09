@@ -33,11 +33,18 @@ CERTORA_CM = $(CERTORA_DIR)/cm.csv
 CERTORA_TABLE = $(CERTORA_DIR)/table.md
 CERTORA_LOGS = $(CERTORA_DIR)/logs
 
+# Halmos params
+HALMOS_DIR = $(BUILD_DIR)/halmos
+HALMOS_OUT = $(HALMOS_DIR)/out.csv
+HALMOS_CM = $(HALMOS_DIR)/cm.csv
+HALMOS_TABLE = $(HALMOS_DIR)/table.md
+HALMOS_LOGS = $(HALMOS_DIR)/logs
+
 PYTHON = python3
 
-.PHONY: all certora solcmc plain clean cleanr
+.PHONY: all certora solcmc halmos plain clean cleanr
 
-all: plain solcmc certora
+all: plain solcmc certora halmos
 	@echo "Adding Solcmc table to README..."
 	@echo "### SolCMC" >> $(README)
 	@cat $(Z3_TABLE) >> $(README)
@@ -45,6 +52,9 @@ all: plain solcmc certora
 	@echo "" >> $(README)
 	@echo "Adding Certora table to README..."
 	@cat $(CERTORA_TABLE) >> $(README)
+	@echo "" >> $(README)
+	@echo "Adding Halmos table to README..."
+	@cat $(HALMOS_TABLE) >> $(README)
 
 #---------------------------- CERTORA ----------------------------#
 certora: $(CERTORA_TABLE)
@@ -99,8 +109,24 @@ $(ELD_OUT): setup
 	@echo "Running SolCMC ($(solver)) experiments..."
 	@$(PYTHON) ../../scripts/run_solcmc.py --contracts $(SOLCMC_CONTRACT) --output $(ELD_DIR) --timeout $(to) --solver eld
 
+#---------------------------- HALMOS -----------------------------#
+halmos: $(HALMOS_TABLE)
+
+$(HALMOS_TABLE): $(HALMOS_CM) 
+	@echo "Generating Halmos results table ($(HALMOS_TABLE))..."
+	@echo "### Halmos" > $(HALMOS_TABLE)
+	@$(PYTHON) ../../scripts/mdtable_gen.py --input $(HALMOS_CM) >> $(HALMOS_TABLE)
+
+$(HALMOS_CM): $(GROUND_TRUTH) $(HALMOS_OUT)
+	@echo "Generating Halmos confusion matrix ($(HALMOS_CM))..."
+	@$(PYTHON) ../../scripts/cm_gen.py --ground-truth $(GROUND_TRUTH) --results $(HALMOS_OUT) > $(HALMOS_CM)
+
+$(HALMOS_OUT): setup
+	@echo "Running Halmos experiments..."
+	@$(PYTHON) ../../scripts/run_halmos.py --contracts $(CONTRACT) --output $(HALMOS_DIR)
+
 #---------------------------- SETUP ------------------------------#
-setup: $(Z3_LOGS) $(ELD_LOGS) $(CERTORA_LOGS)
+setup: $(Z3_LOGS) $(ELD_LOGS) $(CERTORA_LOGS) $(HALMOS_LOGS)
 
 # Create build logs/ dirs, and build/ dirs with them
 $(Z3_LOGS):
@@ -112,6 +138,8 @@ $(ELD_LOGS):
 $(CERTORA_LOGS):
 	@mkdir -p $@
 
+$(HALMOS_LOGS):
+	@mkdir -p $@
 #---------------------------- README -----------------------------#
 plain: cleanr $(README)
 	
