@@ -12,11 +12,13 @@ rule exists_unique_donation_change {
     require(e.msg.value <= nativeBalances[e.msg.sender]);
 
     mathint non_donor_prev = currentContract.donation[a];
+    mathint donor_prev = currentContract.donation[e.msg.sender];
 
-    donate@withrevert(e);    
+    donate@withrevert(e); 
 
     mathint non_donor_next = currentContract.donation[a];
+    mathint donor_next = currentContract.donation[e.msg.sender];
 
+    assert !lastReverted => donor_prev != donor_next;
     assert !lastReverted => non_donor_next == non_donor_prev;
 }
-

@@ -1,5 +1,9 @@
-/// @custom:preghost function withdraw
-bool pre = address(this).balance < goal;
+function check_no_wd_if_no_goal(/*address payable _user*/) public payable {
+    require(address(this).balance < goal);
+    require(msg.value == 0);
 
-/// @custom:postghost function withdraw
-assert(!pre);
+    withdraw();
+    // withdraw(_user);
+
+    assert(false);
+}

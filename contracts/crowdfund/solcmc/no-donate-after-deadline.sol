@@ -1,5 +1,7 @@
-/// @custom:preghost function donate
-bool pre = block.number > end_donate;
- 
-/// @custom:postghost function donate
-assert(!pre);
+function check_no_donate_after_deadline() public payable {
+    require(block.number > end_donate);
+
+    donate();
+
+    assert(false);
+}

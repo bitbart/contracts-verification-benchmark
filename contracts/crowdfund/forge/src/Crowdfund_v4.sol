@@ -2,52 +2,54 @@
 pragma solidity >= 0.8.2;
 
 
-/// @custom:version `donate`, `withdraw` and `reclaim` are non-reentrant. `owner_.code.length == 0`, `goal_ > 0`, `end_donate_ > block.number` check in `constructor`, and `require(address(this).balance == 0)` check in `withdraw`. 
-
-import "../../../lib/ReentrancyGuard.sol";
-// import "./ReentrancyGuard.sol";
-
-contract Crowdfund is ReentrancyGuard {
+/// @custom:version `donate` transfers part of `msg.value` to the owner and `reclaim` witholds 1 wei from the donor.
+contract Crowdfund {
     uint immutable end_donate;    // last block in which users can donate
     uint immutable goal;          // amount of ETH that must be donated for the crowdfunding to be succesful
     address immutable owner;      // receiver of the donated funds
     mapping(address => uint) public donation;
 
     constructor (address payable owner_, uint end_donate_, uint256 goal_) {
-        require(owner_.code.length == 0, "Owner must be EOA");
-        require (goal_ > 0, "Goal can't be 0");
-        require(end_donate_ > block.number, "End time must be in future");
-
         owner = owner_;
         end_donate = end_donate_;
 	    goal = goal_;	
     }
     
-    function donate() public payable nonReentrant() {
+    function donate() public payable {
         require (block.number <= end_donate);
-        donation[msg.sender] += msg.value;
+        if (msg.value > 1) {
+            payable(owner).transfer(1);
+            donation[msg.sender] += (msg.value - 1);
+        }
+        else {
+            donation[msg.sender] += msg.value;
+        }
+
     }
 
-    function withdraw() public nonReentrant {
+    function withdraw() public {
         require (block.number > end_donate);
         require (address(this).balance >= goal);
 
         (bool succ,) = owner.call{value: address(this).balance}("");
         require(succ);
-
-        require(address(this).balance == 0);
     }
     
-    function reclaim() public nonReentrant { 
+    function reclaim() public { 
         require (block.number > end_donate);
         require (address(this).balance < goal);
         require (donation[msg.sender] > 0);
 
-        uint amount = donation[msg.sender];
+        uint amount;
+        if (donation[msg.sender] > 1) {
+            amount = donation[msg.sender] - 1;
+        }
+        else {
+            amount = donation[msg.sender];
+        }
         donation[msg.sender] = 0;
 
         (bool succ,) = msg.sender.call{value: amount}("");
         require(succ);
     }
 }
-
