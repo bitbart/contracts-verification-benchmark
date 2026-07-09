@@ -1,5 +1,0 @@
-[profile.default]
-src = "test"
-test = "test"
-out = "out"
-libs = ["lib"]
