@@ -7,15 +7,14 @@ rule donation_dec_onlyif_reclaim {
     env e;
     calldataarg args;
     method f;
+    address _user;
     
-    mathint donation_prev = currentContract.donation[e.msg.sender];
+    mathint donation_prev = currentContract.donation[_user];
 
     f(e, args);
 
-    mathint donation_next = currentContract.donation[e.msg.sender];
+    mathint donation_next = currentContract.donation[_user];
     
-    assert e.block.number <= currentContract.end_donate =>
-    donation_next < donation_prev =>
-    f.selector == sig:reclaim().selector;
+    assert donation_next < donation_prev => f.selector == sig:reclaim().selector && _user == e.msg.sender;
 }
 

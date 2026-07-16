@@ -9,7 +9,7 @@ GROUND_TRUTH = ../ground-truth.csv
 SPEC_FILES = $(wildcard $(PROPERTIES_DIR)/*.spec)
 GETTER_FILE = getters.sol
 METHODS_FILE = methods.spec
-VERSIONS_FILES = $(wildcard $(VERSIONS_DIR)/*.sol)
+VERSIONS_FILES = $(wildcard $(VERSIONS_DIR)/*v*.sol)
 
 # Output Files
 BUILD_DIR = build
@@ -22,9 +22,9 @@ OUT = $(OUTPUT_DIR)/out.csv
 CM = $(OUTPUT_DIR)/cm.csv
 TABLE = $(OUTPUT_DIR)/table.md
 
-PYTHON = python
+PYTHON = python3
 
-.PHONY: run one setup contracts specs getters directories clean-specs clean
+.PHONY: run one setup contracts specs getters directories clean-specs clean table-only
 
 #---------------------------- RUN --------------------------------#
 run: $(TABLE)
@@ -45,6 +45,13 @@ $(OUT): setup $(VERSIONS_FILES) $(SPEC_FILES) $(GETTER_FILE)
 one: clean-specs contracts specs directories 
 	@$(PYTHON) ../../../scripts/run_certora.py --contracts $(contract) --specs $(specs)
 
+table-only:
+	@echo "Generating Certora confusion matrix ($(CM))..."
+	@$(PYTHON) ../../../scripts/cm_gen.py --ground-truth $(GROUND_TRUTH) --results $(OUT) > $(CM)
+	@echo "Generating Certora results table ($(TABLE))..."
+	@echo "### Certora" > $(TABLE)
+	@$(PYTHON) ../../../scripts/mdtable_gen.py --input $(CM) >> $(TABLE)
+
 #---------------------------- SETUP ------------------------------#
 setup: contracts specs getters directories
 
@@ -55,7 +62,7 @@ specs: $(SPEC_DIR)
 	@for file in $(SPEC_FILES); do \
 		if [ "$$file" != $(PROPERTIES_DIR)/"methods.spec" ]; then \
 			echo "Processing $$file"; \
-			cat $(METHODS_FILE) $$file >> $(SPEC_DIR)/$$file; \
+			cat $(METHODS_FILE) $$file > $(SPEC_DIR)/$$file; \
 		fi \
 	done;
 
