@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// actually multiple times calling commit -> use hooks
+// After a succesful `commit()` call, any immediate following calls to `commit()` must revert
 
 rule commit_twice_reverts {
     env e;

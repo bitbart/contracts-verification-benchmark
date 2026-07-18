@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.18;
 
-/// @custom:version removed check that `commit` should be called with a `msg.value` of at least 1 ETH.
+/// @custom:version call to `reveal` transfers balance to `verifier` instead of `owner`
 contract Htlc {
     address payable public owner;  
     address payable public verifier;
     bytes32 public hash;
     bool public isCommitted;
-    uint start;
-    uint fee;
-    uint waitTime;
+    uint public start;
+    uint public fee;
+    uint public waitTime;
     
     constructor(address payable v) {
         owner = payable(msg.sender);
@@ -22,8 +22,9 @@ contract Htlc {
 
     function commit(bytes32 h) public payable {
         require(msg.sender == owner);
+        require(msg.value >= fee);
         require(!isCommitted);
-    
+
         hash = h;
         isCommitted = true;
     }
@@ -34,8 +35,8 @@ contract Htlc {
         require(isCommitted);       
 
         uint _to_send = address(this).balance;       
-        (bool success,) = owner.call{value: _to_send}("");
-        require(success, "Transfer failed.");
+        (bool success,) = verifier.call{value: _to_send}("");
+        require(success, "Transfer failed.");    
     }
 
     function timeout() public {
@@ -44,9 +45,9 @@ contract Htlc {
 
         uint _to_send = address(this).balance;
         (bool success,) = verifier.call{value: _to_send}("");
-        require(success, "Transfer failed.");    
+        require(success, "Transfer failed.");     
     }
-    
+
     function hashing(string memory s) public pure returns (bytes32){
         return keccak256(abi.encodePacked(s));
     }

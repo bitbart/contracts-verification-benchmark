@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.18;
 
-/// @custom:version conformant to specification.
+/// @custom:version `reveal` and `timeout` reset `isCommitted` to `false`
 contract Htlc {
     address payable public owner;  
     address payable public verifier;

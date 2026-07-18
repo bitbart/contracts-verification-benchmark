@@ -51,4 +51,8 @@ contract Htlc {
     function hashing(string memory s) public pure returns (bytes32){
         return keccak256(abi.encodePacked(s));
     }
+
+    function is_EOA(address payable addr) public view returns (bool) {
+        return addr.code.length == 0;
+    }
 }

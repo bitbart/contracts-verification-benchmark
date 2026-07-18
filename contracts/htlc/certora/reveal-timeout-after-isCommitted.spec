@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-rule reveal_timeout_after_commit {
+// `reveal()` and `timeout()` can only be successfully called if contract is in a committed state
+
+rule reveal_timeout_after_isCommitted {
     env e;
     calldataarg args;
     method f;

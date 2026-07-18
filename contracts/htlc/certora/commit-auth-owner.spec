@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+// If `commit()` is successfully called, then `msg.sender` must be the contract's owner
+
 rule commit_auth_owner {
     env e;
     bytes32 b;

@@ -23,7 +23,6 @@ contract Htlc {
     function commit(bytes32 h) public payable {
         require(msg.sender == owner);
         require(msg.value >= fee);
-        // require(!isCommitted);
 
         hash = h;
         isCommitted = true;
@@ -32,7 +31,6 @@ contract Htlc {
     function reveal(string memory s) public {
         require(msg.sender == owner);
         require(hashing(s) == hash);
-        // require(isCommitted);
 
         uint _to_send = address(this).balance;       
         (bool success,) = owner.call{value: _to_send}("");
@@ -41,7 +39,6 @@ contract Htlc {
 
     function timeout() public {
         require(block.number > start + waitTime);
-        // require(isCommitted);
 
         uint _to_send = address(this).balance;
         (bool success,) = verifier.call{value: _to_send}("");

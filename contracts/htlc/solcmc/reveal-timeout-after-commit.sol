@@ -1,3 +1,5 @@
+// `reveal` and `timeout` can only be called after `commit`.
+
 /// @custom:preghost function reveal
 bool pre = !isCommitted;
 

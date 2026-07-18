@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.18;
 
-/// @custom:version conformant to specification.
+/// @custom:version removed check that revealed string is a pre image of committed hash
 contract Htlc {
     address payable public owner;  
     address payable public verifier;
@@ -29,9 +29,8 @@ contract Htlc {
         isCommitted = true;
     }
 
-    function reveal(string memory /*s*/) public {
+    function reveal(string memory s) public {
         require(msg.sender == owner);
-        // require(hashing(s) == hash);
         require(isCommitted);       
 
         uint _to_send = address(this).balance;       

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+// If `reveal()` does not revert, then the revealed string is a preimage of the committed hash
+
 rule reveal_preimage {
     env e1;
     bytes32 h;
