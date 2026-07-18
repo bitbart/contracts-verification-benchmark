@@ -1,0 +1,7 @@
+{
+    "name": "Hash",
+    "specification": "file:specs.md",
+    "properties": {
+        "hash-can-collide": "It is possible that two different preimages have the same hash"
+    }
+}
