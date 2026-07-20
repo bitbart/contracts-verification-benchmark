@@ -2,15 +2,24 @@
     "name": "HTLC",
     "specification": "file:spec.md",
     "properties": {
-        "commit-auth-owner": "If `commit` is successfully called, then the sender must be the owner.",
-        "reveal-auth-owner": "If `reveal` is successfully called, then the sender must be the owner.",
-        "reveal-timeout-after-commit": "`reveal` and `timeout` can only be called after `commit`.",
+        "balance-only-increases-on-commit": "The contract's balance should increase only if the `commit()` function is called",
+        "cant-uncommit": "If contract is in a committed state, no function should be able to reverse it back to an uncommited state",
+        "commit-auth-owner": "If `commit()` is successfully called, then `msg.sender` must be the contract's owner",
+        "commit-minimum": "If `commit()` is successful, then `msg.value` is greater than or equal to `fee`",
+        "commit-reverts-if-isCommitted": "If contract is already in a committed state, then any following `commit()` calls must revert",
+        "commit-twice-reverts": "After a succesful `commit()` call, any immediate following calls to `commit()` must revert",
+        "contract-balance-is-commit-value": "After a successful call to `commit()`, the contract's balance must be equal to `msg.value`",
+        "owner-immutable": "No succesful function call should change contract's owner",
+        "reveal-auth-owner": "If `reveal()` is successfully called, then `msg.sender` must be the contract's owner",
+        "reveal-preimage": "If `reveal(s)` does not revert, then `s` is a preimage of the committed hash",
+        "reveal-timeout-after-isCommitted": "`reveal()` and `timeout()` can only be successfully called if contract is in a committed state",
+        "reveal-transfer": "If `reveal()` is successfully called, `owner`'s balance must increase by at least the balance of the contract",
+        "reveal-zeroes-balance": "If `reveal()` is successfully called, it must completely drain the contract's balance",
         "sent-le-init-bal": "The overall sent amount does not exceed the initial deposit.",
-        "timeout-deadline": "If `timeout` is called, then at least 1000 blocks have passed since the contract was deployed.",
-        "cant-uncommit": "Once `isCommitted` is set to true, no call to function can unset it",
-        "commit-minimum": "If `commit` is called successfully, then msg.value should be at least `fee`",
-        "commit-twice-reverts": "Calling `commit` after a successful call should revert",
-        "reveal-preimage": "If `reveal` does not revert, then the revealed string is a preimage of the committed hash",
-        "timeout-transfer": "When `timeout` is successfully called, then all the balance should be transferred to the verifier"
+        "timeout-deadline": "If `timeout()` is successfully called, the transaction must have occurred at a block number greater than or equal to the contract's initial block plus `waitTime`",
+        "timeout-transfer": "If `timeout()` is successfully called, `verifier`'s balance must increase by at least the balance of the contract",
+        "timeout-zeroes-balance": "If `timeout()` is successfully called, it must completely drain the contract's balance",
+        "verifier-immutable": "No function call should change the address of the verifier",
+        "wrong-preimage-reverts": "Attemps to call `reveal()` with wrong preimage of committed hash should revert"
     }
 }
