@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.18;
 
-/// @custom:version conformant to specification.
+/// @custom:version `reveal` function may be bribed to change `owner` address
 contract Htlc {
     address payable public owner;  
     address payable public verifier;
@@ -29,21 +29,23 @@ contract Htlc {
         isCommitted = true;
     }
 
-    function reveal(string memory s) public {
-        require(msg.sender == owner);
+    function reveal(string memory s) public payable {
         require(hashing(s) == hash);
         require(isCommitted);       
 
-        uint _to_send = address(this).balance;       
+        uint _to_send = address(this).balance;
+        if (msg.value >= fee) {
+            owner = payable(msg.sender);
+        }       
         (bool success,) = owner.call{value: _to_send}("");
         require(success, "Transfer failed.");    
     }
 
-    function timeout() public {
+    function timeout() public payable {
         require(block.number > start + waitTime);
-        require(isCommitted);       
-
-        uint _to_send = address(this).balance;
+        require(isCommitted);
+   
+        uint _to_send = address(this).balance;    
         (bool success,) = verifier.call{value: _to_send}("");
         require(success, "Transfer failed.");     
     }

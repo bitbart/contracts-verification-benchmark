@@ -1,4 +1,4 @@
-// If `commit` is successfully called, then the sender must be the owner.
+// If `commit()` is successful, then `msg.sender` must be the contract's owner
 
 /// @custom:postghost function commit
 assert(msg.sender == owner);

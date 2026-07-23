@@ -1,4 +1,4 @@
-// When `timeout` is successfully called, then all the balance should be transferred to the verifier
+// If `timeout()` is successful, `verifier`'s balance must increase by at least the balance of the contract
 /// @custom:ghost
 uint256 _pre_verifier_bal;
 

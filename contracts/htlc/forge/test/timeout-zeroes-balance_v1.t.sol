@@ -7,10 +7,11 @@ import {Htlc} from "versions/Htlc_v1.sol";
 contract Verifier {
     address payable addr;
 
-    constructor(address payable _a) {
-        addr = _a;
-    }
+    constructor() {}
 
+    setAddr(address _addr) public {
+        addr = _addr
+    } 
     receive() external payable {
         (bool success,) = payable(addr).call{value: msg.value}(""); // M immediately forwards the received amount to A
     }
@@ -22,40 +23,42 @@ contract HtlcTest is Test {
     uint256 constant FEE = 1 ether;
 
     address owner = address(0x1);
-    address verifier = address(0x2);
     
     string secret = "secret";
     
+    uint256 start;
+    uint256 waitTime;
+
     function setUp() public {
         vm.deal(owner, FEE);
     }
 
-    function test_timeout_transfer() public {
-        // Initialization
-        address payable fwd_addr = payable(address(123));
-        Verifier ver_contract = new Verifier(fwd_addr);
-
+    function test_reveal_zeroes_balance() public {
         // Owner deploys the HTLC contract
         vm.startPrank(owner);
+        address ver_contract = new Verifier();
         htlc = new Htlc(payable(ver_contract));
+        ver_contract.setAddr(htlc);
+
+        start = htlc.start();
+        waitTime = htlc.waitTime();
 
         // Owner commits a hash
-        string memory s;
-        bytes32 hash = htlc.hashing(s);
-        htlc.commit{value: fee}(hash);
-        vm.stopPrank();
+        bytes32 h = htlc.hashing(secret);
+        htlc.commit{value: FEE}(h);
 
         uint256 verifier_bal_before = address(ver_contract).balance;
-        uint256 forward_bal_before = address(fwd_addr).balance;
+        uint256 contract_bal_before = address(htlc).balance;
 
-        // After the specified waitTime, it is possible to trigger the timeout
-        vm.roll(htlc.start() + htlc.waitTime() + 1);
+        vm.roll(start + waitTime);
+
         htlc.timeout();
+        vm.stopPrank();
 
         uint256 verifier_bal_after = address(ver_contract).balance;
-        uint256 forward_bal_after = address(fwd_addr).balance;
+        uint256 contract_bal_after = address(htlc).balance;
 
-        assert(forward_bal_after > forward_bal_before);
+        assert(contract_bal_after >= contract_bal_before);
         assert(verifier_bal_before == verifier_bal_after);
     }
 }

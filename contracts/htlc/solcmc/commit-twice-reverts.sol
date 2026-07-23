@@ -1,4 +1,4 @@
-// Calling `commit` after a successful call to `commit` should revert
+// After a succesful `commit()` call, any immediate following calls to `commit()` must revert
 
 /// @custom:ghost
 bool _succesful_commit;
@@ -11,5 +11,3 @@ _already_commit = _succesful_commit;
 /// @custom:postghost function commit
 assert(!_already_commit);
 _succesful_commit = true;
-
-// COME CHIAMIAMO QUESTE VARIABILI

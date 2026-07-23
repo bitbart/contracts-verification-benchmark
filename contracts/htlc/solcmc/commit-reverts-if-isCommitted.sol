@@ -1,11 +1,7 @@
-// If `isCommitted` is true, then calling `commit` reverts
-// This rule is actually stating the opposite property: "if commit does not revert, then isCommitted was false
-
-/// @custom:ghost
-bool _isCommitted_before;
+// If contract is already in a committed state, then any following `commit()` calls must revert
 
 /// @custom:preghost function commit
-_isCommitted_before = isCommitted;
+bool _wasCommitted = isCommitted;
 
 /// @custom:postghost function commit
-assert(!_isCommitted_before);
+assert(!_wasCommitted);

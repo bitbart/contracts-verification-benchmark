@@ -1,4 +1,5 @@
-// If `reveal` does not revert, then the revealed string is a preimage of the committed hash
+// If `reveal(s)` does not revert, then `s` is a preimage of the committed hash
+
 /// @custom:ghost
 bytes32 _committed_hash;
 bool _commit_success;

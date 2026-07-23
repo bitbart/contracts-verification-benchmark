@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// If `reveal()` is successfully called, then `msg.sender` must be the contract's owner
+// If `reveal()` is successful, then `msg.sender` must be the contract's owner
 
 rule reveal_auth_owner {
     env e;

@@ -1,4 +1,4 @@
-// `reveal` and `timeout` can only be called after `commit`.
+// `reveal()` and `timeout()` can only be successfully called if contract is in a committed state
 
 /// @custom:preghost function reveal
 bool pre = !isCommitted;
