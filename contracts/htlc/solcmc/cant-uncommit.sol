@@ -4,7 +4,7 @@
 bool _wasCommitted;
 
 /// @custom:invariant
-function invariant() public {
+function invariant() internal {
     if (_wasCommitted) {
         assert(isCommitted);
     }
