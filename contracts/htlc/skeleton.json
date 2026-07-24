@@ -2,10 +2,23 @@
     "name": "HTLC",
     "specification": "file:spec.md",
     "properties": {
-        "commit-auth-owner": "If `commit` is successfully called, then the sender must be the owner.",
-        "reveal-auth-owner": "If `reveal` is successfully called, then the sender must be the owner.",
-        "reveal-timeout-after-commit": "`reveal` and `timeout` can only be called after `commit`.",
-        "sent-le-init-bal": "The overall sent amount does not exceed the initial deposit.",
-        "timeout-deadline": "If `timeout` is called, then at least 1000 blocks have passed since the contract was deployed."
+        "balance-only-increases-on-commit": "If the contract balance is increased after a transaction, then the transaction must be a `commit`",
+        "cant-uncommit": "If contract is in a committed state, no transaction should be able to reverse it back to an uncommited state",
+        "commit-auth-owner": "If a `commit` transaction does not revert, then `msg.sender` must be the contract's owner",
+        "commit-minimum": "If a `commit` transaction does not revert, then the contract balance should increase by at least `fee` ETH",
+        "commit-reverts-if-isCommitted": "If contract is already in a committed state, then any following `commit` transaction must revert",
+        "commit-twice-reverts": "After a `commit` transaction that does not revert, any immediately following `commit` transaction must revert",
+        "contract-balance-is-commit-value": "After a `commit` transaction that does not revert, the contract's balance must be equal to the transaction's value",
+        "owner-immutable": "No succesful transaction can change contract's owner",
+        "reveal-auth-owner": "If a `reveal` transaction does not revert, then the transaction's sender must be the contract's owner",
+        "reveal-timeout-after-isCommitted": "A `reveal` or `timeout` transaction won't revert only if contract is in a committed state",
+        "reveal-transfer": "If a `reveal` transaction does not revert, `owner`'s balance must increase by at least the balance of the contract",
+        "reveal-zeroes-balance": "If a `reveal` transaction does not revert, it must completely drain the contract's balance",
+        "sent-le-init-bal": "The overall amount transferred from the contract does not exceed the initial deposit.",
+        "timeout-deadline": "If a `timeout` transaction does not revert, the transaction must have occurred at a block number greater than or equal to the contract's initial block plus `waitTime`",
+        "timeout-transfer": "If a `timeout` transaction does not revert, `verifier`'s balance must increase by at least the balance of the contract",
+        "timeout-zeroes-balance": "If a `timeout` transaction does not revert, it must completely drain the contract's balance",
+        "verifier-immutable": "No succesful transaction can change the address of the verifier",
+        "wrong-preimage-reverts": "If a `reveal(s)` transaction does not revert, then `s` is a preimage of the committed hash"
     }
 }

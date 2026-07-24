@@ -2,70 +2,53 @@
 pragma solidity ^0.8.18;
 
 /// @custom:version conformant to specification.
-contract HTLC {
-   address payable public owner;  
-   address payable public verifier;
-   bytes32 public hash;
-   bool public isCommitted;
-   uint start;
+contract Htlc {
+    address payable public owner;  
+    address payable public verifier;
+    bytes32 public hash;
+    bool public isCommitted;
+    uint public start;
+    uint public fee;
+    uint public waitTime;
+    
+    constructor(address payable v) {
+        owner = payable(msg.sender);
+        verifier = v;
+        start = block.number;
+        isCommitted = false;
+        fee = 1 ether;
+        waitTime = 1000;
+    }
 
-   // ghost variables
-   uint _sent;
-   uint _deposited;
-   bool _commit_called = false;   
-   bool _reveal_called = false;
-   bool _timeout_called = false;
-   uint _timeout_diff;   
-   address _commit_sender;
-   address _reveal_sender;
-  
-   constructor(address payable v) {
-       owner = payable(msg.sender);
-       verifier = v;
-       start = block.number;
-       isCommitted = false;
-   }
+    function commit(bytes32 h) public payable {
+        require(msg.sender == owner);
+        require(msg.value >= fee);
+        require(!isCommitted);
 
-   function commit(bytes32 h) public payable {
-       require(msg.sender == owner);
-       require(msg.value >= 1 ether);
-       require(!isCommitted);
+        hash = h;
+        isCommitted = true;
+    }
 
-       hash = h;
-       isCommitted = true;
-        
-       // ghost state
-       _deposited = address(this).balance;       
-       _commit_called = true;
-       _commit_sender = msg.sender;
-   }
+    function reveal(string memory s) public {
+        require(msg.sender == owner);
+        require(hashing(s) == hash);
+        require(isCommitted);       
 
-   function reveal(string memory s) public {
-       require(msg.sender == owner);
-       require(keccak256(abi.encodePacked(s)) == hash);
-       require(isCommitted);       
+        uint _to_send = address(this).balance;       
+        (bool success,) = owner.call{value: _to_send}("");
+        require(success, "Transfer failed.");    
+    }
 
-       uint _to_send = address(this).balance;       
-       (bool success,) = owner.call{value: _to_send}("");
-       require(success, "Transfer failed.");
+    function timeout() public {
+        require(block.number > start + waitTime);
+        require(isCommitted);       
 
-       // ghost state
-       _sent += _to_send;
-       _reveal_called = true;     
-       _reveal_sender = msg.sender;       
-   }
+        uint _to_send = address(this).balance;
+        (bool success,) = verifier.call{value: _to_send}("");
+        require(success, "Transfer failed.");     
+    }
 
-   function timeout() public {
-       require(block.number > start + 1000);
-       require(isCommitted);       
-
-       uint _to_send = address(this).balance;
-       (bool success,) = verifier.call{value: _to_send}("");
-       require(success, "Transfer failed.");
-
-       // ghost state
-       _sent += _to_send;       
-       _timeout_called = true;      
-       _timeout_diff = block.number - start;       
-   }
+    function hashing(string memory s) public pure returns (bytes32){
+        return keccak256(abi.encodePacked(s));
+    }
 }

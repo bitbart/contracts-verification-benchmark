@@ -1,0 +1,2 @@
+property,version,truth,footnote-md
+hash-can-collide,v1,1,"There may be two different strings that have the same hash"
