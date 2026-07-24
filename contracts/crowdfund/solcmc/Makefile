@@ -20,9 +20,9 @@ OUT = $(OUTPUT_DIR)/out.csv
 CM = $(OUTPUT_DIR)/cm.csv
 TABLE = $(OUTPUT_DIR)/table.md
 
-PYTHON = python
+PYTHON = python3
 
-.PHONY: run one setup contracts directories clean
+.PHONY: run one setup contracts directories clean table-only
 
 #---------------------------- RUN --------------------------------#
 run: $(TABLE)
@@ -43,6 +43,14 @@ $(OUT): setup $(PROPERTIES_FILES) $(VERSIONS_FILES)
 
 one: setup
 	@$(PYTHON) ../../../scripts/run_solcmc.py --contracts $(contract) --timeout $(to)
+
+table-only:
+	@echo "Generating Solcmc confusion matrix ($(CM))..."
+	@$(PYTHON) ../../../scripts/cm_gen.py --ground-truth $(GROUND_TRUTH) --results $(OUT) > $(CM)
+	@echo "Generating SolCMC results table ($(TABLE))...."
+	@if [ $(solver) = "z3" ]; then echo "#### Z3" > $(TABLE); \
+	elif [ $(solver) = "eld" ]; then echo "#### Eldarica" > $(TABLE); fi
+	@$(PYTHON) ../../../scripts/mdtable_gen.py --input $(CM) >> $(TABLE)
 
 #---------------------------- SETUP ------------------------------#
 setup: contracts directories

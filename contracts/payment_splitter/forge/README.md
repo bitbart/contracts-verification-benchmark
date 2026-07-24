@@ -16,17 +16,16 @@ From the `payment_splitter` folder, initialize a forge project:
 forge init forge --force --empty
 ```
 
-Copy the contract sources in the `forge/src` folder: 
+Copy the contract sources in the `src` folder: 
 ```bash
-cp -r versions/* forge/src/
+cp -r ../versions/* src/
 ```
 
 ## Usage
 
 To run the PoCs:
 ```bash
-cd forge/test
 forge test
 ```
 
-Incorrect PoCs (not showing a property violation) will result in assertion violations, and displayed in red.  
+Incorrect PoCs (not showing a property violation) will result in assertion violations, and displayed in red.

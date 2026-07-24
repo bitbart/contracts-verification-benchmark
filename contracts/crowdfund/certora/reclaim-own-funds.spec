@@ -1,13 +1,14 @@
 
 /// reclaim-own-funds:
 /// after a non-reverting `reclaim` by `msg.sender` A,
-/// the ETH balance of A is increased by an amount equal to `donation[A]` before `reclaim` was called.
+/// the ETH balance of A is increased by an amount equal to `donation[A]`
+/// before `reclaim` was called.
 
 rule reclaim_own_funds {
     env e;
     
-    require(nativeBalances[currentContract] < currentContract.goal);
     require(e.block.number > currentContract.end_donate);
+    require(nativeBalances[currentContract] < currentContract.goal);
     require(currentContract.donation[e.msg.sender] > 0);
     require(e.msg.value == 0);
 
@@ -21,8 +22,5 @@ rule reclaim_own_funds {
 
     mathint bal_A_next = nativeBalances[e.msg.sender];
  
-
-    assert !lastReverted =>
-    bal_A_next == bal_A_prev + donation_A;
+    assert !lastReverted => bal_A_next == bal_A_prev + donation_A;
 }
-

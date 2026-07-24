@@ -5,10 +5,14 @@
 
 rule no_receive_after_deadline {
     env e;
+    calldataarg args;
+    method f;
 
     mathint bal_contract_prev = nativeBalances[currentContract];
 
     require(e.block.number > currentContract.end_donate);
+
+    f(e, args);
 
     mathint bal_contract_next = nativeBalances[currentContract];
 

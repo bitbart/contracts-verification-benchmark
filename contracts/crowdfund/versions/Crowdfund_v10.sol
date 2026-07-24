@@ -5,6 +5,7 @@ pragma solidity >= 0.8.2;
 /// @custom:version `donate`, `withdraw` and `reclaim` are non-reentrant. `owner_.code.length == 0`, `goal_ > 0`, `end_donate_ > block.number` check in `constructor`, and `require(address(this).balance == 0)` check in `withdraw`. 
 
 import "../../../lib/ReentrancyGuard.sol";
+// import "./ReentrancyGuard.sol";
 
 contract Crowdfund is ReentrancyGuard {
     uint immutable end_donate;    // last block in which users can donate

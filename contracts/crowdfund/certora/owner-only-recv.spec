@@ -1,5 +1,6 @@
-// owner-only-recv:
-// only the owner can receive ETH from the contract.
+
+/// owner-only-recv:
+/// only the owner can receive ETH from the contract.
 
 ghost bool violated {
     init_state axiom violated == false;

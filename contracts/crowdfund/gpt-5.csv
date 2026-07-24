@@ -21,3 +21,4 @@ owner-not-change,1,TRUE
 msgvalue-not-negative,1,TRUE
 reclaim-even-if-msgvalue,1,FALSE
 wd-empties-balance,1,FALSE
+wd-full-balance,1,FALSE

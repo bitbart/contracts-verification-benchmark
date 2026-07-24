@@ -1,3 +1,4 @@
+
 /// reclaim-not-revert:
 /// a transaction `reclaim` is not reverted if
 /// the goal amount is not reached and
@@ -10,9 +11,10 @@ rule reclaim_not_revert {
     require(nativeBalances[currentContract] < currentContract.goal);
     require(e.block.number > currentContract.end_donate);
     require(currentContract.donation[e.msg.sender] > 0);
+    
     require(e.msg.value == 0);
     
-    reclaim@withrevert(e);    
+    reclaim@withrevert(e);
 
     assert !lastReverted;
 }
