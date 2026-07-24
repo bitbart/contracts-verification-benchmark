@@ -7,9 +7,9 @@ contract Htlc {
     address payable public verifier;
     bytes32 public hash;
     bool public isCommitted;
-    uint start;
-    uint fee;
-    uint waitTime;
+    uint public start;
+    uint public fee;
+    uint public waitTime;
 
     constructor(address payable v) {
         owner = payable(msg.sender);
