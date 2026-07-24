@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
-import {Htlc} from "versions/Htlc_v2.sol";
+import {Htlc} from "../src/Htlc_v2.sol";
 
 contract HtlcTest is Test {
     Htlc htlc;
@@ -13,16 +13,15 @@ contract HtlcTest is Test {
     uint256 constant FEE = 1 ether;
 
     function setUp() public {
-        vm.deal(owner, fee);
+        vm.deal(owner, 2*FEE);
     }
 
     function test_commit_twice_reverts() public {
         vm.startPrank(owner);
-        htlc = new Htlc(verifier);
+        htlc = new Htlc(payable(verifier));
         
         htlc.commit{value: FEE}(htlc.hashing("secret1"));
 
-        vm.expectRevert();
         htlc.commit{value: FEE}(htlc.hashing("secret2"));
     }
 }

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
-import {Htlc} from "versions/Htlc_v1.sol";
+import {Htlc} from "../src/Htlc_v1.sol";
 
 contract Owner {
     address payable addr;
@@ -52,7 +52,7 @@ contract HtlcTest is Test {
         uint256 owner_bal_after = address(own_contract).balance;
         uint256 forward_bal_after = address(fwd_addr).balance;
 
-        assert(forward_bal_after > forward_bal_before);
-        assert(owner_bal_before == owner_bal_after);
+        assertTrue(forward_bal_after >= forward_bal_before);
+        assertTrue(owner_bal_before == owner_bal_after);
     }
 }

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
-import {Htlc} from "versions/Htlc_v1.sol";
+import {Htlc} from "../src/Htlc_v1.sol";
 
 // Helper contract used to force-send ETH into the Htlc contract
 // via selfdestruct, before commit() is ever called.
@@ -32,7 +32,7 @@ contract HtlcTest is Test {
 
     function test_commit_balance_is_commit_value() public {
         vm.prank(owner);
-        htlc = new Htlc(verifier);
+        htlc = new Htlc(payable(verifier));
         assertEq(address(htlc).balance, 0);
         assertFalse(htlc.isCommitted());
 
@@ -40,7 +40,7 @@ contract HtlcTest is Test {
         vm.startPrank(attacker);
         Attacker att = new Attacker{value: FORCED_AMOUNT}();
 
-        att.destroy(payable(address(h)));
+        att.destroy(payable(address(htlc)));
 
         assertEq(address(htlc).balance, FORCED_AMOUNT);
         assertFalse(htlc.isCommitted());
@@ -48,7 +48,7 @@ contract HtlcTest is Test {
         vm.stopPrank();
 
         // Owner now commits, sending the required fee
-        bytes32 h = htlc.hashing(s);
+        bytes32 h = htlc.hashing(secret);
 
         vm.deal(owner, FEE);
         vm.prank(owner);

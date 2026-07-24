@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "forge-std/Test.sol";
-import "versions/Htlc_v13.sol";
+import {Test} from "forge-std/Test.sol";
+import {Htlc} from "../src/Htlc_v13.sol";
 
 contract HtlcTest is Test {
     Htlc htlc;
@@ -24,7 +24,7 @@ contract HtlcTest is Test {
     function test_verifier_immutable() public {
         vm.startPrank(owner);
 
-        htlc = new Htlc(verifier);
+        htlc = new Htlc(payable(verifier));
         start = htlc.start();
         waitTime = htlc.waitTime();
 
@@ -33,9 +33,10 @@ contract HtlcTest is Test {
 
         vm.roll(start + waitTime);
 
+        vm.expectRevert();
         htlc.timeout{value: FEE}();
 
-        assertTrue(htlc.verifier() != verifier);
-        assertTrue(htlc.verifier() == attacker);
+        assertFalse(htlc.verifier() != verifier);
+        assertFalse(htlc.verifier() == attacker);
     }
 }

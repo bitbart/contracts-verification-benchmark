@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
-import {Htlc} from "../../versions/Htlc_v7.sol";
+import {Htlc} from "../src/Htlc_v7.sol";
 
 contract HtlcTest is Test {
     Htlc htlc;
@@ -25,8 +25,8 @@ contract HtlcTest is Test {
         bytes32 hash = htlc.hashing(secret);
         htlc.commit{value: FEE}(hash);
 
-        assertTrue(htlc.isCommitted);
+        assertTrue(htlc.isCommitted());
         htlc.reveal(secret);
-        assertFalse(htlc.isCommitted);
+        assertFalse(htlc.isCommitted());
     }
 }

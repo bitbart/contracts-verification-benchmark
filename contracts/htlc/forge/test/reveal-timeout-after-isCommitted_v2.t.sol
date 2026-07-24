@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
-import {Htlc} from "versions/Htlc_v2.sol";
+import {Htlc} from "../src/Htlc_v2.sol";
 
 contract HtlcTest is Test {
     Htlc htlc;
@@ -20,7 +20,7 @@ contract HtlcTest is Test {
         vm.startPrank(owner);
         htlc = new Htlc(payable(verifier));
 
-        vm.roll(h.start() + h.waitTime() + 1);
+        vm.roll(htlc.start() + htlc.waitTime() + 1);
         htlc.timeout();
     }
 }

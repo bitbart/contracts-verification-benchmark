@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
-import {Htlc} from "versions/Htlc_v1.sol";
+import {Htlc} from "../src/Htlc_v1.sol";
 
 // Helper contract used to force-send ETH into the Htlc contract via selfdestruct
 contract Attacker {
@@ -30,7 +30,7 @@ contract HtlcTest is Test {
 
     function test_balance_only_increases_on_commit() public {
         vm.prank(owner);
-        htlc = new Htlc(verifier);
+        htlc = new Htlc(payable(verifier));
 
         assertEq(address(htlc).balance, 0);
         assertFalse(htlc.isCommitted());

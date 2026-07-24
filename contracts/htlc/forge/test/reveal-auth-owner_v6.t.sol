@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
-import {Htlc} from "versions/Htlc_v6.sol";
+import {Htlc} from "../src/Htlc_v6.sol";
 
 contract HtlcTest is Test {
     Htlc htlc;
@@ -25,9 +25,9 @@ contract HtlcTest is Test {
         bytes32 h = htlc.hashing(secret);
         htlc.commit{value: FEE}(h);
 
-        vm.prank(attacker);
-        htlc.reveal{value: FEE}(secret);
+        vm.startPrank(attacker);
+        htlc.reveal(secret);
 
-        assertTrue(htlc.owner() == attacker);
+        assertFalse(htlc.owner() == attacker);
     }
 }

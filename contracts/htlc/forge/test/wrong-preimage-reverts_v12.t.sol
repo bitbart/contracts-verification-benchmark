@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "forge-std/Test.sol";
-import "versions/Htlc_v12.sol";
+import {Test} from "forge-std/Test.sol";
+import {Htlc} from "../src/Htlc_v12.sol";
 
 contract HtlcTest is Test {
     Htlc htlc;
@@ -24,11 +24,12 @@ contract HtlcTest is Test {
     function test_wrong_preimage_reverts_v12() public {
         vm.startPrank(owner);
 
-        htlc = new Htlc(verifier);
+        htlc = new Htlc(payable(verifier));
 
         bytes32 h = htlc.hashing(secret);
         htlc.commit{value: FEE}(h);
 
+        vm.expectRevert();
         htlc.reveal("wrong");
     }
 }

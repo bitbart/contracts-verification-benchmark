@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
-import {Htlc} from "versions/Htlc_v1.sol";
+import {Htlc} from "../src/Htlc_v1.sol";
 
 contract Verifier {
     address payable addr;
@@ -41,8 +41,8 @@ contract HtlcTest is Test {
 
         // Owner commits a hash
         string memory s;
-        bytes32 hash = htlc.hashing(s);
-        htlc.commit{value: fee}(hash);
+        bytes32 h = htlc.hashing(s);
+        htlc.commit{value: FEE}(h);
         vm.stopPrank();
 
         uint256 verifier_bal_before = address(ver_contract).balance;

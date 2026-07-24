@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
-import {Htlc} from "versions/Htlc_v1.sol";
+import {Htlc} from "../src/Htlc_v1.sol";
 
 contract Attacker {
     constructor() payable {}
@@ -30,8 +30,8 @@ contract HtlcTest is Test {
 
     function test_timeout_transfer() public {
         vm.startPrank(owner);
-        htlc = new Htlc(verifier);
-        assertEq(address(h).balance, 0);
+        htlc = new Htlc(payable(verifier));
+        assertEq(address(htlc).balance, 0);
 
         // Owner commits a hash
         bytes32 h = htlc.hashing(secret);
@@ -43,10 +43,9 @@ contract HtlcTest is Test {
         // An unrelated attacker forces additional ETH into the contract after commit()
         uint256 forcedAmount = 2*FEE;
         vm.deal(attacker, forcedAmount);
-        vm.prank(attacker);
+        vm.startPrank(attacker);
         Attacker att = new Attacker{value: forcedAmount}();
 
-        vm.prank(attacker);
         att.destroy(payable(address(htlc)));
 
         assertEq(address(htlc).balance, FEE + forcedAmount);
@@ -54,7 +53,7 @@ contract HtlcTest is Test {
         // Owner reveals the preimage; the whole contract balance is sent to owner
         uint256 ownerBalBefore = owner.balance;
 
-        vm.prank(owner);
+        vm.startPrank(owner);
         htlc.reveal(secret);
 
         uint256 ownerBalAfter = owner.balance;
