@@ -19,19 +19,22 @@ The contract implements the following methods:
 - **donation-dec-onlyif-reclaim**: if `donation[A]` decreases after a transaction (of the Crowdfund contract), then that transaction must be a `reclaim` where A is the sender.
 - **donation-inc-onlyif-donate**: if `donation[A]` is increased after a transaction (of the Crowdfund contract), then that transaction must be a `donate` where A is the sender.
 - **exists-unique-donation-change**: after a non-reverting `donate` transaction to the Crowdfund contract, the donation of exactly one user has changed.
-- **goal-not-change**: The value of `goal` does not change after its value is initialized in the constructor.
-- **msgvalue-not-negative**: The `msg.value` for a call to `donate` should not be negative.
+- **goal-not-change**: the value of `goal` does not change after its value is initialized in the constructor.
+- **msg-value-not-negative**: the `msg.value` for a call to `donate` should not be negative.
+- **no-deadlock**: at least one of the main functions (donate, withdraw, reclaim) must not revert if the contract has a balance and the caller has made a donation.
 - **no-donate-after-deadline**: calls to `donate` will revert if the donation phase has ended.
 - **no-receive-after-deadline**: the contract balance does not increase after the end of the donation phase.
 - **no-wd-if-no-goal**: calls to `withdraw` will revert if the contract balance is less than the `goal`.
-- **owner-not-change**: The address `owner` does not change after its value is initialized in the constructor.
+- **owner-not-change**: the address `owner` does not change after its value is initialized in the constructor.
 - **owner-only-recv**: only the owner can receive ETH from the contract.
-- **reclaim-even-if-msgvalue**: For a call to `reclaim` by `msg.sender` A, the call executes as expected even if `msg.value` is non-zero.
+- **reclaim-even-if-msgvalue**: for a call to `reclaim` by `msg.sender` A, the call executes as expected even if `msg.value` is non-zero.
 - **reclaim-not-revert**: a transaction `reclaim` is not reverted if the goal amount is not reached and the deposit phase has ended, and the sender has donated funds that they have not reclaimed yet.
 - **reclaim-own-funds**: after a non-reverting `reclaim` by `msg.sender` A, the ETH balance of A is increased by an amount equal to `donation[A]` before `reclaim` was called.
 - **wd-empties-balance**: after a non-reverting `withdraw`, the ETH balance of the Crowdfund contract is equal to zero.
+- **wd-full-balance**: after a non-reverting `withdraw`, the whole balance of the contract is sent to `owner`.
 - **wd-not-revert**: a transaction `withdraw` is not reverted if the contract balance is greater than or equal to the goal and the donation phase has ended.
 - **wd-not-revert-EOA**: a transaction `withdraw` is not reverted if the contract balance is greater than or equal to the goal, the donation phase has ended, and the `receiver` is an EOA.
+- **wd-onlyif-goal-reached**: after a non-reverting `withdraw`, the balance of the contract before the transaction must have been greater or equal to the `goal`.
 - **wd-transfer-to-owner**: after a non-reverting `withdraw`, the ETH balance of owner is increased by an amount equal to the balance (of Crowdfund) before `withdraw` was called.
 
 ## Versions
@@ -45,6 +48,7 @@ The contract implements the following methods:
 - **v8**: no `require (block.number > end_donate)` check, i.e any user can reclaim before `end_donate`.
 - **v9**: no `donation[msg.sender] += msg.value` check & `donate` returns (msg.value - 1) while claiming "donation reverted".
 - **v10**: `donate`, `withdraw` and `reclaim` are non-reentrant. `owner_.code.length == 0`, `goal_ > 0`, `end_donate_ > block.number` check in `constructor`, and `require(address(this).balance == 0)` check in `withdraw`. 
+- **v11**: if `goal` is reached and the donation phase has not ended and the balance of the contract minus donation[A] is less than the goal, then A can clawback his funds.
 
 ## Verification data
 
@@ -52,5 +56,3 @@ The contract implements the following methods:
 - [Solcmc/z3](solcmc-z3.csv)
 - [Solcmc/Eldarica](solcmc-eld.csv)
 - [Certora](certora.csv)
-
-## Experiments

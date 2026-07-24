@@ -1,20 +1,18 @@
 
 /// wd-empties-balance:
-// after a non-reverting `withdraw`,
-// the ETH balance of the Crowdfund contract is equal to zero.
+/// after a non-reverting `withdraw`,
+/// the ETH balance of the Crowdfund contract is equal to zero.
 
 
 rule wd_empties_balance {
     env e;
+    calldataarg args;
     
-    require(nativeBalances[currentContract] >= currentContract.goal);
     require(e.block.number > currentContract.end_donate);
+    require(nativeBalances[currentContract] >= currentContract.goal);
     require(e.msg.value == 0);
 
-    withdraw@withrevert(e);
+    withdraw@withrevert(e, args);
 
-    mathint contract_new_balance = nativeBalances[currentContract];
-
-    assert !lastReverted =>
-    contract_new_balance == 0;
+    assert !lastReverted => nativeBalances[currentContract] == 0;
 }
