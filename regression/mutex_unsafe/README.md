@@ -49,6 +49,13 @@ function f(address _a) public {
 ### Certora
 |        | check-mutex |
 |--------|-------------|
-| **v1** | FP!         |
+| **v1** | ERR         |
+ 
+
+
+### Halmos
+|        | check-mutex |
+|--------|-------------|
+| **v1** | TN!         |
  
 
