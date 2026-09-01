@@ -1,0 +1,9 @@
+[profile.default]
+src = '../GasLeft_v*'
+test = '.'
+out = 'out'
+libs = ['../../../lib']
+
+remappings = [
+    'target/=../',
+]

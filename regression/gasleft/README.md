@@ -40,3 +40,10 @@ function f() public {
 | **v1** | FN                            | TN                            |
  
 
+
+### Halmos
+|        | less-equal-gasleft-assignment | more-gasleft-assignment       |
+|--------|-------------------------------|-------------------------------|
+| **v1** | FN!                           | TN!                           |
+ 
+
