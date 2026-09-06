@@ -68,8 +68,8 @@ redeem-fairness,v6,1,
 redeem-liveness,v1,1,
 redeem-liveness,v2,1,
 redeem-liveness,v3,1,
-redeem-liveness,v4,0,"This property is false, since the require(x < supply) check prevents a user from withdrawing exactly 100% of the total supply."
-redeem-liveness,v5,0,"This property is false, since the require(x < supply) check prevents a user from withdrawing exactly 100% of the total supply."
+redeem-liveness,v4,1,
+redeem-liveness,v5,1,
 redeem-liveness,v6,0,"This property is false, since the require(x < supply) check prevents a user from withdrawing exactly 100% of the total supply."
 redeem-precision,v1,1,
 redeem-precision,v2,1,
@@ -82,7 +82,7 @@ reserves-not-drained,v2,1,
 reserves-not-drained,v3,1,
 reserves-not-drained,v4,1,
 reserves-not-drained,v5,1,
-reserves-not-drained,v6,0,"This property is false, since any user can redeem the entire supply, fully draining the reserves."
+reserves-not-drained,v6,1,
 swap-fee,v1,1,
 swap-fee,v2,1,
 swap-fee,v3,1,

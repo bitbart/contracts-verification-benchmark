@@ -1,123 +1,128 @@
 # Riepilogo Benchmark Verifica Formale (AMM)
 
-Questo documento fornisce una mappatura completa dello stato dell'arte del benchmark di verifica formale applicato alle quattro versioni del contratto AMM. Suddivide e classifica le versioni del contratto, le regole scritte per testarle, la copertura dei test pratici (Forge) e confronta i risultati dei due prover formali (Certora e SolCMC) rispetto alla Ground Truth.
+Questo documento fornisce una mappatura completa dello stato dell'arte del benchmark di verifica formale applicato alla nuova architettura a "cascata" (V1-V6) del contratto AMM. Suddivide e classifica le versioni del contratto, le regole scritte per testarle, la copertura dei test pratici (Forge) e confronta i risultati dei due prover formali (Certora e SolCMC) rispetto alla Ground Truth.
 
 ---
 
-## 1. Evoluzione delle Versioni del Contratto
+## 1. Evoluzione delle Versioni del Contratto (Architettura a Cascata)
 
-Questa tabella illustra l'evoluzione incrementale della sicurezza del contratto AMM, da un'implementazione "naif" a una pronta per la produzione.
+A differenza dei benchmark tradizionali, i difetti qui sono cumulativi. Ogni versione eredita le vulnerabilità della successiva (procedendo al contrario), partendo da una V6 completamente esposta fino ad arrivare alla V1 blindata.
 
-| Versione | Profilo | Difetti / Vulnerabilità Principali | Risoluzioni |
-| :--- | :--- | :--- | :--- |
-| **AMM_v1** | *Sicura (Production-ready)* | Nessuna nota | Sincronizza i saldi flessibilmente contro i Donation DoS, aggiunge `nonReentrant` e upper bounds. |
-| **AMM_v2** | *Ibrida (Matematicamente Perfetta)* | Donation DoS (uguaglianza stretta `balance == r0`), Reentrancy | Fissa Liveness, Inflation Attack, Price Truncation e aggiunge Swap Fee (0.3%). |
-| **AMM_v3** | *Naif* | Inflation Attack, Liveness Bug (impossibile prelevare 100%), Donation DoS, Assenza Fee, Reentrancy | - |
-| **AMM_v4** | *Disastrosa (Didattica)* | Infinite Dilution (prezzo = x0+x1), Price Truncation (manca 1e18), Unbounded Redeem (drenaggio totale) | Rimuove (per sbaglio) il Liveness Bug originale togliendo i check di sicurezza. |
+| Versione | Profilo | Difetti / Vulnerabilità Principali |
+| :--- | :--- | :--- |
+| **AMM_v6** | *Colabrodo* | Bug 5 (Inflation Attack): Rimuove il lock della `MINIMUM_LIQUIDITY`. |
+| **AMM_v5** | *Vulnerabile* | Bug 4 (Precision Loss): Rimuove lo scaling `1e18` dai calcoli dei prezzi. |
+| **AMM_v4** | *Vulnerabile* | Bug 3 (Redeem Liveness): Usa `< supply` bloccando il prelievo del 100%. |
+| **AMM_v3** | *Vulnerabile* | Bug 2 (Reentrancy): Rimuove il modificatore `nonReentrant`. |
+| **AMM_v2** | *Ibrida* | Bug 1 (Donation DoS): Usa il controllo di uguaglianza stretta `require(balance == r0)`. |
+| **AMM_v1** | *Sicura (Baseline)* | Risolve tutti i bug: sincronizza flessibilmente, aggiunge i lock e usa scalature corrette. |
 
 ---
 
 ## 2. I 4 Pilastri della Sicurezza Verificata
 
-Le 10 proprietà testate non sono state scelte a caso, ma coprono sistematicamente i 4 pilastri delle vulnerabilità DeFi negli Automated Market Maker:
+Le 16 proprietà testate non sono state scelte a caso, ma coprono sistematicamente i 4 pilastri delle vulnerabilità DeFi negli Automated Market Maker:
 
 1. **Precisione Matematica e Scaling**: Verifica che la matematica intera della EVM non distrugga il valore economico tramite troncamenti a zero o overflow. Valida il corretto scaling (`1e18`) dei prezzi per prevenire furti di precisione.
-2. **Sicurezza Economica e Tokenomics**: Garantisce che le regole finanziarie non siano manipolabili. Dimostra matematicamente la difesa contro l'Inflation Attack (tramite `MINIMUM_LIQUIDITY`), l'incremento rigoroso della fee e l'equità proporzionale dei prelievi di fronte a donazioni di token extra.
-3. **Vulnerabilità Operative e Blocchi (DoS & Liveness)**: Assicura che i fondi non possano rimanere bloccati (frozen) a causa di attacchi logici. Smaschera deadlock operativi (come l'uso di `<` al posto di `<=`) e attacchi DoS causati dall'invio malevolo di token diretti al contratto.
-4. **Integrità dello Stato Globale**: Dimostra che le fondamenta algebriche del contratto non possano mai collassare, garantendo che le riserve non possano mai essere drenate completamente una volta inizializzate, mantenendo vivo il mercato.
+2. **Sicurezza Economica e Tokenomics**: Garantisce che le regole finanziarie non siano manipolabili. Dimostra matematicamente la difesa contro l'Inflation Attack (tramite `MINIMUM_LIQUIDITY`), l'incremento rigoroso della fee e l'equità proporzionale dei prelievi.
+3. **Vulnerabilità Operative e Blocchi (DoS & Liveness)**: Assicura che i fondi non possano rimanere bloccati (frozen) a causa di attacchi logici. Smaschera deadlock operativi e attacchi DoS causati dall'invio malevolo di token diretti al contratto.
+4. **Integrità dello Stato Globale**: Dimostra che le fondamenta algebriche del contratto non possano mai collassare, garantendo che le riserve non possano mai essere drenate completamente e il mercato rimanga stabile (Prodotto Costante).
 
 ---
 
 ## 3. Tassonomia delle Proprietà
 
-| # | Proprietà | Pilastro | Categoria (Skeleton) | Tipo | Descrizione |
-| :- | :--- | :--- | :--- | :--- | :--- |
-| 1 | **deposit-precision** | 1 (Precisione) | Function Spec | Safety | Assicura che un deposito ragionevole (>= 0.1%) non generi zero azioni (shares) a causa di perdite di precisione. |
-| 1b | **deposit-precision-strict** | 1 (Precisione) | Function Spec | Safety | Dimostrazione (Didattica) che l'uso dell'uguaglianza stretta `==` fallisce a causa degli errori di arrotondamento della divisione EVM. |
-| 2 | **donation-dos** | 3 (DoS & Liveness) | Function Spec | Liveness | Verifica che la funzione di prelievo non si blocchi per colpa di un invio malevolo (donazione) diretto al contratto. |
-| 3 | **minimum-liquidity** | 2 (Sicurezza Econ.) | State Invariant | Safety | Verifica che almeno 1000 token di liquidità siano permanentemente bloccati all'address 0 per mitigare attacchi di inflazione. |
-| 4 | **price-bounds** | 1 (Precisione) | Function Spec | Safety | Valida il fattore di scaling `1e18` in base al "principio di scarsità" relativo delle riserve. |
-| 5 | **price-equality** | 1 (Precisione) | Function Spec | Safety | Se le riserve dei due token sono identiche, il prezzo calcolato del token deve essere esattamente `1e18`. |
-| 6 | **price-symmetry** | 1 (Precisione) | Function Spec | Safety | Dimostra che il prodotto incrociato dei prezzi non ecceda `1e36`, evitando overflow. |
-| 7 | **redeem-fairness** | 2 (Sicurezza Econ.) | Function Spec | Safety | Verifica che l'ammontare prelevato sia matematicamente proporzionale ai bilanci reali del contratto, ridistribuendo le donazioni extra. |
-| 8 | **redeem-liveness** | 3 (DoS & Liveness) | Function Spec | Liveness | Garantisce che l'ultimo fornitore di liquidità possa prelevare il suo 100% senza che la transazione vada in revert. |
-| 8b | **redeem-precision** | 1 (Precisione) | Function Spec | Safety | Verifica che se un utente brucia delle shares, riceva sempre un ammontare > 0 (o vada in revert). |
-| 9 | **reserves-not-drained** | 4 (Integrità Stato) | State Invariant | Safety | Assicura che le riserve di una pool inizializzata rimangano strettamente maggiori di 0 (impossibile drenare totalmente). |
-| 10 | **swap-fee** | 2 (Sicurezza Econ.) | Function Spec | Safety | Verifica che dopo uno swap il prodotto costante (k) aumenti rigorosamente a causa della tassa (fee). |
-| 11 | **constant-product** | 4 (Integrità Stato) | Function Spec | Safety | Dopo uno swap, il prodotto matematico dei bilanci reali (K = balance0 * balance1) non deve mai diminuire. |
-| 12 | **swap-precision** | 1 (Precisione) | Function Spec | Safety | Scambiare una quantità non nulla di token deve restituire una quantità non nulla, evitando la perdita di precision a zero. |
+| # | Proprietà | Categoria | Tipo | Descrizione |
+| :- | :--- | :--- | :--- | :--- |
+| 1 | **constant-product** | Function Spec | Safety | Dopo uno swap, il prodotto matematico dei bilanci reali non deve mai diminuire. |
+| 2 | **deposit-precision** | Function Spec | Safety | Assicura che i token coniati non eccedano la corretta proporzione matematica a causa di sbilanciamenti. |
+| 3 | **deposit-precision-strict** | Function Spec | Safety | Dimostrazione che l'uso dell'uguaglianza stretta `==` fallisce a causa degli arrotondamenti EVM. |
+| 4 | **donation-dos** | Function Spec | Liveness | Verifica che la funzione di prelievo non si blocchi per colpa di un invio malevolo diretto al contratto. |
+| 5 | **minimum-liquidity** | State Invariant | Safety | Verifica che almeno 1000 token di liquidità siano bloccati all'address 0 contro gli attacchi di inflazione. |
+| 6 | **minimum-liquidity-strict** | State Invariant | Safety | Versione con uguaglianza stretta del controllo di liquidità. |
+| 7 | **price-bounds** | Function Spec | Safety | Valida la disuguaglianza relativa dei prezzi calcolati rispetto alle riserve. |
+| 8 | **price-equality** | Function Spec | Safety | Se le riserve sono identiche, il prezzo calcolato deve essere identico per entrambi i token. |
+| 9 | **price-symmetry** | Function Spec | Safety | Dimostra che il prodotto incrociato dei prezzi non ecceda `1e36`, evitando overflow. |
+| 10 | **price-symmetry-strict** | Function Spec | Safety | Versione con uguaglianza stretta (fallisce sempre a causa della perdita di precisione). |
+| 11 | **redeem-fairness** | Function Spec | Safety | Verifica che l'ammontare prelevato sia matematicamente proporzionale alla propria quota di supply. |
+| 12 | **redeem-liveness** | Function Spec | Liveness | Garantisce che l'ultimo fornitore di liquidità possa prelevare il 100% della supply. |
+| 13 | **redeem-precision** | Function Spec | Safety | Bruciando shares valide, l'utente deve ricevere sempre un ammontare > 0 di token. |
+| 14 | **reserves-not-drained** | State Invariant | Safety | Assicura che le riserve di una pool inizializzata rimangano strettamente maggiori di 0. |
+| 15 | **swap-fee** | Function Spec | Safety | Verifica che dopo uno swap il prodotto k aumenti rigorosamente a causa della tassa trattenuta. |
+| 16 | **swap-precision** | Function Spec | Safety | Dimostrazione (fallimento atteso) che scambiare 1 wei restituisce sempre zero token per arrotondamento. |
 
 ---
 
 ## 4. Copertura Testing Concreto (Forge)
 
-Oltre alla prova formale astratta, alcuni comportamenti sono stati validati concretamente sulla EVM tramite Forge per cristallizzare le vulnerabilità e i "Proof of Concept" (PoC).
+Tutti i bug associati all'architettura a cascata V1-V6 sono provvisti di Proof of Concept (PoC) funzionanti e allineati.
 
-| # | Proprietà | Testata in Forge? | Dettagli / PoC Associato |
-| :- | :--- | :---: | :--- |
-| 1 | **deposit-precision** | ❌ No | Nessun PoC esplicito presente per testare il troncamento delle shares. |
-| 1b | **deposit-precision-strict** | ✅ Sì | `deposit-precision-strict_v1.t.sol`: dimostra il falso positivo (rounding error) con quantità indivisibili. |
-| 2 | **donation-dos** | ✅ Sì | `donation-dos_v2.t.sol`: dimostra il freeze permanente inviando 1 wei alla pool. |
-| 3 | **minimum-liquidity** | ✅ Sì | Dimostrazione pratica dell'Inflation Attack (tramite script correlato a depositi). |
-| 4 | **price-bounds** | ❌ No | Nessun PoC presente. |
-| 5 | **price-equality** | ✅ Sì | `price-equality_v4.t.sol` e `price-equality_v1.t.sol`: dimostrano il bug di troncamento a zero sulla v4 e la sua risoluzione sulla v1. |
-| 6 | **price-symmetry** | ❌ No | Nessun PoC presente. |
-| 7 | **redeem-fairness** | ✅ Sì | `redeem-fairness_v4.t.sol` e `redeem-fairness_v1.t.sol`: dimostrano la perdita del capitale donato sulla v4, e la sua corretta redistribuzione sulla v1. |
-| 8 | **redeem-liveness** | ✅ Sì | `redeem-liveness_v3.t.sol`: dimostra il deadlock della vittima sulla v3. |
-| 8b | **redeem-precision** | ✅ Sì | `redeem-precision_v4.t.sol`: dimostra il furto di shares per arrotondamento a zero. |
-| 9 | **reserves-not-drained** | ✅ Sì | `reserves-not-drained_v4.t.sol`: mostra il furto del 100% della liquidità. |
-| 10 | **swap-fee** | ✅ Sì | `swap-fee_v3.t.sol` e `swap-fee_v1.t.sol`: dimostrano la deviazione del prodotto k in assenza di trattenuta sulla v3, e il rigido incremento sulla v1. |
-| 11 | **constant-product** | ✅ Sì | `constant-product_v4.t.sol`: dimostra il crollo matematico del prodotto k quando le riserve memorizzate non vengono aggiornate (drenaggio di valore). |
-| 12 | **swap-precision** | ✅ Sì | `swap-precision_v1.t.sol`: dimostra il furto per arrotondamento (zero return) scambiando 1 wei. |
+| # | PoC File (Forge) | Dettagli |
+| :- | :--- | :--- |
+| 1 | `deposit-precision-strict_v1.t.sol` | Dimostra il bug di precisione nell'arrotondamento EVM sulle divisioni. |
+| 2 | `deposit-precision_v6.t.sol` | PoC dell'Inflation Attack che porta il deposito di quote a restituire 0 shares (V6). |
+| 3 | `donation-dos_v2.t.sol` | Dimostra il freeze permanente (DoS) inviando fondi non richiesti al contratto (V2). |
+| 4 | `minimum-liquidity_v6.t.sol` | Validazione diretta dell'assenza di liquidità minima bloccata (V6). |
+| 5 | `price-equality_v2.t.sol` | Valida calcoli di prezzo asimmetrici dovuti a discrepanze nelle riserve. |
+| 6 | `redeem-fairness_v1.t.sol` | Validazione della corretta restituzione proporzionale. |
+| 7 | `redeem-liveness_v4.t.sol` | Dimostra il deadlock: impossibile per un utente bruciare il 100% delle sue quote (V4). |
+| 8 | `redeem-precision_v6.t.sol` | Dimostra come i troncamenti a zero azzerino i fondi recuperati in situazioni limite (V6). |
+| 9 | `reentrancy_v3.t.sol` | Classico attacco di Reentrancy sfruttando la mancanza di lock (V3). |
+| 10 | `reserves-not-drained_v6.t.sol` | Dimostra il completo drenaggio della pool in assenza di salvaguardie matematiche. |
+| 11 | `swap-fee_v1.t.sol` | Validazione del corretto incasso percentuale nello State. |
+| 12 | `swap-precision_v1.t.sol` | Dimostra il "zero return" (furto di 1 wei a causa dell'arrotondamento). |
 
 ---
 
 ## 5. Matrice dei Risultati (Ground Truth vs Prover)
 
-La tabella definitiva che confronta le aspettative umane (Ground Truth) con le performance effettive degli analizzatori formali.
-*(Legenda: ❌ = Proprietà Violata / Buggata ; ✅ = Proprietà Verificata / Sicura)*
+La tabella definitiva confronta le aspettative umane (Ground Truth) con le performance effettive dei due prover. I risultati dimostrano la superiorità di Certora nell'astrarre correttamente i path complessi DeFi e le chiamate esterne (Uninterpreted Functions), contro i limiti architetturali di SolCMC (State Havoc, Limiti Aritmetici, Assenza di Liveness nativa).
 
-| Proprietà | Tool | v1 | v2 | v3 | v4 | Note SolCMC / Certora |
-| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
-| **deposit-precision** | *Ground Truth* | ✅ | ✅ | ❌ | ❌ |  |
-| | **Certora** | ✅ | ✅ | ❌ | ❌ | Perfettamente allineato. |
-| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | Fallisce v2/v1 per loop abstraction (ciclo while della radice quadrata). |
-| **deposit-precision-strict** | *Ground Truth* | ❌ | ❌ | ❌ | ❌ | (Falso Positivo atteso ovunque per l'errore di arrotondamento). |
-| | **Certora** | ❌ | ❌ | ❌ | ❌ | Allineato al fallimento atteso. |
-| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | Allineato al fallimento atteso. |
-| **donation-dos** | *Ground Truth* | ✅ | ❌ | ❌ | ✅ |  |
-| | **Certora** | ✅ | ❌ | ❌ | ✅ | Perfettamente allineato. Isola in modo netto v2 vs v1. |
-| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | Essendo una proprietà Liveness `try/catch`, fallisce ovunque. |
-| **minimum-liquidity** | *Ground Truth* | ✅ | ✅ | ❌ | ❌ |  |
-| | **Certora** | ✅ | ✅ | ❌ | ❌ | Perfettamente allineato. |
-| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | Fallisce v2/v1 per array aliasing e astrazione cicli. |
-| **price-bounds** | *Ground Truth* | ✅ | ✅ | ✅ | ❌ |  |
-| | **Certora** | ✅ | ✅ | ✅ | ❌ | Perfettamente allineato. |
-| | **SolCMC** | ❌ | ❌ | ✅ | ❌ | Supporta benissimo le disuguaglianze lineari, ma fallisce su loop. |
-| **price-equality** | *Ground Truth* | ✅ | ✅ | ✅ | ❌ |  |
-| | **Certora** | ✅ | ✅ | ✅ | ❌ | Perfettamente allineato. |
-| | **SolCMC** | ❌ | ❌ | ✅ | ❌ | Opera bene sull'algebra lineare, ma fallisce se c'è astrazione loop. |
-| **price-symmetry** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ |  |
-| | **Certora** | ✅ | ✅ | ✅ | ✅ | Perfettamente allineato. |
-| | **SolCMC** | ✅ | ✅ | ✅ | ✅ | Allineato! (Algebra pura su getter). |
-| **redeem-fairness** | *Ground Truth* | ✅ | ✅ | ✅ | ❌ |  |
-| | **Certora** | ✅ | ✅ | ✅ | ❌ | Conferma che solo calcolando sui bilanci reali (v2/v1) si distribuiscono le donazioni. v3 passa "a vuoto" per via del revert finale. |
-| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | Fallisce ovunque a causa della dipendenza da external calls (`this.redeem`). |
-| **redeem-liveness** | *Ground Truth* | ✅ | ✅ | ❌ | ✅ |  |
-| | **Certora** | ✅ | ✅ | ❌ | ✅ | Allineato dopo aver isolato il DoS (`balance0 == r0`). |
-| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | Fallisce ovunque a causa della mancata astrazione sui path liveness/external calls. |
-| **redeem-precision** | *Ground Truth* | ✅ | ✅ | ❌ | ❌ |  |
-| | **Certora** | ✅ | ✅ | ❌ | ❌ | Perfettamente allineato. |
-| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | Fallisce ovunque per colpa delle external calls. |
-| **reserves-not-drained** | *Ground Truth* | ✅ | ✅ | ✅ | ❌ |  |
-| | **Certora** | ✅ | ✅ | ✅ | ❌ | Perfettamente allineato. |
-| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | Falsi positivi generati da chiamate esterne / memoria. |
-| **swap-fee** | *Ground Truth* | ✅ | ✅ | ❌ | ❌ |  |
-| | **Certora** | ✅ | ✅ | ❌ | ❌ | Perfettamente allineato. |
-| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | Fallisce a causa dell'inlining mancante (astrazione). |
-| **constant-product** | *Ground Truth* | ✅ | ✅ | ✅ | ❌ |  |
-| | **Certora** | ✅ | ✅ | ✅ | ❌ | Perfettamente allineato. Identifica la gravissima vulnerabilità di v4. |
-| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | Fallisce (Timeout) su V1-V3 a causa dell'esplosione di stati durante lo swap, ma riesce a trovare la vulnerabilità su V4? (Da verificare) |
-| **swap-precision** | *Ground Truth* | ❌ | ❌ | ❌ | ❌ | (Fallimento atteso, la divisione intera ruba sempre token infinitesimi) |
-| | **Certora** | ❌ | ❌ | ❌ | ❌ | Allineato al fallimento atteso. |
-| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | Allineato al fallimento atteso. |
+*(Legenda: ❌ = Proprietà Violata/Falsa ; ✅ = Proprietà Sicura/Vera)*
+
+| Proprietà | Tool | v1 | v2 | v3 | v4 | v5 | v6 | Note Benchmark |
+| :--- | :--- | :-: | :-: | :-: | :-: | :-: | :-: | :--- |
+| **constant-product** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | |
+| | **Certora** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Perfettamente allineato. |
+| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Fallisce per State Havoc sulle chiamate esterne. |
+| **deposit-precision** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | V6 subisce l'Inflation Attack. |
+| | **Certora** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Perfettamente allineato. |
+| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Fallisce per Non-Linear Arithmetic / State Havoc. |
+| **deposit-precision-strict** | *Ground Truth* | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Falso atteso a causa dei rounding error EVM. |
+| | **Certora / SolCMC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Entrambi allineati al fallimento atteso. |
+| **donation-dos** | *Ground Truth* | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Bug introdotto nella V2 (Strict Equality). |
+| | **Certora** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Perfettamente allineato sulla Liveness. |
+| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Liveness espressa con `.call()`, restituisce sempre Falsi Negativi. |
+| **minimum-liquidity** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | V6 rimuove il lock. |
+| | **Certora** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Perfettamente allineato. |
+| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | State Havoc azzera la variabile simbolica simulando il fallimento. |
+| **minimum-liquidity-strict**| *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | |
+| | **Certora** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Perfettamente allineato. |
+| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Stesso destino di minimum-liquidity. |
+| **price-bounds** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | |
+| | **Certora** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Perfettamente allineato. |
+| | **SolCMC** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Risolve le disuguaglianze lineari pure senza state havoc. |
+| **price-equality** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | |
+| | **Certora** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Perfettamente allineato. |
+| | **SolCMC** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Idem come sopra. |
+| **price-symmetry** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | |
+| | **Certora / SolCMC**| ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Entrambi allineati (Matematica pura senza state change). |
+| **price-symmetry-strict** | *Ground Truth* | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Falso atteso (Rounding). |
+| | **Certora / SolCMC**| ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Entrambi allineati al fallimento atteso. |
+| **redeem-fairness** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | |
+| | **Certora** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Perfettamente allineato. |
+| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Fallisce per via di Non-Linear Arithmetic. |
+| **redeem-liveness** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Bug introdotto in V4 ma innescabile solo in V6 (rimozione lock). |
+| | **Certora** | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | Falso Positivo in V4/V5: esplora stati irraggiungibili. |
+| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Liveness supportata solo via `.call()`, restituisce sempre Falsi Negativi. |
+| **redeem-precision** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | V6 soffre l'Inflation Attack. |
+| | **Certora** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Perfettamente allineato. |
+| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Fallisce ovunque per colpa di State Havoc sulle chiamate esterne. |
+| **reserves-not-drained** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | |
+| | **Certora** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Perfettamente allineato. |
+| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Falsi negativi generati da chiamate esterne e Havoc memory. |
+| **swap-fee** | *Ground Truth* | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | |
+| | **Certora** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Perfettamente allineato. |
+| | **SolCMC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Fallisce a causa della mancanza di inlining (State Havoc). |
+| **swap-precision** | *Ground Truth* | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Zero return atteso. |
+| | **Certora / SolCMC**| ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | Entrambi allineati al fallimento atteso. |

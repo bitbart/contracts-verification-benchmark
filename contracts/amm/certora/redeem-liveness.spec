@@ -30,7 +30,7 @@ rule redeem_liveness {
     require(currentContract.t0(e) != currentContract.t1(e));
     require(currentContract.t0(e) != 0 && currentContract.t1(e) != 0);
     require(currentContract.t0(e) != currentContract && currentContract.t1(e) != currentContract);
-    require(currentContract._status == 1);
+    
 
 
     require((shares * currentContract.r0(e)) / currentContract.supply(e) > 0);

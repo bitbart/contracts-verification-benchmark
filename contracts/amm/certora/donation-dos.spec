@@ -33,7 +33,7 @@ rule donation_dos {
     require(currentContract.t0(e) != currentContract && currentContract.t1(e) != currentContract);
 
     // Reentrancy
-    require(currentContract._status == 1);
+    
 
 
     // Tokens redeemed > 0

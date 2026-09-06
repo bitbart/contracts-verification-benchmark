@@ -1,3 +1,0 @@
-Analisi del comportamento dei Tool: Dimostra come Certora, grazie al meccanismo di Dispatching dei contratti esterni, eviti i falsi positivi in cui invece cade SolCMC a causa dell'approssimazione (Havoc) sulle chiamate esterne.
-
-La vulnerabilità di Denial of Service: Evidenzia come la versione "compliant" del benchmark sia in realtà vulnerabile a un attacco di manipolazione diretta del balance (Donazione), suggerendo come fix l'uso dell'operatore >= al posto di ==.

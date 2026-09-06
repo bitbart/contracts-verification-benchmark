@@ -51,11 +51,11 @@ contract RedeemPrecisionTest is Test {
     }
 
     // redeem-precision:
-    // After a non-reverting `redeem(liquidity_tokens)` transaction of a strictly positive amount of liquidity tokens, the real token balances of the sender strictly increase.
+    // After a non-reverting `redeem` transaction of a strictly positive amount of liquidity tokens, the real token balances of the sender strictly increase.
 
     // PoC:
     // - Step 1 (setup): The user initializes the pool with a large amount of liquidity.
-    // - Step 2 (attack): The user attempts to redeem a very small amount of shares. Due to the lack of slippage/zero-checks, the integer division truncates the output to zero, burning the shares without returning any tokens.
+    // - Step 2 (attack): The user attempts to redeem a very small amount of shares. Due to the lack of slippage, the integer division truncates the output to zero, burning the shares without returning any tokens.
     function test_redeem_precision_loss() public {
 
         vm.startPrank(attacker);

@@ -14,7 +14,7 @@ rule redeem_fairness {
     // State of the contract
     require(supplyBefore > 0);
     require(userMintedBefore <= supplyBefore);
-    require(currentContract._status == 1);
+    
 
     uint bal0Before = currentContract.getBalance0(e);
     uint bal1Before = currentContract.getBalance1(e);

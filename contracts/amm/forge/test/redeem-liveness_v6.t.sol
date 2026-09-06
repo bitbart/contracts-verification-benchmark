@@ -21,7 +21,7 @@ contract MockToken is IERC20 {
     }
 }
 
-contract MinimumLiquidityV4Test is Test {
+contract RedeemLivenessV6Test is Test {
     V6.AMM ammV6;
     MockToken token0;
     MockToken token1;
@@ -41,21 +41,20 @@ contract MinimumLiquidityV4Test is Test {
         vm.stopPrank();
     }
 
-    // minimum-liquidity:
-    // If the total supply of liquidity tokens is strictly positive, the amount of liquidity tokens minted to the zero address is always greater than or equal to 1000.
+    // redeem-liveness:
+    // If the contract's tracked reserves are equal to its real balances, a `redeem` transaction by a valid sender possessing a strictly positive amount of liquidity tokens never reverts.
 
     // PoC:
-    // - Step 1 (setup): The user prepares to deposit initial liquidity into an empty pool.
-    // - Step 2 (attack): The user deposits liquidity, but the protocol fails to permanently lock MINIMUM_LIQUIDITY to address(0). As a result, the first depositor retains 100% of the LP supply, leaving the pool vulnerable to share ratio manipulation (Inflation Attack).
-    function test_no_minimum_liquidity_lock_v6() public {
+    // - Step 1 (setup): The user initializes the pool by depositing liquidity. Since V6 removes the `MINIMUM_LIQUIDITY` lock, the user correctly receives 100% of the total supply.
+    // - Step 2 (attack): The user attempts to redeem their shares. Since they hold the entire supply (`x == supply`), the transaction reverts strictly due to the flawed `require(x < supply)` check, successfully freezing the last provider's funds.
+    function test_redeem_liveness_bug_v6() public {
         vm.startPrank(user);
-        ammV6.deposit(1000, 1000);
+        ammV6.deposit(10000, 10000);
+
+        uint userShares = ammV6.minted(user);
+
+        vm.expectRevert();
+        ammV6.redeem(userShares);
         vm.stopPrank();
-
-        uint lockedLiquidity = ammV6.minted(address(0));
-
-        assertEq(lockedLiquidity, 0);
-
-        assertEq(ammV6.minted(user), ammV6.supply());
     }
 }
