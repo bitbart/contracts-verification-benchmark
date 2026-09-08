@@ -1,52 +1,52 @@
 property,version,truth,footnote-md
-constant-product,v1,1,
-constant-product,v2,1,
-constant-product,v3,1,
+constant-product,v1,0,
+constant-product,v2,0,
+constant-product,v3,0,
 constant-product,v4,1,
 constant-product,v5,1,
-constant-product,v6,1,
-deposit-precision,v1,1,
-deposit-precision,v2,1,
-deposit-precision,v3,1,
-deposit-precision,v4,1,
-deposit-precision,v5,1,
-deposit-precision,v6,0,"This property is false, since the integer division can truncate the minted tokens to zero during an inflation attack."
+constant-product,v6,0,
+deposit-precision,v1,1,"This property is false, since the integer division can truncate the minted tokens to zero."
+deposit-precision,v2,1,"This property is false, since the integer division can truncate the minted tokens to zero."
+deposit-precision,v3,1,"This property is false, since the integer division can truncate the minted tokens to zero."
+deposit-precision,v4,1,"This property is false, since the integer division can truncate the minted tokens to zero."
+deposit-precision,v5,0,"This property is false, since the integer division can truncate the minted tokens to zero."
+deposit-precision,v6,0,"This property is false, since the integer division can truncate the minted tokens to zero."
 deposit-precision-strict,v1,0,"This property is false, since EVM integer division causes unavoidable rounding errors."
 deposit-precision-strict,v2,0,"This property is false, since EVM integer division causes unavoidable rounding errors."
 deposit-precision-strict,v3,0,"This property is false, since EVM integer division causes unavoidable rounding errors."
 deposit-precision-strict,v4,0,"This property is false, since EVM integer division causes unavoidable rounding errors."
 deposit-precision-strict,v5,0,"This property is false, since EVM integer division causes unavoidable rounding errors."
 deposit-precision-strict,v6,0,"This property is false, since EVM integer division causes unavoidable rounding errors."
-donation-dos,v1,1,"This property is true, because the contract syncs real balances using balanceOf, bypassing the strict equality vulnerability."
-donation-dos,v2,0,"This property is false, since the strict equality check require(balance == r0) fails when tokens are donated, causing a DoS."
-donation-dos,v3,0,"This property is false, since the strict equality check require(balance == r0) fails when tokens are donated, causing a DoS."
+donation-dos,v1,1,"This property is true, because the contract removed the strict equality check."
+donation-dos,v2,1,"This property is true, because the contract removed the strict equality check."
+donation-dos,v3,1,"This property is true, because the contract removed the strict equality check."
 donation-dos,v4,0,"This property is false, since the strict equality check require(balance == r0) fails when tokens are donated, causing a DoS."
 donation-dos,v5,0,"This property is false, since the strict equality check require(balance == r0) fails when tokens are donated, causing a DoS."
 donation-dos,v6,0,"This property is false, since the strict equality check require(balance == r0) fails when tokens are donated, causing a DoS."
 minimum-liquidity,v1,1,
 minimum-liquidity,v2,1,
-minimum-liquidity,v3,1,
-minimum-liquidity,v4,1,
-minimum-liquidity,v5,1,
-minimum-liquidity,v6,0,"This property is false, since the contract does not lock any minimum liquidity to address(0), leaving the pool vulnerable to inflation attacks."
-minimum-liquidity-strict,v1,1,
-minimum-liquidity-strict,v2,1,
-minimum-liquidity-strict,v3,1,
-minimum-liquidity-strict,v4,1,
-minimum-liquidity-strict,v5,1,
-minimum-liquidity-strict,v6,0,"This property is false, since the contract does not lock any minimum liquidity to address(0), leaving the pool vulnerable to inflation attacks."
+minimum-liquidity,v3,0,"This property is false, since the contract does not lock any minimum liquidity, leaving the pool vulnerable to inflation attacks."
+minimum-liquidity,v4,0,"This property is false, since the contract does not lock any minimum liquidity, leaving the pool vulnerable to inflation attacks."
+minimum-liquidity,v5,0,"This property is false, since the contract does not lock any minimum liquidity, leaving the pool vulnerable to inflation attacks."
+minimum-liquidity,v6,0,"This property is false, since the contract does not lock any minimum liquidity, leaving the pool vulnerable to inflation attacks."
+minimum-liquidity-strict,v1,0,"This property is false, since the contract does not lock any minimum liquidity."
+minimum-liquidity-strict,v2,0,"This property is false, since the contract does not lock any minimum liquidity."
+minimum-liquidity-strict,v3,0,"This property is false, since the contract does not lock any minimum liquidity."
+minimum-liquidity-strict,v4,0,"This property is false, since the contract does not lock any minimum liquidity."
+minimum-liquidity-strict,v5,0,"This property is false, since the contract does not lock any minimum liquidity."
+minimum-liquidity-strict,v6,0,"This property is false, since the contract does not lock any minimum liquidity."
 price-bounds,v1,1,
 price-bounds,v2,1,
 price-bounds,v3,1,
 price-bounds,v4,1,
-price-bounds,v5,1,"This property is true, because even without 1e18 scaling, the integer division strictly satisfies the relative inequality p1 > p0."
-price-bounds,v6,1,"This property is true, because even without 1e18 scaling, the integer division strictly satisfies the relative inequality p1 > p0."
+price-bounds,v5,1,
+price-bounds,v6,1,
 price-equality,v1,1,
 price-equality,v2,1,
 price-equality,v3,1,
 price-equality,v4,1,
-price-equality,v5,1,"This property is true, because even without 1e18 scaling, r0/r1 and r1/r0 both equal 1, satisfying p0 == p1."
-price-equality,v6,1,"This property is true, because even without 1e18 scaling, r0/r1 and r1/r0 both equal 1, satisfying p0 == p1."
+price-equality,v5,1,
+price-equality,v6,1,
 price-symmetry,v1,1,
 price-symmetry,v2,1,
 price-symmetry,v3,1,
@@ -59,36 +59,36 @@ price-symmetry-strict,v3,0,This property should always be false because of preci
 price-symmetry-strict,v4,0,This property should always be false because of precision loss of division.
 price-symmetry-strict,v5,0,This property should always be false because of precision loss of division.
 price-symmetry-strict,v6,0,This property should always be false because of precision loss of division.
-redeem-fairness,v1,1,
-redeem-fairness,v2,1,
-redeem-fairness,v3,1,
+redeem-fairness,v1,0,
+redeem-fairness,v2,0,
+redeem-fairness,v3,0,
 redeem-fairness,v4,1,
 redeem-fairness,v5,1,
 redeem-fairness,v6,1,
 redeem-liveness,v1,1,
 redeem-liveness,v2,1,
 redeem-liveness,v3,1,
-redeem-liveness,v4,1,
-redeem-liveness,v5,1,
+redeem-liveness,v4,0,"This property is false, since the require(x < supply) check prevents a user from withdrawing exactly 100% of the total supply."
+redeem-liveness,v5,0,"This property is false, since the require(x < supply) check prevents a user from withdrawing exactly 100% of the total supply."
 redeem-liveness,v6,0,"This property is false, since the require(x < supply) check prevents a user from withdrawing exactly 100% of the total supply."
-redeem-precision,v1,1,
-redeem-precision,v2,1,
-redeem-precision,v3,1,
-redeem-precision,v4,1,
-redeem-precision,v5,1,
+redeem-precision,v1,0,"This property is false, since division truncates to 0, meaning shares are burned but the user receives nothing."
+redeem-precision,v2,0,"This property is false, since division truncates to 0, meaning shares are burned but the user receives nothing."
+redeem-precision,v3,0,"This property is false, since division truncates to 0, meaning shares are burned but the user receives nothing."
+redeem-precision,v4,0,"This property is false, since division truncates to 0, meaning shares are burned but the user receives nothing."
+redeem-precision,v5,0,"This property is false, since division truncates to 0, meaning shares are burned but the user receives nothing."
 redeem-precision,v6,0,"This property is false, since division truncates to 0, meaning shares are burned but the user receives nothing."
 reserves-not-drained,v1,1,
 reserves-not-drained,v2,1,
 reserves-not-drained,v3,1,
 reserves-not-drained,v4,1,
-reserves-not-drained,v5,1,
-reserves-not-drained,v6,1,
-swap-fee,v1,1,
-swap-fee,v2,1,
-swap-fee,v3,1,
-swap-fee,v4,1,
-swap-fee,v5,1,
-swap-fee,v6,1,
+reserves-not-drained,v5,0,"This property is false, since mathematical errors in deposit/swap allow draining the reserves."
+reserves-not-drained,v6,0,"This property is false, since mathematical errors in deposit/swap allow draining the reserves."
+swap-fee,v1,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
+swap-fee,v2,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
+swap-fee,v3,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
+swap-fee,v4,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
+swap-fee,v5,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
+swap-fee,v6,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
 swap-precision,v1,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."
 swap-precision,v2,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."
 swap-precision,v3,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."

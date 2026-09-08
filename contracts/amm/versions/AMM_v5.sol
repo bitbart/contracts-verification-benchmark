@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import "./lib/IERC20.sol";
 
-/// @custom:version Bug 4 (Precision Loss): Removes 1e18 scaling
+// /// @custom:version Bug 5: Added Buggy Deposit (removes proportion check)
 
 contract AMM {
     IERC20 public immutable t0;
@@ -12,154 +12,123 @@ contract AMM {
     uint public r0;
     uint public r1;
 
+    bool ever_deposited;
     uint public supply;
     mapping(address => uint) public minted;
 
-    uint private constant MINIMUM_LIQUIDITY = 1000;
-
+    // ghost variables
+    enum Tx{None, Dep, Swap, Rdm}
+    Tx _lastTx;
+    uint public _prevSupply;
+    
     constructor(IERC20 _t0, IERC20 _t1) {
-        require(address(_t0) != address(_t1));
-        require(address(_t0) != address(0) && address(_t1) != address(0));
-        t0 = _t0;
-        t1 = _t1;
+        t0 = IERC20(_t0);
+        t1 = IERC20(_t1);
+        require(address(t0) != address(t1));
     }
 
     function deposit(uint x0, uint x1) public {
-        require(x0 > 0 && x1 > 0);
+        require (x0>0 && x1>0);
 
-        uint balance0Before = t0.balanceOf(address(this));
-        uint balance1Before = t1.balanceOf(address(this));
-
-        _safeTransferFrom(t0, msg.sender, address(this), x0);
-        _safeTransferFrom(t1, msg.sender, address(this), x1);
-
-        uint amount0 = t0.balanceOf(address(this)) - balance0Before;
-        uint amount1 = t1.balanceOf(address(this)) - balance1Before;
-
+    	// ghost code	
+    	_prevSupply = supply;
+	
+        t0.transferFrom(msg.sender, address(this), x0);
+        t1.transferFrom(msg.sender, address(this), x1);
+           
         uint toMint;
-
-        if (supply == 0) {
-            uint liquidity = _sqrt(amount0 * amount1);
-            require(liquidity > MINIMUM_LIQUIDITY);
-            toMint = liquidity - MINIMUM_LIQUIDITY;
-
-            minted[address(0)] += MINIMUM_LIQUIDITY;
-            supply += MINIMUM_LIQUIDITY;
-        } else {
-            uint mint0 = (amount0 * supply) / r0;
-            uint mint1 = (amount1 * supply) / r1;
-            toMint = mint0 < mint1 ? mint0 : mint1;
+           
+        if (ever_deposited) {
+            require (r0 > 0);
+            toMint = (x0 * supply) / r0;
         }
-
-        require(toMint > 0, "Insufficient liquidity minted");
-
+        else {
+            ever_deposited = true;
+            toMint = x0;
+        }
+           
+        require(toMint > 0, "Dep precondition");
+           
         minted[msg.sender] += toMint;
         supply += toMint;
+        r0 += x0;
+        r1 += x1;
+           
+        // require(t0.balanceOf(address(this)) == r0);
+        // require(t1.balanceOf(address(this)) == r1);
 
-
-        r0 += amount0;
-        r1 += amount1;
-        require(t0.balanceOf(address(this)) == r0);
-        require(t1.balanceOf(address(this)) == r1);
+    	// ghost code
+    	_lastTx = Tx.Dep;	
     }
 
     function redeem(uint x) public {
-        require(supply > 0);
-        require(minted[msg.sender] >= x);
-        require(x < supply);
-        require(x > 0);
+        require (supply > 0);
+        require (minted[msg.sender] >= x);
+        require (x < supply);
 
-        uint balance0 = t0.balanceOf(address(this));
-        uint balance1 = t1.balanceOf(address(this));
+	// ghost code
+	_prevSupply = supply;
+	    
+        uint x0 = (x * r0) / supply;
+        uint x1 = (x * r1) / supply;
+            
+        t0.transfer(msg.sender, x0);
+        t1.transfer(msg.sender, x1);
 
-        uint amount0 = (x * balance0) / supply;
-        uint amount1 = (x * balance1) / supply;
-
-        require(amount0 > 0 && amount1 > 0);
-
-        minted[msg.sender] -= x;
+        r0 -= x0;
+        r1 -= x1;
         supply -= x;
-
-        _safeTransfer(t0, msg.sender, amount0);
-        _safeTransfer(t1, msg.sender, amount1);
-
-        r0 -= amount0;
-        r1 -= amount1;
+        minted[msg.sender] -= x;
+        
         require(t0.balanceOf(address(this)) == r0);
         require(t1.balanceOf(address(this)) == r1);
+
+	// ghost code
+	_lastTx = Tx.Rdm;
     }
 
     function swap(address t, uint x_in, uint x_out_min) public {
-        require(t == address(t0) || t == address(t1), "Invalid token");
-        require(x_in > 0, "Zero amount in");
+	require(t == address(t0) || t == address(t1));
+        require(x_in > 0);
 
+	// ghost code
+	_prevSupply = supply;
+	
         bool is_t0 = t == address(t0);
-        IERC20 t_in = is_t0 ? t0 : t1;
-        IERC20 t_out = is_t0 ? t1 : t0;
-
-        uint balanceInBefore = t_in.balanceOf(address(this));
-
-        _safeTransferFrom(t_in, msg.sender, address(this), x_in);
-
-        uint amountIn = t_in.balanceOf(address(this)) - balanceInBefore;
-
-        uint balanceIn = t_in.balanceOf(address(this));
-        uint balanceOut = t_out.balanceOf(address(this));
-
-        uint reserveIn = balanceIn - amountIn;
-        uint reserveOut = balanceOut;
-
-        uint amountInWithFee = amountIn * 997;
-        uint numerator = amountInWithFee * reserveOut;
-        uint denominator = (reserveIn * 1000) + amountInWithFee;
-        uint x_out = numerator / denominator;
+        (IERC20 t_in, IERC20 t_out, uint r_in, uint r_out) = is_t0
+            ? (t0, t1, r0, r1)
+            : (t1, t0, r1, r0);
+	
+        t_in.transferFrom(msg.sender, address(this), x_in);
+	
+        uint x_out = (x_in * r_out) / (r_in + x_in);
 
         require(x_out >= x_out_min);
-
-        _safeTransfer(t_out, msg.sender, x_out);
+	
+        t_out.transfer(msg.sender, x_out);
+	
+        (r0,r1) = is_t0
+            ? (r0 + x_in, r1 - x_out)
+            : (r0 - x_out, r1 + x_in);
         
-        if (is_t0) {
-            r0 += amountIn;
-            r1 -= x_out;
-        } else {
-            r0 -= x_out;
-            r1 += amountIn;
-        }
         require(t0.balanceOf(address(this)) == r0);
         require(t1.balanceOf(address(this)) == r1);
+
+	// ghost code
+	_lastTx = Tx.Swap;	
     }
 
+    // TODO remove?
+    /// @notice price of a token in terms of the other token, scaled by 1e18
+    /// @dev price(address(t0)) returns price of t0 in units of t1 (t1 per t0) * 1e18
     function price(address token) external view returns (uint) {
         if (token == address(t0)) {
-            require(r0 > 0);
-            return r1 / r0;
+            require(r0 > 0, "no reserves");
+            return (r1 * 1e18) / r0;
         } else if (token == address(t1)) {
-            require(r1 > 0);
-            return r0 / r1;
+            require(r1 > 0, "no reserves");
+            return (r0 * 1e18) / r1;
         }
-        revert("Invalid token");
-    }
-
-    // --- INTERNAL HELPERS ---
-
-    function _safeTransfer(IERC20 token, address to, uint value) private {
-        require(token.transfer(to, value));
-    }
-
-    function _safeTransferFrom(IERC20 token, address from, address to, uint value) private {
-        require(token.transferFrom(from, to, value));
-    }
-
-    function _sqrt(uint y) private pure returns (uint z) {
-        if (y > 3) {
-            z = y;
-            uint x = y / 2 + 1;
-            while (x < z) {
-                z = x;
-                x = (y / x + x) / 2;
-            }
-        } else if (y != 0) {
-            z = 1;
-        }
+        revert("invalid token");
     }
 }
