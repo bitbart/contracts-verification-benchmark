@@ -3,8 +3,9 @@
     "specification": "file:spec.md",
     "properties": {
         "constant-product": "After a non-reverting `swap` transaction, the product of the contract's token balances is greater than or equal to the product before the transaction.",
-        "deposit-precision": "After a non-reverting `deposit` transaction where the deposited amounts are proportional to the reserves and are at least one-thousandth of the current reserves, the minted liquidity tokens are strictly positive and do not exceed the proportion between the deposited amounts and the contract's existing reserves.",
-        "deposit-precision-strict": "After a non-reverting `deposit` transaction where the deposited amounts are proportional to the reserves and are at least one-thousandth of the current reserves, the minted liquidity tokens are strictly positive and equal to the proportion between the deposited amounts and the contract's existing reserves.",
+        "constant-product-reserves": "After a non-reverting `swap` transaction, the product of the contract's tracked reserves is greater than or equal to the product before the transaction.",
+        "deposit-precision": "After a non-reverting `deposit` transaction where the deposited amounts are at least one-thousandth of the current reserves, the minted liquidity tokens are strictly positive and do not exceed the proportion between the deposited amounts of both tokens and the contract's existing reserves.",
+        "deposit-precision-strict": "After a non-reverting `deposit` transaction where the deposited amounts are at least one-thousandth of the current reserves, the minted liquidity tokens are strictly positive and equal to the proportion between the deposited amounts of both tokens and the contract's existing reserves.",
         "donation-dos": "If the token balances of the contract exceed its reserves, a `redeem` transaction by a sender possessing a positive amount of liquidity tokens never reverts.",
         "minimum-liquidity": "If the total supply of liquidity tokens is strictly positive, the amount of liquidity tokens minted to the zero address is always greater than or equal to 1000.",
         "minimum-liquidity-strict": "If the total supply of liquidity tokens is strictly positive, the amount of liquidity tokens minted to the zero address is always equal to 1000.",
@@ -17,13 +18,15 @@
         "redeem-precision": "After a non-reverting `redeem` transaction of a strictly positive amount of liquidity tokens, the real token balances of the sender strictly increase.",
         "reserves-not-drained": "If the tracked reserves of the contract are both strictly positive, then after any non-reverting transaction to the contract, the tracked reserves remain strictly positive.",
         "swap-fee": "After a non-reverting `swap` transaction, the product of the contract's tracked reserves strictly increases.",
-        "swap-precision": "After a non-reverting `swap` transaction where `amountIn` is strictly positive and the minimum return is set to zero, the contract's balance of the output token is decreased."
+        "swap-precision": "After a non-reverting `swap` transaction where `amountIn` is strictly positive and the minimum return is set to zero, the contract's balance of the output token is decreased.",
+        "swap-slippage": "After a non-reverting `swap` transaction, the amount of output tokens transferred to the sender is greater than or equal to the minimum return requested."
     },
     "property-types": {
+        "constant-product": "function spec",
+        "constant-product-reserves": "function spec",
         "deposit-precision": "function spec",
         "deposit-precision-strict": "function spec",
         "donation-dos": "function spec",
-        "constant-product": "function spec",
         "minimum-liquidity": "state invariant",
         "minimum-liquidity-strict": "state invariant",
         "price-bounds": "function spec",
@@ -35,6 +38,7 @@
         "redeem-precision": "function spec",
         "reserves-not-drained": "state invariant",
         "swap-fee": "function spec",
-        "swap-precision": "function spec"
+        "swap-precision": "function spec",
+        "swap-slippage": "function spec"
     }
 }

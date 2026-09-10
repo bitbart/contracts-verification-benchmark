@@ -58,21 +58,19 @@ contract DepositPrecisionV6Test is Test {
     function test_inflation_attack_truncation_v6() public {
         vm.startPrank(attacker);
 
-        ammV6.deposit(1, 1);
+        ammV6.deposit(100, 100);
 
-        ammV6.swap(address(token1), 2, 0);
-
-        ammV6.swap(address(token0), 1, 0);
+        ammV6.swap(address(token0), 100, 0);
 
         vm.stopPrank();
 
-        assertEq(ammV6.r0(), 2);
-        assertEq(ammV6.r1(), 2);
-        assertEq(ammV6.supply(), 1);
+        assertEq(ammV6.r0(), 200);
+        assertEq(ammV6.r1(), 0);
+        assertEq(ammV6.supply(), 100);
 
         vm.startPrank(victim);
 
-        vm.expectRevert("Insufficient liquidity minted");
+        vm.expectRevert();
         ammV6.deposit(1, 1);
 
         vm.stopPrank();

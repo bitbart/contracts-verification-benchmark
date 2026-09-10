@@ -5,12 +5,18 @@ constant-product,v3,0,
 constant-product,v4,1,
 constant-product,v5,1,
 constant-product,v6,0,
-deposit-precision,v1,1,"This property is false, since the integer division can truncate the minted tokens to zero."
-deposit-precision,v2,1,"This property is false, since the integer division can truncate the minted tokens to zero."
-deposit-precision,v3,1,"This property is false, since the integer division can truncate the minted tokens to zero."
-deposit-precision,v4,1,"This property is false, since the integer division can truncate the minted tokens to zero."
-deposit-precision,v5,0,"This property is false, since the integer division can truncate the minted tokens to zero."
-deposit-precision,v6,0,"This property is false, since the integer division can truncate the minted tokens to zero."
+constant-product-reserves,v1,1,
+constant-product-reserves,v2,1,
+constant-product-reserves,v3,1,
+constant-product-reserves,v4,1,
+constant-product-reserves,v5,1,
+constant-product-reserves,v6,0,
+deposit-precision,v1,1,
+deposit-precision,v2,1,
+deposit-precision,v3,0,"This property is false, since the contract does not lock any minimum liquidity, leaving the pool vulnerable to inflation attacks that cause truncation to 0."
+deposit-precision,v4,0,"This property is false, since the contract does not lock any minimum liquidity, leaving the pool vulnerable to inflation attacks that cause truncation to 0."
+deposit-precision,v5,0,"This property is false, since the contract does not enforce proportional deposits and suffers from inflation attacks."
+deposit-precision,v6,0,"This property is false, since the contract suffers from inflation attacks."
 deposit-precision-strict,v1,0,"This property is false, since EVM integer division causes unavoidable rounding errors."
 deposit-precision-strict,v2,0,"This property is false, since EVM integer division causes unavoidable rounding errors."
 deposit-precision-strict,v3,0,"This property is false, since EVM integer division causes unavoidable rounding errors."
@@ -29,9 +35,9 @@ minimum-liquidity,v3,0,"This property is false, since the contract does not lock
 minimum-liquidity,v4,0,"This property is false, since the contract does not lock any minimum liquidity, leaving the pool vulnerable to inflation attacks."
 minimum-liquidity,v5,0,"This property is false, since the contract does not lock any minimum liquidity, leaving the pool vulnerable to inflation attacks."
 minimum-liquidity,v6,0,"This property is false, since the contract does not lock any minimum liquidity, leaving the pool vulnerable to inflation attacks."
-minimum-liquidity-strict,v1,0,"This property is false, since the contract does not lock any minimum liquidity."
-minimum-liquidity-strict,v2,0,"This property is false, since the contract does not lock any minimum liquidity."
-minimum-liquidity-strict,v3,0,"This property is false, since the contract does not lock any minimum liquidity."
+minimum-liquidity-strict,v1,1,
+minimum-liquidity-strict,v2,1,
+minimum-liquidity-strict,v3,0,"This property is false, since V3 removed the lock of the initial minimum liquidity."
 minimum-liquidity-strict,v4,0,"This property is false, since the contract does not lock any minimum liquidity."
 minimum-liquidity-strict,v5,0,"This property is false, since the contract does not lock any minimum liquidity."
 minimum-liquidity-strict,v6,0,"This property is false, since the contract does not lock any minimum liquidity."
@@ -79,19 +85,25 @@ redeem-precision,v5,0,"This property is false, since division truncates to 0, me
 redeem-precision,v6,0,"This property is false, since division truncates to 0, meaning shares are burned but the user receives nothing."
 reserves-not-drained,v1,1,
 reserves-not-drained,v2,1,
-reserves-not-drained,v3,1,
+reserves-not-drained,v3,0,"This property is false, since V3 removed the minimum liquidity lock, allowing a single user to redeem 100% of the supply and drain the reserves to 0."
 reserves-not-drained,v4,1,
-reserves-not-drained,v5,0,"This property is false, since mathematical errors in deposit/swap allow draining the reserves."
+reserves-not-drained,v5,1,
 reserves-not-drained,v6,0,"This property is false, since mathematical errors in deposit/swap allow draining the reserves."
-swap-fee,v1,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
-swap-fee,v2,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
-swap-fee,v3,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
-swap-fee,v4,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
-swap-fee,v5,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
-swap-fee,v6,0,"This property is false, since the Professor's AMM implements a zero-fee model, while the spec asserts a 3-per-mille fee."
+swap-fee,v1,1,
+swap-fee,v2,1,
+swap-fee,v3,1,
+swap-fee,v4,0,"This property is false, since V4 implements a zero-fee model, meaning the product remains constant (does not strictly increase) when exact division occurs."
+swap-fee,v5,0,"This property is false, since V5 implements a zero-fee model, meaning the product remains constant (does not strictly increase) when exact division occurs."
+swap-fee,v6,0,"This property is false, since V6 uses a broken linear swap formula that causes the product to decrease."
 swap-precision,v1,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."
 swap-precision,v2,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."
 swap-precision,v3,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."
 swap-precision,v4,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."
 swap-precision,v5,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."
 swap-precision,v6,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."
+swap-slippage,v1,1,
+swap-slippage,v2,1,
+swap-slippage,v3,1,
+swap-slippage,v4,1,
+swap-slippage,v5,1,
+swap-slippage,v6,1,

@@ -10,8 +10,7 @@
         require(amount0 * 1000 >= _r0);
         require(amount1 * 1000 >= _r1);
 
-        require(amount0 * _r1 == amount1 * _r0);
-
+        // (Removed proportionality precondition to let the prover test if the contract enforces it)
         deposit(amount0, amount1);
 
         uint newSupply = supply;
@@ -22,4 +21,6 @@
 
         // (amount0 / _r0) * _supply
         assert(mintedTokens * _r0 == amount0 * _supply);
+        // (amount1 / _r1) * _supply
+        assert(mintedTokens * _r1 == amount1 * _supply);
     }

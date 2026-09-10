@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import "./lib/IERC20.sol";
 
-// /// @custom:version Bug 6: Added Broken Swap Math (drains pool)
+/// @custom:version Added Broken Swap Math (drains pool)
 
 contract AMM {
     IERC20 public immutable t0;
@@ -16,11 +16,6 @@ contract AMM {
     uint public supply;
     mapping(address => uint) public minted;
 
-    // ghost variables
-    enum Tx{None, Dep, Swap, Rdm}
-    Tx _lastTx;
-    uint public _prevSupply;
-    
     constructor(IERC20 _t0, IERC20 _t1) {
         t0 = IERC20(_t0);
         t1 = IERC20(_t1);
@@ -30,9 +25,6 @@ contract AMM {
     function deposit(uint x0, uint x1) public {
         require (x0>0 && x1>0);
 
-    	// ghost code	
-    	_prevSupply = supply;
-	
         t0.transferFrom(msg.sender, address(this), x0);
         t1.transferFrom(msg.sender, address(this), x1);
            
@@ -53,12 +45,6 @@ contract AMM {
         supply += toMint;
         r0 += x0;
         r1 += x1;
-           
-        // require(t0.balanceOf(address(this)) == r0);
-        // require(t1.balanceOf(address(this)) == r1);
-
-    	// ghost code
-    	_lastTx = Tx.Dep;	
     }
 
     function redeem(uint x) public {
@@ -66,9 +52,6 @@ contract AMM {
         require (minted[msg.sender] >= x);
         require (x < supply);
 
-	// ghost code
-	_prevSupply = supply;
-	    
         uint x0 = (x * r0) / supply;
         uint x1 = (x * r1) / supply;
             
@@ -83,17 +66,12 @@ contract AMM {
         require(t0.balanceOf(address(this)) == r0);
         require(t1.balanceOf(address(this)) == r1);
 
-	// ghost code
-	_lastTx = Tx.Rdm;
     }
 
     function swap(address t, uint x_in, uint x_out_min) public {
 	require(t == address(t0) || t == address(t1));
         require(x_in > 0);
 
-	// ghost code
-	_prevSupply = supply;
-	
         bool is_t0 = t == address(t0);
         (IERC20 t_in, IERC20 t_out, uint r_in, uint r_out) = is_t0
             ? (t0, t1, r0, r1)
@@ -114,13 +92,8 @@ contract AMM {
         require(t0.balanceOf(address(this)) == r0);
         require(t1.balanceOf(address(this)) == r1);
 
-	// ghost code
-	_lastTx = Tx.Swap;	
     }
 
-    // TODO remove?
-    /// @notice price of a token in terms of the other token, scaled by 1e18
-    /// @dev price(address(t0)) returns price of t0 in units of t1 (t1 per t0) * 1e18
     function price(address token) external view returns (uint) {
         if (token == address(t0)) {
             require(r0 > 0, "no reserves");

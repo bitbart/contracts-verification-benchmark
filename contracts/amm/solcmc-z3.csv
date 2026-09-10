@@ -5,6 +5,12 @@ constant-product,v3,N!
 constant-product,v4,N!
 constant-product,v5,N!
 constant-product,v6,N!
+constant-product-reserves,v1,N!
+constant-product-reserves,v2,N!
+constant-product-reserves,v3,N!
+constant-product-reserves,v4,N!
+constant-product-reserves,v5,N!
+constant-product-reserves,v6,N!
 deposit-precision,v1,N!
 deposit-precision,v2,N!
 deposit-precision,v3,N!
@@ -95,3 +101,9 @@ swap-precision,v3,N!
 swap-precision,v4,N!
 swap-precision,v5,N!
 swap-precision,v6,N!
+swap-slippage,v1,N!
+swap-slippage,v2,N!
+swap-slippage,v3,N!
+swap-slippage,v4,N!
+swap-slippage,v5,N!
+swap-slippage,v6,N!
