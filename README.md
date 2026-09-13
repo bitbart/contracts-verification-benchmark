@@ -100,20 +100,6 @@ verification tools according to the following table:
 | N       | Property might be false | Assert red     |
 | N!      | Property is false       | Satisfy red    |
 
-### Computing scores
-To compute scores for each verification tool, navigate to the
-[`contracts/`](contracts/) directory and execute the following command in your
-terminal:
-```
-$ make
-or
-$ make scores
-```
-This commands will generate a `.csv` file where each tool is represented by a
-row, displaying the count of different outcomes and the total score of the
-tool. Please ensure that you have previously run experiments in the
-corresponding usecase directories, as this process relies on experiments
-results.
 
 ## Extending the benchmark
 
@@ -237,14 +223,8 @@ function invariant(uint z) public {
 
 ### Certora directory structure
 
-Certora directories contain:
-- `Makefile`: to setup and run certora experiments.
-- `getters.sol`: a collection of getters for contract state variables, useful to write certora specifications.
-- `methods.spec`: methods declaration to use in certora specifications.
-- Specification files.
-
-An example of a specification file:
-
+Certora specifications are expressed in CVL, che [Certora Verification Language](https://docs.certora.com/en/latest/docs/cvl/index.html).
+Here is an example:
 ```
 rule P1 {
     env e;
@@ -259,18 +239,6 @@ rule P1 {
     assert x != y;
 }
 ```
-
-### Version-specific properties
-
-Property files must follow the specified naming conventions:
-
-- For general properties, the file should be named as `p<property_number>.sol`.
-- If the property is associated with a specific contract version, use the
-  format `p<property_number>_v<version_number>.sol`.
-
-The tool manages the matching of properties and versions. It prioritizes
-version-specific properties; if a version-specific definition of the property
-exists, the tool will use it. Otherwise, it will default to the generic one.
 
 ### Property tags
 
