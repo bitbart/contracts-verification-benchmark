@@ -1,6 +1,6 @@
 {
     "name": "Lottery",
-    "specification": "file:specification.md",
+    "specification": "file:spec.md",
     "properties": {
         "deadlock-freedom-join1": "In status `Join1` if contract balance is positive, some user can perform a non-reverting transaction that empties the contract balance",
         "deadlock-freedom-reveal0": "In status `Reveal0` if contract balance is positive, some user can perform a non-reverting transaction that empties the contract balance",

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >= 0.8.2;
 
-/// @custom:version missing status check in join1
+/// @custom:version missing status check in `join1`
 contract Lottery {
     address public owner;
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >= 0.8.2;
 
-/// @custom:version no preimage verification in reveal1
+/// @custom:version no preimage verification in `reveal1`
 contract Lottery {
     address public owner;
 

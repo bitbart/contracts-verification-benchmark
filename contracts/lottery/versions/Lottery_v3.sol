@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >= 0.8.2;
 
-/// @custom:version redeem1_noreveal0 transfers only half the balance
+/// @custom:version `redeem1_noreveal0` transfers only half the balance
 contract Lottery {
     address public owner;
 

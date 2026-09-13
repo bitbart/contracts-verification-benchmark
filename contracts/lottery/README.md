@@ -44,25 +44,25 @@ The protocol followed by (honest) players is the following:
 
 ## Versions
 - **v1**: conformant to specification
-- **v2**: redeem0_nojoin1 transfers only half the balance
-- **v3**: redeem1_noreveal0 transfers only half the balance
-- **v4**: redeem0_noreveal1 transfers only half the balance
-- **v5**: win transfers only half the balance
-- **v6**: redeem0_noreveal1 sends to player1 instead of player0
-- **v7**: missing status check in join1
-- **v8**: missing status check in reveal0
-- **v9**: missing status check in reveal1
-- **v10**: missing status check in win
-- **v11**: winner computation depends on block.timestamp
-- **v12**: no preimage verification in reveal0
-- **v13**: no preimage verification in reveal1
+- **v2**: `redeem0_nojoin1` transfers only half the balance
+- **v3**: `redeem1_noreveal0` transfers only half the balance
+- **v4**: `redeem0_noreveal1` transfers only half the balance
+- **v5**: `win` transfers only half the balance
+- **v6**: `redeem0_noreveal1` sends to player1 instead of player0
+- **v7**: missing status check in `join1`
+- **v8**: missing status check in `reveal0`
+- **v9**: missing status check in `reveal1`
+- **v10**: missing status check in `win`
+- **v11**: winner computation depends on `block.timestamp`
+- **v12**: no preimage verification in `reveal0`
+- **v13**: no preimage verification in `reveal1`
 - **v14**: owner can force winner selection
-- **v15**: redeem0_noreveal1 checks end_join instead of end_reveal1
-- **v16**: reveal0() does not update status
+- **v15**: `redeem0_noreveal1` checks `end_join` instead of `end_reveal1`
+- **v16**: `reveal0` does not update status
 - **v17**: `reveal1` does not update status
-- **v18**: redeem*() functions send ETH to msg.sender
-- **v19**: join1() does not require to match bet of player0
-- **v20**: win() transfers ETH balance to msg.sender
+- **v18**: the redeem functions send ETH to `msg.sender`
+- **v19**: `join1` does not require to match bet of `player0`
+- **v20**: `win` transfers ETH balance to `msg.sender`
 - **v21**: `reveal0` has no upper deadline
 - **v22**: `reveal1` has no upper deadline
 
@@ -72,5 +72,3 @@ The protocol followed by (honest) players is the following:
 - [Solcmc/z3](solcmc-z3.csv)
 - [Solcmc/Eldarica](solcmc-eld.csv)
 - [Certora](certora.csv)
-
-## Experiments
