@@ -8,5 +8,5 @@ rule hash_can_collide {
     bytes32 hash1 = hashing(e, s1);
     bytes32 hash2 = hashing(e, s2);
 
-    assert(hash1 == hash2);
+    satisfy(hash1 == hash2);
 }

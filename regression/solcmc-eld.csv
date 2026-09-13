@@ -1,0 +1,4 @@
+property,version,outcome
+hash-can-collide,v1,N!
+hash-congruence,v1,N!
+hash-negate,v1,P!

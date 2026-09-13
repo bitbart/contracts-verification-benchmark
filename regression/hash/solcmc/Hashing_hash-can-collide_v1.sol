@@ -16,11 +16,8 @@ contract Hashing {
         return true;
     }
 	
-	function g() public pure {
-		string memory s1;
-		string memory s2;
-
-		assert(!strEqual(s1, s2));
+	function g(string memory s1, string memory s2) public pure {
+		require(!strEqual(s1, s2));
 
 		bytes32 hash1 = hashing(s1);
 		bytes32 hash2 = hashing(s2);

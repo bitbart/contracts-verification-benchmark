@@ -193,12 +193,13 @@ def run(contract_path, spec_path):
         return ERROR, log.stdout
 
     # Save result
-    is_positive = no_errors_found(log.stdout)
+    if has_satisfy:
+        is_positive = is_verified_once  # existential → disjunctive over instantiations
+    else:
+        is_positive = no_errors_found(log.stdout) and not is_violated
+
     # Negation
     is_positive = not is_positive if negate else is_positive
-
-    if is_violated:
-        is_positive = False 
 
     res = STRONG_POSITIVE if has_assert or has_invariant else WEAK_POSITIVE
     if not is_positive:
