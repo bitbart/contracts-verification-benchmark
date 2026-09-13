@@ -1,20 +1,14 @@
 # AMM
 
 ## Specification
-# AMM Specification
-
 The Automated Market Maker (AMM) contract allows users to provide liquidity and swap tokens using a constant product formula ($x \times y = k$).
 
-## Core Features
-- **Deposit**: Users can add liquidity to the pool in exchange for LP (Liquidity Provider) tokens.
-- **Redeem**: Users can burn their LP tokens to withdraw their proportional share of the underlying reserves.
-- **Swap**: Users can trade one token for another.
+The contract has the following entry points:
+- **deposit()**, which allows users to add liquidity to the pool in exchange for minted tokens;
+- **redeem()**, which allows users to burn their minted tokens to withdraw their proportional share of the underlying reserves;
+- **swap()**, which allows users to trade one token for another.
 
-## Requirements
-- The contract maintains internal reserves (`r0` and `r1`).
-- The AMM must not lock user funds without a valid economic reason.
-- Operations should follow standard ERC20 token interactions.
-
+All operations follow standard ERC20 token interactions.
 
 ## Properties
 - **constant-product**: After a non-reverting `swap` transaction, the product of the contract's token balances is greater than or equal to the product before the transaction.
@@ -48,30 +42,5 @@ The Automated Market Maker (AMM) contract allows users to provide liquidity and 
 
 - [Ground truth](ground-truth.csv)
 - [Solcmc/z3](solcmc-z3.csv)
+- [Solcmc/Eldarica](solcmc-eld.csv)
 - [Certora](certora.csv)
-
-## Experiments
-### SolCMC
-#### Z3
-|        | constant-product          | constant-product-reserves | deposit-precision         | deposit-precision-strict  | donation-dos              | minimum-liquidity         | minimum-liquidity-strict  | price-bounds              | price-equality            | price-symmetry            | price-symmetry-strict     | redeem-fairness           | redeem-liveness           | redeem-precision          | reserves-not-drained      | swap-fee                  | swap-precision            | swap-slippage             |
-|--------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|
-| **v1** | TN!                       | FN!                       | FN!                       | TN!                       | FN!                       | FN!                       | FN!                       | TP!                       | TP!                       | TP!                       | TN!                       | TN!                       | FN!                       | TN!                       | FN!                       | FN!                       | TN!                       | FN!                       |
-| **v2** | TN!                       | FN!                       | FN!                       | TN!                       | FN!                       | FN!                       | FN!                       | TP!                       | TP!                       | TP!                       | TN!                       | TN!                       | FN!                       | TN!                       | FN!                       | FN!                       | TN!                       | FN!                       |
-| **v3** | TN!                       | FN!                       | TN!                       | TN!                       | FN!                       | TN!                       | TN!                       | TP!                       | TP!                       | TP!                       | TN!                       | TN!                       | FN!                       | TN!                       | TN!                       | FN!                       | TN!                       | FN!                       |
-| **v4** | FN!                       | FN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TP!                       | TP!                       | TP!                       | TN!                       | FN!                       | TN!                       | TN!                       | FN!                       | TN!                       | TN!                       | FN!                       |
-| **v5** | FN!                       | FN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TP!                       | TP!                       | TP!                       | TN!                       | FN!                       | TN!                       | TN!                       | FN!                       | TN!                       | TN!                       | FN!                       |
-| **v6** | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TP!                       | TP!                       | TP!                       | TN!                       | FN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | FN!                       |
- 
-
-
-### Certora
-|        | constant-product          | constant-product-reserves | deposit-precision         | deposit-precision-strict  | donation-dos              | minimum-liquidity         | minimum-liquidity-strict  | price-bounds              | price-equality            | price-symmetry            | price-symmetry-strict     | redeem-fairness           | redeem-liveness           | redeem-precision          | reserves-not-drained      | swap-fee                  | swap-precision            | swap-slippage             |
-|--------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|---------------------------|
-| **v1** | TN!                       | TP!                       | TP!                       | TN!                       | FN!                       | TP!                       | TP!                       | TP!                       | TP!                       | TP!                       | TN!                       | TN!                       | FN!                       | TN!                       | TP!                       | TP!                       | TN!                       | TP!                       |
-| **v2** | TN!                       | TP!                       | TP!                       | TN!                       | TP!                       | TP!                       | TP!                       | TP!                       | TP!                       | TP!                       | TN!                       | TN!                       | TP!                       | TN!                       | TP!                       | TP!                       | TN!                       | TP!                       |
-| **v3** | TN!                       | TP!                       | TN!                       | TN!                       | TP!                       | TN!                       | TN!                       | TP!                       | TP!                       | TP!                       | TN!                       | TN!                       | TP!                       | TN!                       | FP!                       | TP!                       | TN!                       | TP!                       |
-| **v4** | TP!                       | TP!                       | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TP!                       | TP!                       | TP!                       | TN!                       | TP!                       | TN!                       | TN!                       | TP!                       | TN!                       | TN!                       | TP!                       |
-| **v5** | TP!                       | TP!                       | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TP!                       | TP!                       | TP!                       | TN!                       | TP!                       | TN!                       | TN!                       | TP!                       | TN!                       | TN!                       | TP!                       |
-| **v6** | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TP!                       | TP!                       | TP!                       | TN!                       | TP!                       | TN!                       | TN!                       | TN!                       | TN!                       | TN!                       | TP!                       |
- 
-
