@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import "./lib/IERC20.sol";
 
-/// @custom:version Fixed Reentrancy & Unsafe transfers
+/// @custom:version Fixed Inflation Attack (added MINIMUM_LIQUIDITY)
 
 contract AMM {
     IERC20 public immutable t0;
@@ -16,23 +16,17 @@ contract AMM {
     uint public supply;
     mapping(address => uint) public minted;
 
-    uint private unlocked = 1;
-    modifier nonReentrant() {
-        require(unlocked == 1, "ReentrancyGuard: reentrant call");
-        unlocked = 0;
-        _;
-        unlocked = 1;
-    }
-
     constructor(IERC20 _t0, IERC20 _t1) {
         t0 = IERC20(_t0);
         t1 = IERC20(_t1);
         require(address(t0) != address(t1));
     }
 
-    function deposit(uint x0, uint x1) public nonReentrant {
+    function deposit(uint x0, uint x1) public {
         require (x0>0 && x1>0);
 
+        t0.transferFrom(msg.sender, address(this), x0);
+        t1.transferFrom(msg.sender, address(this), x1);
            
         uint toMint;
            
@@ -55,26 +49,25 @@ contract AMM {
         supply += toMint;
         r0 += x0;
         r1 += x1;
-        _safeTransferFrom(t0, msg.sender, address(this), x0);
-        _safeTransferFrom(t1, msg.sender, address(this), x1);
     }
 
-    function redeem(uint x) public nonReentrant {
+    function redeem(uint x) public {
         require (supply > 0);
         require (minted[msg.sender] >= x);
 
         uint x0 = (x * r0) / supply;
         uint x1 = (x * r1) / supply;
             
+        t0.transfer(msg.sender, x0);
+        t1.transfer(msg.sender, x1);
+
         r0 -= x0;
         r1 -= x1;
         supply -= x;
         minted[msg.sender] -= x;
-        _safeTransfer(t0, msg.sender, x0);
-        _safeTransfer(t1, msg.sender, x1);
     }
 
-    function swap(address t, uint x_in, uint x_out_min) public nonReentrant {
+    function swap(address t, uint x_in, uint x_out_min) public {
 	require(t == address(t0) || t == address(t1));
         require(x_in > 0);
 
@@ -83,6 +76,7 @@ contract AMM {
             ? (t0, t1, r0, r1)
             : (t1, t0, r1, r0);
 	
+        t_in.transferFrom(msg.sender, address(this), x_in);
 	
         uint amountInWithFee = x_in * 997;
         uint numerator = amountInWithFee * r_out;
@@ -91,21 +85,13 @@ contract AMM {
 
         require(x_out >= x_out_min);
 	
+        t_out.transfer(msg.sender, x_out);
+	
         (r0,r1) = is_t0
             ? (r0 + x_in, r1 - x_out)
             : (r0 - x_out, r1 + x_in);
-        _safeTransferFrom(t_in, msg.sender, address(this), x_in);
-        _safeTransfer(t_out, msg.sender, x_out);
         
 
-    }
-
-    function _safeTransfer(IERC20 token, address to, uint value) private {
-        require(token.transfer(to, value));
-    }
-
-    function _safeTransferFrom(IERC20 token, address from, address to, uint value) private {
-        require(token.transferFrom(from, to, value));
     }
 
     function _sqrt(uint y) private pure returns (uint z) {

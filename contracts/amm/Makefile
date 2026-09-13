@@ -12,7 +12,7 @@ SKELETON = ./skeleton.json
 GROUND_TRUTH = ./ground-truth.csv
 README = README.md
 
-PYTHON = python
+PYTHON = python3
 
 .PHONY: all certora solcmc plain clean cleanr clean-solcmc clean-certora
 
@@ -20,7 +20,6 @@ all: plain solcmc certora
 	@echo "Adding Solcmc table to README..."
 	@echo "### SolCMC" >> $(README)
 	@cat $(SOLCMC_Z3_TABLE) >> $(README)
-	@cat $(SOLCMC_ELD_TABLE) >> $(README)
 	@echo "" >> $(README)
 	@echo "Adding Certora table to README..."
 	@cat $(CERTORA_TABLE) >> $(README)
@@ -32,7 +31,7 @@ $(CERTORA_TABLE):
 	@cd $(realpath $(CERTORA_DIR)) && make
 
 #---------------------------- SOLCMC -----------------------------#
-solcmc: $(SOLCMC_Z3_TABLE) $(SOLCMC_ELD_TABLE)
+solcmc: $(SOLCMC_Z3_TABLE)
 
 $(SOLCMC_Z3_TABLE):
 	@cd $(realpath $(SOLCMC_DIR)) && make solver=z3
