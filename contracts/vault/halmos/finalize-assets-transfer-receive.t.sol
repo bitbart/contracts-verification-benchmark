@@ -32,8 +32,6 @@ contract VaultTest {
         uint256 withdrawAmount
     ) public {
         vm.assume(recoveryKey != address(0) && recoveryKey != OWNER);
-        vm.assume(initialBalance > 0 && initialBalance <= 100 ether);
-        vm.assume(withdrawAmount > 0 && withdrawAmount <= initialBalance);
 
         receiver = new HonestReceiver();
 

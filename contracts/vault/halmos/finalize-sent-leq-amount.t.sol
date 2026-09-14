@@ -34,8 +34,6 @@ contract VaultTest {
         vm.assume(receiver != address(0));
         vm.assume(receiver != address(vault));
 
-        vm.assume(amount <= initialVaultBalance);
-
         vm.deal(address(vault), initialVaultBalance);
 
         vm.prank(OWNER);

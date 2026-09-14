@@ -34,9 +34,6 @@ contract VaultTest {
         vm.assume(caller != address(0));
         vm.assume(receiver != address(0));
 
-        vm.assume(initialBalance <= 100 ether);
-        vm.assume(amount <= 100 ether);
-
         vm.prank(OWNER);
         vault = new Vault(payable(recoveryKey), WAIT_TIME);
 

@@ -23,11 +23,11 @@ contract VaultTest {
         address recoveryKey,
         address receiver,
         uint256 initialBalance,
-        bool triggerAction
+        bool triggerAction,
+        uint256 withdrawAmount
     ) public {
         vm.assume(recoveryKey != address(0) && recoveryKey != OWNER);
         vm.assume(receiver != address(0));
-        vm.assume(initialBalance > 0 && initialBalance <= 100 ether);
 
         vm.deal(address(vault), initialBalance);
 
@@ -36,10 +36,9 @@ contract VaultTest {
 
         if (triggerAction) {
             vm.prank(OWNER);
-            try vault.withdraw(receiver, 1 ether) {} catch {}
+            try vault.withdraw(receiver, withdrawAmount) {} catch {}
         }
 
-       
         bytes32 stateSlot = vm.load(address(vault), bytes32(uint256(6)));
         uint256 stateValue = uint256(stateSlot);
 
