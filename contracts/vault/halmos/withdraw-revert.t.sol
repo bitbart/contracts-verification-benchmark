@@ -1,0 +1,61 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity >=0.8.2;
+
+import "target/{{VERSION}}.sol";
+
+interface IHalmosVM {
+    function assume(bool condition) external;
+    function prank(address msgSender) external;
+    function deal(address account, uint256 newBalance) external;
+    function load(address account, bytes32 slot) external view returns (bytes32);
+}
+
+contract VaultTest {
+    IHalmosVM constant vm =
+        IHalmosVM(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
+
+    Vault vault;
+
+    address constant OWNER = address(0xAA);
+    uint256 constant WAIT_TIME = 10;
+
+    /// @notice Property: withdraw-revert
+    function check_withdraw_revert(
+        address recoveryKey,
+        address caller,
+        address receiver,
+        uint256 amount,
+        uint256 initialBalance,
+        bool startInReqState
+    ) public {
+        vm.assume(recoveryKey != address(0));
+        vm.assume(recoveryKey != OWNER);
+
+        vm.assume(caller != address(0));
+        vm.assume(receiver != address(0));
+
+        vm.prank(OWNER);
+        vault = new Vault(payable(recoveryKey), WAIT_TIME);
+
+        vm.deal(address(vault), initialBalance);
+
+        if (startInReqState && initialBalance > 0) {
+            vm.prank(OWNER);
+            vault.withdraw(receiver, 1 wei);
+        }
+
+        bytes32 stateSlot = vm.load(address(vault), bytes32(uint256(6)));
+
+        uint256 currentState = uint256(stateSlot);
+        uint256 currentBalance = address(vault).balance;
+
+        bool mustRevert = (amount > currentBalance) || (caller != OWNER) || (currentState != 0);
+
+        vm.prank(caller);
+        try vault.withdraw(receiver, amount) {
+            assert(!mustRevert);
+        } catch {
+            assert(mustRevert);
+        }
+    }
+}
