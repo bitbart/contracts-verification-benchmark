@@ -1,0 +1,9 @@
+[profile.default]
+src = '../MutexSafe_v*'
+test = '.'
+out = 'out'
+libs = ['../../../lib']
+
+remappings = [
+    'target/=../',
+]
