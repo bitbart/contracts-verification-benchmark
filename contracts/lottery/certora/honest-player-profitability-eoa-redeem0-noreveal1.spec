@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// Assuming `player0` and `player1` behave as EOAs: in state `Reveal1`, a user can perform a non-reverting
-// transaction, made after the state's respective deadline, that strictly increases `player0`'s ETH balance
-// by exactly the pot, leaves the contract's ETH balance at zero, and advances status to `End`
+// Assuming `player0` and `player1` behave as EOAs: in any reachable `Reveal1`
+// state, a user can perform a non-reverting transaction, made after the
+// state's deadline, that strictly increases `player0`'s ETH balance by exactly
+// the pot, leaves the contract's ETH balance at zero, and advances status
+// to `End`
 
 /// @custom:run certoraRun versions/Lottery_v1.sol:Lottery versions/lib/EOA0.sol versions/lib/EOA1.sol --verify Lottery:certora/honest-player-profitability-eoa-redeem0-noreveal1.spec --link Lottery:player0=EOA0 --link Lottery:player1=EOA1
+
+/// @custom:negate
 rule honest_player_profitability_eoa_redeem0_noreveal1 (method f)
 filtered {
     f -> !f.isView &&
@@ -30,9 +34,9 @@ filtered {
 
     f(e, args);
 
-    satisfy (
-        nativeBalances[p0] == p0_bal_pre + pot &&
-        nativeBalances[currentContract] == 0 &&
-        currentContract.status == Lottery.Status.End
+    assert (
+        nativeBalances[p0] != p0_bal_pre + pot ||
+        nativeBalances[currentContract] != 0 ||
+        currentContract.status != Lottery.Status.End
     );
 }

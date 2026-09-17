@@ -1,3 +1,7 @@
+// If a user performs a non-reverting transaction then the contract's state 
+// after the transaction is strictly greater than it was before, according to
+// the ordering `Join0` < `Join1` < `Reveal0` < `Reveal1` < `Win` < `End`
+
 /// @custom:ghost
 uint8 _pre_status;
 

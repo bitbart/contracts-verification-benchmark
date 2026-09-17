@@ -6,6 +6,7 @@
 // state modifications
 
 /// @custom:run certoraRun versions/Lottery_v1.sol:Lottery versions/lib/EOA0.sol versions/lib/EOA1.sol --verify Lottery:certora/owner-impartiality-eoa.spec --optimistic_hashing --link Lottery:player0=EOA0 --link Lottery:player1=EOA1
+
 rule owner_impartiality_eoa(method f)
 filtered {
     f -> !f.isView &&

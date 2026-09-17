@@ -2,18 +2,13 @@
 
 // After a non-reverting `reveal0` transaction, assuming `player0` and
 // `player1` are EOAs, some user can perform, either immediately, or in the
-// future provided there are no in-between transactions, a transaction that
-// makes `player0` redeem the pot
+// future provided there are no in-between transactions, a `redeem0_noreveal1` 
+// transaction that makes `player0` redeem the pot
 
-/// @custom:run certoraRun versions/Lottery_v1.sol:Lottery versions/lib/EOA0.sol versions/lib/EOA1.sol --verify Lottery:certora/no-incentives-to-abort-eoa.spec --link Lottery:player0=EOA0 --link Lottery:player1=EOA1 --optimistic_hashing --optimistic_loop
+/// @custom:run certoraRun versions/Lottery_v1.sol:Lottery versions/lib/EOA0.sol versions/lib/EOA1.sol --verify Lottery:certora/no-incentives-to-abort-witness-eoa.spec --link Lottery:player0=EOA0 --link Lottery:player1=EOA1 --optimistic_hashing --optimistic_loop
 
 /// @custom:negate
-rule no_incentives_to_abort_eoa (method f)
-filtered {
-    f -> !f.isView &&
-         !f.isPure &&
-         f.contract == currentContract
-} {
+rule no_incentives_to_abort_eoa_witness {
     env e_reveal0;
     calldataarg args_reveal0;
 
@@ -32,7 +27,8 @@ filtered {
 
     require pre_contract_bal > 0;
     require currentContract.status == Lottery.Status.Reveal1;
-    f(e_redeem, args_redeem);
+    
+    redeem0_noreveal1(e_redeem, args_redeem);
         
     mathint post_p0_bal = nativeBalances[p0];
     mathint post_p1_bal = nativeBalances[p1];
