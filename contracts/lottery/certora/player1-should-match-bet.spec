@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// If a `join1` transaction doesn't revert then `msg.value` matched the bet from `player0`
+// If a `join1` transaction doesn't revert then `msg.value` matched the bet
+// made by `player0`
 
 rule player1_should_match_bet {
     env e;

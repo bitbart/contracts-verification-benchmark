@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// Assuming `player0` and `player1` are EOAs: if the honest protocol would result in `expected_winner` to be the
-// winner of the lottery, a non-reverting `win` transaction must increase `expected_winner` ETH balance by the pot
+// Assuming `player0` and `player1` are EOAs: in a reachable Win state, a 
+// non-reverting `win` transaction must increase by the pot amount the ETH
+// balance of the player returned by `compute_winner`
 
 /// @custom:run certoraRun versions/Lottery_v1.sol:Lottery versions/lib/EOA0.sol versions/lib/EOA1.sol --verify Lottery:certora/win-pays-fair-winner-eoa.spec --link Lottery:player0=EOA0 --link Lottery:player1=EOA1 --optimistic_hashing --optimistic_loop
 rule win_pays_fair_winner_eoa {

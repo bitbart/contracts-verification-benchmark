@@ -2,12 +2,13 @@
 
 // In state `Reveal1` if contract balance is positive, some user can perform,
 // either immediately, or in the future provided there are no in-between
-// transactions, a non-reverting transaction that empties the contract balance.
+// transactions, a non-reverting transaction that empties the contract balance,
+// assuming that `player0` and `player1` are EOAs.
 
-/// @custom:run certoraRun versions/Lottery_v1.sol:Lottery --verify Lottery:certora/deadlock-freedom-reveal1.spec --optimistic_hashing --optimistic_loop
+/// @custom:run certoraRun versions/Lottery_v1.sol:Lottery versions/lib/EOA0.sol versions/lib/EOA1.sol --verify Lottery:certora/deadlock-freedom-reveal1-eoa.spec --link Lottery:player0=EOA0 --link Lottery:player1=EOA1 --optimistic_hashing --optimistic_loop
 
 /// @custom:negate
-rule deadlock_freedom_reveal1 (method f)
+rule deadlock_freedom_reveal1_eoa (method f)
 filtered {
     f -> !f.isView && !f.isPure
 } {
