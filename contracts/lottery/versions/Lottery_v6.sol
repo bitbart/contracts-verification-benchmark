@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >= 0.8.2;
 
-/// @custom:version redeem0_noreveal1 sends to player1 instead of player0
+/// @custom:version `redeem0_noreveal1` sends to player1 instead of player0
 contract Lottery {
     address public owner;
 

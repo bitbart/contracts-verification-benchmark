@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >= 0.8.2;
 
-/// @custom:version winner computation depends on block.timestamp
+/// @custom:version winner computation depends on `block.timestamp`
 contract Lottery {
     address public owner;
 

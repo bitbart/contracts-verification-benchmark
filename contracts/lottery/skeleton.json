@@ -1,6 +1,6 @@
 {
     "name": "Lottery",
-    "specification": "file:specification.md",
+    "specification": "file:spec.md",
     "properties": {
         "deadlock-freedom-join1": "In state `Join1` if contract balance is positive, some user can perform, either immediately, or in the future provided there are no in-between transactions, a non-reverting transaction that empties the contract balance.",
         "deadlock-freedom-join1-eoa": "In state `Join1` if contract balance is positive, some user can perform, either immediately, or in the future provided there are no in-between transactions, a non-reverting transaction that empties the contract balance, assuming that `player0` and `player1` are EOAs.",

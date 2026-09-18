@@ -22,7 +22,9 @@ OUT = $(OUTPUT_DIR)/out.csv
 CM = $(OUTPUT_DIR)/cm.csv
 TABLE = $(OUTPUT_DIR)/table.md
 
-PYTHON = python
+CERTORA_FLAGS = --optimistic_loop
+
+PYTHON = python3
 
 .PHONY: run one setup contracts specs getters directories clean-specs clean
 
@@ -55,7 +57,7 @@ specs: $(SPEC_DIR)
 	@for file in $(SPEC_FILES); do \
 		if [ "$$file" != $(PROPERTIES_DIR)/"methods.spec" ]; then \
 			echo "Processing $$file"; \
-			cat $(METHODS_FILE) $$file >> $(SPEC_DIR)/$$file; \
+			cat $(METHODS_FILE) $$file > $(SPEC_DIR)/$$(basename $$file); \
 		fi \
 	done;
 

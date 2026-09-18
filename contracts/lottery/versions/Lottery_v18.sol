@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >= 0.8.2;
 
-/// @custom:version redeem*() functions send ETH to msg.sender
+/// @custom:version the redeem functions send ETH to `msg.sender`
 contract Lottery {
     address public owner;
 

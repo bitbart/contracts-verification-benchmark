@@ -476,6 +476,8 @@ owner-impartiality-eoa,v2,N
 owner-impartiality-eoa,v20,N
 owner-impartiality-eoa,v21,N
 owner-impartiality-eoa,v22,N
+owner-impartiality-eoa,v23,N
+owner-impartiality-eoa,v24,N
 owner-impartiality-eoa,v3,N
 owner-impartiality-eoa,v4,N
 owner-impartiality-eoa,v5,N
@@ -498,6 +500,8 @@ player1-should-match-bet,v2,P!
 player1-should-match-bet,v20,P!
 player1-should-match-bet,v21,P!
 player1-should-match-bet,v22,P!
+player1-should-match-bet,v23,P!
+player1-should-match-bet,v24,P!
 player1-should-match-bet,v3,P!
 player1-should-match-bet,v4,P!
 player1-should-match-bet,v5,P!
@@ -520,6 +524,8 @@ redeem-before-deadline-reverts-nojoin1,v2,P!
 redeem-before-deadline-reverts-nojoin1,v20,P!
 redeem-before-deadline-reverts-nojoin1,v21,P!
 redeem-before-deadline-reverts-nojoin1,v22,P!
+redeem-before-deadline-reverts-nojoin1,v23,P!
+redeem-before-deadline-reverts-nojoin1,v24,P!
 redeem-before-deadline-reverts-nojoin1,v3,P!
 redeem-before-deadline-reverts-nojoin1,v4,P!
 redeem-before-deadline-reverts-nojoin1,v5,P!
@@ -542,6 +548,8 @@ redeem-before-deadline-reverts-noreveal0,v2,P!
 redeem-before-deadline-reverts-noreveal0,v20,P!
 redeem-before-deadline-reverts-noreveal0,v21,P!
 redeem-before-deadline-reverts-noreveal0,v22,P!
+redeem-before-deadline-reverts-noreveal0,v23,P!
+redeem-before-deadline-reverts-noreveal0,v24,P!
 redeem-before-deadline-reverts-noreveal0,v3,P!
 redeem-before-deadline-reverts-noreveal0,v4,P!
 redeem-before-deadline-reverts-noreveal0,v5,P!
@@ -564,6 +572,8 @@ redeem-before-deadline-reverts-noreveal1,v2,P!
 redeem-before-deadline-reverts-noreveal1,v20,P!
 redeem-before-deadline-reverts-noreveal1,v21,P!
 redeem-before-deadline-reverts-noreveal1,v22,P!
+redeem-before-deadline-reverts-noreveal1,v23,P!
+redeem-before-deadline-reverts-noreveal1,v24,P!
 redeem-before-deadline-reverts-noreveal1,v3,P!
 redeem-before-deadline-reverts-noreveal1,v4,P!
 redeem-before-deadline-reverts-noreveal1,v5,P!
@@ -586,6 +596,8 @@ redeem0-noreveal1-fairness-eoa,v2,P!
 redeem0-noreveal1-fairness-eoa,v20,P!
 redeem0-noreveal1-fairness-eoa,v21,P!
 redeem0-noreveal1-fairness-eoa,v22,P!
+redeem0-noreveal1-fairness-eoa,v23,P!
+redeem0-noreveal1-fairness-eoa,v24,P!
 redeem0-noreveal1-fairness-eoa,v3,P!
 redeem0-noreveal1-fairness-eoa,v4,P!
 redeem0-noreveal1-fairness-eoa,v5,P!
@@ -608,6 +620,8 @@ reveal0-reverts-after-deadline,v2,P!
 reveal0-reverts-after-deadline,v20,P!
 reveal0-reverts-after-deadline,v21,N
 reveal0-reverts-after-deadline,v22,P!
+reveal0-reverts-after-deadline,v23,N
+reveal0-reverts-after-deadline,v24,P!
 reveal0-reverts-after-deadline,v3,P!
 reveal0-reverts-after-deadline,v4,P!
 reveal0-reverts-after-deadline,v5,P!
@@ -629,7 +643,9 @@ reveal1-reverts-after-deadline,v19,P!
 reveal1-reverts-after-deadline,v2,P!
 reveal1-reverts-after-deadline,v20,P!
 reveal1-reverts-after-deadline,v21,P!
-reveal1-reverts-after-deadline,v22,N
+reveal1-reverts-after-deadline,v22,P!
+reveal1-reverts-after-deadline,v23,P!
+reveal1-reverts-after-deadline,v24,N
 reveal1-reverts-after-deadline,v3,P!
 reveal1-reverts-after-deadline,v4,P!
 reveal1-reverts-after-deadline,v5,P!
@@ -652,6 +668,8 @@ status-irreversible,v2,P!
 status-irreversible,v20,P!
 status-irreversible,v21,P!
 status-irreversible,v22,P!
+status-irreversible,v23,P!
+status-irreversible,v24,P!
 status-irreversible,v3,P!
 status-irreversible,v4,P!
 status-irreversible,v5,P!
@@ -674,6 +692,8 @@ win-pays-fair-winner-eoa,v2,N
 win-pays-fair-winner-eoa,v20,N
 win-pays-fair-winner-eoa,v21,N
 win-pays-fair-winner-eoa,v22,N
+win-pays-fair-winner-eoa,v23,N
+win-pays-fair-winner-eoa,v24,N
 win-pays-fair-winner-eoa,v3,N
 win-pays-fair-winner-eoa,v4,N
 win-pays-fair-winner-eoa,v5,N
@@ -696,6 +716,8 @@ win-transaction-env-independent,v2,P!
 win-transaction-env-independent,v20,P!
 win-transaction-env-independent,v21,P!
 win-transaction-env-independent,v22,P!
+win-transaction-env-independent,v23,P!
+win-transaction-env-independent,v24,P!
 win-transaction-env-independent,v3,P!
 win-transaction-env-independent,v4,P!
 win-transaction-env-independent,v5,P!
@@ -718,6 +740,8 @@ winner-computation-env-independent,v2,P!
 winner-computation-env-independent,v20,P!
 winner-computation-env-independent,v21,P!
 winner-computation-env-independent,v22,P!
+winner-computation-env-independent,v23,P!
+winner-computation-env-independent,v24,P!
 winner-computation-env-independent,v3,P!
 winner-computation-env-independent,v4,P!
 winner-computation-env-independent,v5,P!
@@ -740,6 +764,8 @@ wrong-preimage-reverts-p0,v2,P!
 wrong-preimage-reverts-p0,v20,P!
 wrong-preimage-reverts-p0,v21,P!
 wrong-preimage-reverts-p0,v22,P!
+wrong-preimage-reverts-p0,v23,P!
+wrong-preimage-reverts-p0,v24,P!
 wrong-preimage-reverts-p0,v3,P!
 wrong-preimage-reverts-p0,v4,P!
 wrong-preimage-reverts-p0,v5,P!
@@ -762,6 +788,8 @@ wrong-preimage-reverts-p1,v2,P!
 wrong-preimage-reverts-p1,v20,P!
 wrong-preimage-reverts-p1,v21,P!
 wrong-preimage-reverts-p1,v22,P!
+wrong-preimage-reverts-p1,v23,P!
+wrong-preimage-reverts-p1,v24,P!
 wrong-preimage-reverts-p1,v3,P!
 wrong-preimage-reverts-p1,v4,P!
 wrong-preimage-reverts-p1,v5,P!

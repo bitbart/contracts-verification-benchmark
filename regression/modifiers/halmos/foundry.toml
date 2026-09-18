@@ -1,0 +1,9 @@
+[profile.default]
+src = '../Modifiers_v*'
+test = '.'
+out = 'out'
+libs = ['../../../lib']
+
+remappings = [
+    'target/=../',
+]
