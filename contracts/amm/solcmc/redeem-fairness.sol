@@ -1,16 +1,26 @@
 
     function check_redeem_fairness(uint x) public {
-        uint _supply = supply;
-        require(_supply > 0);
-        require(x > 0 && x <= minted[msg.sender]);
+
+        require(supply > 0);
+        require(minted[msg.sender] >= x);
+        require(x > 0);
         
-        uint bal0Before = t0.balanceOf(address(this));
+
+
+        uint senderBal0Before = t0.balanceOf(msg.sender);
+        uint senderBal1Before = t1.balanceOf(msg.sender);
         
-        uint expectedOut0 = (x * bal0Before) / _supply;
+
+        uint expectedOut0 = (x * t0.balanceOf(address(this))) / supply;
+        uint expectedOut1 = (x * t1.balanceOf(address(this))) / supply;
         
+
         redeem(x);
         
-        uint bal0After = t0.balanceOf(address(this));
+
+        uint senderBal0After = t0.balanceOf(msg.sender);
+        uint senderBal1After = t1.balanceOf(msg.sender);
         
-        assert(bal0Before - bal0After == expectedOut0);
+        assert(senderBal0After - senderBal0Before == expectedOut0);
+        assert(senderBal1After - senderBal1Before == expectedOut1);
     }

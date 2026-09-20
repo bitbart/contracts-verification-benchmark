@@ -1,26 +1,18 @@
 
-    function check_deposit_precision_strict(uint amount0, uint amount1) public {
-        uint _r0 = r0;
-        uint _r1 = r1;
-        uint _supply = supply;
+    function check_deposit_precision_strict(uint x0, uint x1) public {
+        
+        uint supplyBefore = supply;
 
-        require(_r0 >= 1000 && _r1 >= 1000);
+        require(x0 * 1000 >= r0);
+        require(x1 * 1000 >= r1);
 
-        // The user deposits at least 1/1000th of the reserves.
-        require(amount0 * 1000 >= _r0);
-        require(amount1 * 1000 >= _r1);
 
-        // (Removed proportionality precondition to let the prover test if the contract enforces it)
-        deposit(amount0, amount1);
+        deposit(x0, x1);
 
-        uint newSupply = supply;
-        uint mintedTokens = newSupply - _supply;
 
-        // Precision loss should not truncate the minted tokens to zero
-        assert(mintedTokens > 0);
+        uint minted = supply - supplyBefore;
 
-        // (amount0 / _r0) * _supply
-        assert(mintedTokens * _r0 == amount0 * _supply);
-        // (amount1 / _r1) * _supply
-        assert(mintedTokens * _r1 == amount1 * _supply);
+        assert(minted > 0);
+        assert(minted * r0 == x0 * supply);
+        assert(minted * r1 == x1 * supply);
     }
