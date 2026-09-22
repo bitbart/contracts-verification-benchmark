@@ -1,15 +1,10 @@
 /// @custom:property price-symmetry
-/// @custom:description The product of the prices of token0 and token1, as calculated by the `price` function, never exceeds 1e36.
+/// @custom:description Let `t0`, `t1` be the tokens held by the contract. The product between `price(t0)` and `price(t1)` never exceeds 1e36.
 
 rule price_symmetry() {
     
     env e;
     
-    // (t0 / t1) * (t1 / t0) * 1e18 * 1e18 = 1 * 1e36 = 1e36
-
-    require(currentContract.t0(e) != currentContract.t1(e));
-    require(currentContract.r0(e) > 0 && currentContract.r1(e) > 0);
-
     mathint p0 = currentContract.price(e, currentContract.t0(e));
     mathint p1 = currentContract.price(e, currentContract.t1(e));
 

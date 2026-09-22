@@ -1,12 +1,14 @@
 
-    function check_donation_dos(uint shares) public {
-        uint bal0 = t0.balanceOf(address(this));
-        uint bal1 = t1.balanceOf(address(this));
+    function check_donation_dos(uint x) public {
         
-        require(bal0 > r0 || bal1 > r1);
-        require(shares > 0 && shares <= minted[address(this)]);
+        uint b0 = t0.balanceOf(address(this));
+        uint b1 = t1.balanceOf(address(this));
+        
+        require(b0 >= r0 && b1 >= r1);
+        require(minted[address(this)] >= x);
         require(supply > 0);
+        require(x <= supply);
         
-        (bool success, ) = address(this).call(abi.encodeWithSignature("redeem(uint256)", shares));
+        (bool success, ) = address(this).call(abi.encodeWithSignature("redeem(uint256)", x));
         assert(success);
     }

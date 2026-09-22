@@ -16,7 +16,7 @@ contract AMM {
     uint public supply;
     mapping(address => uint) public minted;
 
-    uint private unlocked = 1;
+    uint public unlocked = 1;
     modifier nonReentrant() {
         require(unlocked == 1, "ReentrancyGuard: reentrant call");
         unlocked = 0;

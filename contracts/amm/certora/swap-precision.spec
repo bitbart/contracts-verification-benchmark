@@ -1,41 +1,38 @@
 /// @custom:property swap-precision
-/// @custom:description After a non-reverting `swap` transaction where `amountIn` is strictly positive and the minimum return is set to zero, the contract's balance of the output token is decreased.
+/// @custom:description Let t0, t1 be two different tokens held by the contract. After a non-reverting `swap(t0, x_in, x_out_min)` transaction where `x_out_min == 0`, the contract's balance of `t1` is decreased.
 
 rule swap_precision {
     env e;
-
     address token;
-    uint amountIn;
-    mathint balanceOutBefore;
-    
-    // token validation
-    require(currentContract.t0(e) != currentContract.t1(e));
-    require(currentContract.t0(e) != 0 && currentContract.t1(e) != 0);
-    require(currentContract.t0(e) != currentContract && currentContract.t1(e) != currentContract);
-    
+    uint xIn;
+    uint xMin;
 
-    
+    require(e.msg.sender != currentContract);
+    require(e.msg.sender != 0);
+
+
     require(token == currentContract.t0(e) || token == currentContract.t1(e));
-    require(amountIn > 0);
+    require(xIn > 0);
     
+    mathint balanceOutBefore;
 
     if (token == currentContract.t0(e)) {
-        balanceOutBefore = currentContract.getBalance1(e);
+        balanceOutBefore = currentContract.t1(e).balanceOf(e, currentContract);
     }
     else {
-        balanceOutBefore = currentContract.getBalance0(e);
+        balanceOutBefore = currentContract.t0(e).balanceOf(e, currentContract);
     }
 
-    swap(e, token, amountIn, 0);
+    
+    swap(e, token, xIn, xMin);
 
     mathint balanceOutAfter;
 
     if (token == currentContract.t0(e)) {
-        balanceOutAfter = currentContract.getBalance1(e);
-    }
-    else {
-        balanceOutAfter = currentContract.getBalance0(e);
+        balanceOutAfter = currentContract.t1(e).balanceOf(e, currentContract);
+    } else {
+        balanceOutAfter = currentContract.t0(e).balanceOf(e, currentContract);
     }
     
-    assert(balanceOutBefore - balanceOutAfter > 0);
+    assert(balanceOutBefore > balanceOutAfter);
 }

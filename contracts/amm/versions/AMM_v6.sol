@@ -69,7 +69,7 @@ contract AMM {
     }
 
     function swap(address t, uint x_in, uint x_out_min) public {
-	require(t == address(t0) || t == address(t1));
+	    require(t == address(t0) || t == address(t1));
         require(x_in > 0);
 
         bool is_t0 = t == address(t0);

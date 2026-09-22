@@ -3,24 +3,26 @@
 
 rule constant_product {
     env e;
+    address t;
+    uint xIn;
+    uint xOutMin;
 
-    // Preconditions
+    mathint kBefore = currentContract.t0(e).balanceOf(e, currentContract) * currentContract.t1(e).balanceOf(e, currentContract);
+
+
     require(currentContract.t0(e) != currentContract.t1(e));
     require(currentContract.t0(e) != 0 && currentContract.t1(e) != 0);
-    require(currentContract.t0(e) != currentContract && currentContract.t1(e) != currentContract);
+    require(currentContract.t0(e) != currentContract && currentContract.t1(e) != currentContract);    
     
-    mathint oldK = currentContract.getBalance0(e) * currentContract.getBalance1(e);
+    require(t == currentContract.t0(e) || t == currentContract.t1(e));
+    require(xIn > 0);
 
-    address token;
-    uint amountIn;
-    uint amountOutMin;
-    
-    require(token == currentContract.t0(e) || token == currentContract.t1(e));
-    require(amountIn > 0);
-    
-    swap(e, token, amountIn, amountOutMin);
 
-    mathint newK = currentContract.getBalance0(e) * currentContract.getBalance1(e);
+    swap(e, t, xIn, xOutMin);
 
-    assert(newK >= oldK);
+
+    mathint kAfter = currentContract.t0(e).balanceOf(e, currentContract) * currentContract.t1(e).balanceOf(e, currentContract);
+
+
+    assert(kAfter >= kBefore);
 }
