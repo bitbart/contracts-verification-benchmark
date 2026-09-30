@@ -50,7 +50,7 @@ contract DonationDosV4Test is Test {
     }
 
     // donation-dos:
-    // If the token balances of the contract exceed its reserves, a `redeem` transaction by a sender possessing a positive amount of liquidity tokens never reverts.
+    // Let `t0`, `t1` be the amount of token0 and token1 held by the contract, let `r0`, `r1` be the contract's internal reserves of those tokens, and let `supply` be the internal supply of the contract. If `t0 >= r0` and `t1 >= r1`, a `redeem(x)`, transaction by a sender A, with `minted[A] >= x`, `supply > 0` and `x <= supply` never reverts.
 
     // PoC:
     // - Step 1 (setup): The victim deposits tokens to initialize the pool. The attacker then transfers 1 wei directly to the contract (donation), causing the real balance to decouple from the internal reserves.

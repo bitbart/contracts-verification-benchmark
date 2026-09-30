@@ -42,7 +42,7 @@ contract MinimumLiquidityV4Test is Test {
     }
 
     // minimum-liquidity:
-    // If the total supply of liquidity tokens is strictly positive, the amount of liquidity tokens minted to the zero address is always greater than or equal to 1000.
+    // If the total supply of liquidity tokens is strictly positive, then `minted[address(0)] >= 1000`.
 
     // PoC:
     // - Step 1 (setup): The user prepares to deposit initial liquidity into an empty pool.

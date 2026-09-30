@@ -1,10 +1,10 @@
 property,version,truth,footnote-md
-constant-product,v1,0,
-constant-product,v2,0,
-constant-product,v3,0,
+constant-product,v1,1,
+constant-product,v2,0,"The property is false due to reentrancy on the swap function.",
+constant-product,v3,0,"The property is false due to reentrancy on the swap function.",
 constant-product,v4,1,
 constant-product,v5,1,
-constant-product,v6,0,
+constant-product,v6,0,"The property is false due to the wrong swap formula.",
 constant-product-reserves,v1,1,
 constant-product-reserves,v2,1,
 constant-product-reserves,v3,1,
@@ -89,12 +89,18 @@ reserves-not-drained,v3,0,"This property is false, since V3 removed the minimum 
 reserves-not-drained,v4,1,
 reserves-not-drained,v5,1,
 reserves-not-drained,v6,0,"This property is false, since mathematical errors in deposit/swap allow draining the reserves."
-swap-fee,v1,1,
-swap-fee,v2,1,
-swap-fee,v3,1,
-swap-fee,v4,0,"This property is false, since V4 implements a zero-fee model, meaning the product remains constant (does not strictly increase) when exact division occurs."
-swap-fee,v5,0,"This property is false, since V5 implements a zero-fee model, meaning the product remains constant (does not strictly increase) when exact division occurs."
-swap-fee,v6,0,"This property is false, since V6 uses a broken linear swap formula that causes the product to decrease."
+swap-fee,v1,0,"This property is false, since the product of a non initialized pool is 0.
+swap-fee,v2,0,"This property is false, since the product of a non initialized pool is 0.
+swap-fee,v3,0,"This property is false, since the product of a non initialized pool is 0.
+swap-fee,v4,0,"This property is false, since the product of a non initialized pool is 0.
+swap-fee,v5,0,"This property is false, since the product of a non initialized pool is 0.
+swap-fee,v6,0,"This property is false, since the product of a non initialized pool is 0.
+swap-fee-gt0,v1,1,
+swap-fee-gt0,v2,1,
+swap-fee-gt0,v3,1,
+swap-fee-gt0,v4,0,"This property is false, since this version implements a zero-fee model, meaning the product remains constant (does not strictly increase) when exact division occurs."
+swap-fee-gt0,v5,0,"This property is false, since this version implements a zero-fee model, meaning the product remains constant (does not strictly increase) when exact division occurs."
+swap-fee-gt0,v6,0,"This property is false, since this version implements a zero-fee model, meaning the product remains constant (does not strictly increase) when exact division occurs."
 swap-precision,v1,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."
 swap-precision,v2,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."
 swap-precision,v3,0,"This property is false, since trading 1 wei results in a zero token return due to integer division truncation."

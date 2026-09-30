@@ -1,33 +1,32 @@
 /// @custom:property deposit-precision-strict
-/// @custom:description After a non-reverting `deposit` transaction where the deposited amounts are at least one-thousandth of the current reserves, the minted liquidity tokens are strictly positive and equal to the proportion between the deposited amounts of both tokens and the contract's existing reserves.
+/// @custom:description After a non-reverting deposit(x0, x1) transaction where `x0 >= r0/1000` and `x1 >= r1/1000`, the minted liquidity tokens (`minted`) satisfy `minted > 0`, `minted / supplyBefore == x0 / r0`, and `minted / supplyBefore == x1 / r1`, where `r0`, `r1`, and `supplyBefore` denote the state before the deposit.
 
-rule deposit_precision_strict(uint amount0, uint amount1) {
+rule deposit_precision_strict {
     
     env e;
-    uint _supply = currentContract.supply(e);
+    uint x0;
+    uint x1;
+    uint r0 = currentContract.r0(e);
+    uint r1 = currentContract.r1(e);
+    uint supplyBefore = currentContract.supply(e);
 
-    // (Removed Inflation attack precondition to let the prover test it)
 
     require(currentContract.t0(e) != currentContract.t1(e));
     require(e.msg.sender != currentContract);
 
-    uint _r0 = currentContract.r0(e);
-    uint _r1 = currentContract.r1(e);
 
-    require(_r0 >= 1000);
-    require(_r1 >= 1000);
+    require(x0 * 1000 >= r0);
+    require(x1 * 1000 >= r1);
 
-    require(amount0 * 1000 >= _r0);
-    require(amount1 * 1000 >= _r1);
 
-    // (Removed proportionality precondition to let the prover test if the contract enforces it)
+    deposit(e, x0, x1);
 
-    deposit(e, amount0, amount1);
 
-    uint newSupply = currentContract.supply(e);
-    mathint minted = newSupply - _supply;
+    uint supplyAfter = currentContract.supply(e);
+    mathint minted = supplyAfter - supplyBefore;
 
-    assert(_supply > 0 => minted > 0);
-    assert(_supply > 0 => (minted * _r0 == amount0 * _supply));
-    assert(_supply > 0 => (minted * _r1 == amount1 * _supply));
+
+    assert(minted > 0);
+    assert(minted * r0 == x0 * supplyBefore);
+    assert(minted * r1 == x1 * supplyBefore);
 }

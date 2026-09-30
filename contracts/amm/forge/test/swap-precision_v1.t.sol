@@ -25,8 +25,7 @@ contract SwapPrecisionV1Test is Test {
     V1.AMM ammV1;
     MockToken token0;
     MockToken token1;
-    address user = address(0x1234);
-    address attacker = address(0x5678);
+    address user = address(0x1111);
 
     function setUp() public {
         token0 = new MockToken();
@@ -35,36 +34,30 @@ contract SwapPrecisionV1Test is Test {
 
         token0.transfer(user, 100000);
         token1.transfer(user, 100000);
-        token0.transfer(attacker, 20000);
 
-        vm.prank(user);
+        vm.startPrank(user);
         token0.approve(address(ammV1), type(uint256).max);
-        vm.prank(user);
         token1.approve(address(ammV1), type(uint256).max);
-        
-        vm.prank(attacker);
-        token0.approve(address(ammV1), type(uint256).max);
+        ammV1.deposit(10000, 10000);
+        vm.stopPrank();
     }
 
     // swap-precision:
-    // After a non-reverting `swap` transaction where `amountIn` is strictly positive and the minimum return is set to zero, the contract's balance of the output token is decreased.
+    // Let `t0`, `t1` be two different tokens held by the contract. After a non-reverting `swap(t0, x_in, x_out_min)` transaction where `x_out_min == 0`, the contract's balance of `t1` is decreased.
 
     // PoC:
-    // - Step 1 (setup): The user deposits massive liquidity, creating a large denominator.
-    // - Step 2 (attack): The attacker swaps a microscopic amount (1 wei). Due to integer division truncation, the output evaluates to 0, absorbing the input without returning any value.
-    function test_swap_precision_zero_return_v1() public {
+    // - Step 1: Initial liquidity is provided.
+    // - Step 2: The user performs a swap by sending exactly 1 wei of `token0`.
+    // - Step 3: Due to EVM integer division truncation, the calculated output amount evaluates to 0. The transaction succeeds, but the user receives 0 `token1`, violating the strict increase invariant.
+    function test_swap_precision_v1() public {
+        uint balOutBefore = token1.balanceOf(user);
+        
         vm.startPrank(user);
-        ammV1.deposit(10000, 10000);
+        ammV1.swap(address(token0), 1, 0); 
         vm.stopPrank();
 
-        uint bal1Before = token1.balanceOf(attacker);
+        uint balOutAfter = token1.balanceOf(user);
         
-        vm.startPrank(attacker);
-        ammV1.swap(address(token0), 1, 0); // 1 wei swap
-        vm.stopPrank();
-        
-        uint bal1After = token1.balanceOf(attacker);
-        
-        assertEq(bal1After - bal1Before, 0);
+        assertEq(balOutAfter - balOutBefore, 0);
     }
 }

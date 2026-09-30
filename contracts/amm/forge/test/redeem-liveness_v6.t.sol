@@ -42,7 +42,7 @@ contract RedeemLivenessV6Test is Test {
     }
 
     // redeem-liveness:
-    // If the contract's tracked reserves are equal to its real balances, a `redeem` transaction by a valid sender possessing a strictly positive amount of liquidity tokens never reverts.
+    // Let `b0`, `b1` be the token balances of the contract, and let `r0`, `r1` be the internal reserves of the contract. If `r0 == b0` and `r1 == b1`, a `redeem(x)` transaction by a sender `A`, with `minted[A] >= x`, `x > 0` and `x < supply` never reverts.
 
     // PoC:
     // - Step 1 (setup): The user initializes the pool by depositing liquidity. Since V6 removes the `MINIMUM_LIQUIDITY` lock, the user correctly receives 100% of the total supply.

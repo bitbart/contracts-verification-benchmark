@@ -1,3 +1,5 @@
+import os
+os.environ["BROWSER"] = "echo"
 '''
 Operates on either a single file or every file within a directory.
 
@@ -55,7 +57,7 @@ def violations_found(output):
 
 def property_violated(output, spec_path):
     property_name = str(spec_path).replace("certora/","").replace(".spec","").replace("-","_")
-    return f"Violated: {property_name}" in output
+    return f"Violated: {property_name}" in output or f"Failed on {property_name}" in output
 
 # Checks if the property was verified at least for one method
 def property_verified_at_least_one(output, spec_path):

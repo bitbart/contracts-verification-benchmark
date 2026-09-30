@@ -1,49 +1,36 @@
 /// @custom:property redeem-liveness
-/// @custom:description If the contract's tracked reserves are equal to its actual balances, a `redeem` transaction by a valid sender possessing a positive amount of liquidity tokens never reverts.
+/// @custom:description Let `b0`, `b1` be the token balances of the contract, and let `r0`, `r1` be the internal reserves of the contract. If `r0 == b0` and `r1 == b1`, a `redeem(x)` transaction by a sender `A`, with `minted[A] >= x`, `x > 0` and `x < supply` never reverts.
 
 rule redeem_liveness {
     env e;
-
-    uint maxValue = 1000000000000000000000000000;
-    uint shares = currentContract.minted(e, e.msg.sender);
-
-    require(currentContract.getBalance0(e) == currentContract.r0(e));
-    require(currentContract.getBalance1(e) == currentContract.r1(e));
-
-
-    require(shares > 0);
-    require(shares <= currentContract.supply(e));
-    require(currentContract.supply(e) > 0);
-
-
-    // Upper bounds to prevent overflows and reverts
-    require(currentContract.getBalance0(e) < maxValue);
-    require(currentContract.getBalance1(e) < maxValue);
-    require(shares < maxValue);
-    require(currentContract.supply(e) < maxValue);
-    require(currentContract.r0(e) < maxValue);
-    require(currentContract.r1(e) < maxValue);
-    require(currentContract.getUserBalance0(e, e.msg.sender) < maxValue);
-    require(currentContract.getUserBalance1(e, e.msg.sender) < maxValue);
-
-    // token validation
-    require(currentContract.t0(e) != currentContract.t1(e));
-    require(currentContract.t0(e) != 0 && currentContract.t1(e) != 0);
-    require(currentContract.t0(e) != currentContract && currentContract.t1(e) != currentContract);
+    uint x;
     
-
-
-    require((shares * currentContract.r0(e)) / currentContract.supply(e) > 0);
-    require((shares * currentContract.r1(e)) / currentContract.supply(e) > 0);
-
-    require(shares + currentContract.minted(e, 0) == currentContract.supply(e));
-
-    // msg.sender validation
     require(e.msg.value == 0);
     require(e.msg.sender != 0);
-    require(e.msg.sender != currentContract);
+    require(currentContract.t0(e) != currentContract.t1(e));
+    require(currentContract.t0(e) != 0 && currentContract.t1(e) != 0);
 
-    redeem@withrevert(e, shares);
+
+    require(currentContract.t0(e).balanceOf(e, currentContract) == currentContract.r0(e));
+    require(currentContract.t1(e).balanceOf(e, currentContract) == currentContract.r1(e));
+
+
+    require(currentContract.minted(e, e.msg.sender) >= x);
+    require(x > 0);
+    require(x < currentContract.supply(e));
+
+
+    // Remove??
+    // require(currentContract.unlocked(e) == 1);
+    // require(currentContract.r0(e) <= 1000000000000000000000000000000000000);
+    // require(currentContract.r1(e) <= 1000000000000000000000000000000000000);
+    // require(currentContract.supply(e) <= 1000000000000000000000000000000000000);
+    // require(currentContract.t0(e).balanceOf(e, e.msg.sender) <= 1000000000000000000000000000000000000);
+    // require(currentContract.t1(e).balanceOf(e, e.msg.sender) <= 1000000000000000000000000000000000000);
+    // require(currentContract.supply(e) > 0);
+
+
+    redeem@withrevert(e, x);
 
     assert(!lastReverted);
 }
