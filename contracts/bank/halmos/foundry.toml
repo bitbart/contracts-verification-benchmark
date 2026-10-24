@@ -3,8 +3,14 @@ src = '.'
 test = '.'
 out = 'out'
 libs = ['lib']
+skip = ['lib/**']
 
 remappings = [
     'target/=versions/',
-    'lib/=lib/'
+    'lib/=lib/',
+    'halmos-cheatcodes/=lib/halmos-cheatcodes/src/',
+    'forge-std/=lib/forge-std/src/'
 ]
+
+[lint]
+lint_on_build = false

@@ -12,7 +12,7 @@ rule deposit_not_revert_external {
     require credits_sender + e.msg.value <= max_uint;
 
     // external transaction
-    require e.msg.value == e.tx.origin;
+    require e.msg.sender == e.tx.origin;
 
     deposit@withrevert(e);
     

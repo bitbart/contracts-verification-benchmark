@@ -2,54 +2,49 @@
 pragma solidity >=0.8.2;
 
 import "target/{{VERSION}}.sol";
+import "./BankHandler/bankHandler.sol";
+import {SymTest} from "halmos-cheatcodes/SymTest.sol";
+import {Test} from "forge-std/Test.sol";
 
-interface IHalmosVM {
-    function assume(bool condition) external;
-    function prank(address msgSender) external;
-    function deal(address account, uint256 newBalance) external;
-    function load(address account, bytes32 slot) external view returns (bytes32);
-}
-
-contract BankTest {
-    IHalmosVM constant vm = IHalmosVM(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
+/// Property deposit-assets-credit:
+/// after a non-reverting `deposit()`, the credits of `msg.sender` are increased by `msg.value`.
+contract BankTest is Test, SymTest {
     Bank bank;
+    BankHandler handler;
 
     function setUp() public {
+        
+        address owner = svm.createAddress("owner");
+        vm.startPrank(owner);
         {{CONSTRUCTOR_SETUP}};
+        vm.stopPrank();
+
+        address user = svm.createAddress("A");
+        handler = new BankHandler(address(bank), user);
+
+        _assumeUser(owner);
+        _assumeUser(user);
+        excludeSender(address(0));
+        excludeSender(address(bank));
+        excludeSender(address(handler));
+        excludeSender(address(this));
+
+        // Halmos must explore only the Handler: direct calls to Bank
+        // would skip the update of the ghost variables
+        targetContract(address(handler));
     }
 
-    // Helper function to read credits directly from EVM storage
-    function getCredits(address user) internal view returns (uint256) {
-        bytes32 slot = keccak256(abi.encodePacked(user, uint256(0)));
-        bytes32 value = vm.load(address(bank), slot);
-        return uint256(value);
+    function _assumeUser(address a) internal view {
+        vm.assume(a != address(0));
+        vm.assume(a != address(bank));
+        vm.assume(a != address(handler));
+        vm.assume(a != address(this));
     }
 
-    /// @notice Property: deposit-assets-credit
-    function check_deposit_assets_credit(
-        address caller,
-        uint256 depositAmount,
-        uint256 initialBalance
-    ) public {
-        vm.assume(caller != address(0));
-        vm.assume(caller != address(bank));
-        vm.assume(caller != address(vm));
-
-        vm.assume(depositAmount <= 1000 ether);
-        vm.assume(initialBalance >= depositAmount);
-        vm.deal(caller, initialBalance);
-
-        uint256 old_user_credit = getCredits(caller);
-        vm.assume(old_user_credit <= type(uint256).max - depositAmount);
-
-        vm.prank(caller);
-        (bool success, ) = address(bank).call{value: depositAmount}(
-            abi.encodeWithSelector(Bank.deposit.selector)
-        );
-
-        if (success) {
-            uint256 new_user_credit = getCredits(caller);
-            assert(new_user_credit == old_user_credit + depositAmount);
+    /// @custom:halmos --invariant-depth 3
+    function invariant_deposit_assets_credit() public view {
+        if (handler.lastSelector() == Bank.deposit.selector) {
+            assert(handler.senderCreditAfter() - handler.senderCreditBefore() == handler.lastValue());
         }
     }
 }

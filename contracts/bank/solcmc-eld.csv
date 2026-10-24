@@ -37,8 +37,8 @@ credit-dec-onlyif-withdraw,v1,N
 credit-dec-onlyif-withdraw,v10,N
 credit-dec-onlyif-withdraw,v11,N!
 credit-dec-onlyif-withdraw,v12,N
-credit-dec-onlyif-withdraw,v13,N
-credit-dec-onlyif-withdraw,v14,N!
+credit-dec-onlyif-withdraw,v13,UNK
+credit-dec-onlyif-withdraw,v14,N
 credit-dec-onlyif-withdraw,v15,P!
 credit-dec-onlyif-withdraw,v16,N
 credit-dec-onlyif-withdraw,v17,N!
@@ -146,7 +146,7 @@ deposit-revert,v16,N!
 deposit-revert,v17,P!
 deposit-revert,v2,P!
 deposit-revert,v3,P!
-deposit-revert,v4,UNK
+deposit-revert,v4,N
 deposit-revert,v5,P!
 deposit-revert,v6,P!
 deposit-revert,v7,N
@@ -271,4 +271,3 @@ withdraw-sender-rcv-EOA,v6,N!
 withdraw-sender-rcv-EOA,v7,N!
 withdraw-sender-rcv-EOA,v8,N!
 withdraw-sender-rcv-EOA,v9,N!
-withdraw-user-balance,v13,N!

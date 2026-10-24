@@ -2,57 +2,50 @@
 pragma solidity >=0.8.2;
 
 import "target/{{VERSION}}.sol";
+import "./BankHandler/bankHandler.sol";
+import {SymTest} from "halmos-cheatcodes/SymTest.sol";
+import {Test} from "forge-std/Test.sol";
 
-interface IHalmosVM {
-    function assume(bool condition) external;
-    function prank(address msgSender) external;
-    function deal(address account, uint256 newBalance) external;
-    function load(address account, bytes32 slot) external view returns (bytes32);
-}
-
-contract BankTest {
-    IHalmosVM constant vm = IHalmosVM(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
+/// Property withdraw-revert:
+/// a `withdraw(amount)` call reverts if `amount` is zero or greater than the credit of `msg.sender`.
+contract BankTest is Test, SymTest {
     Bank bank;
+    BankHandler handler;
 
     function setUp() public {
+        
+        address owner = svm.createAddress("owner");
+        vm.startPrank(owner);
         {{CONSTRUCTOR_SETUP}};
+        vm.stopPrank();
+
+        address user = svm.createAddress("A");
+        handler = new BankHandler(address(bank), user);
+
+        _assumeUser(owner);
+        _assumeUser(user);
+        excludeSender(address(0));
+        excludeSender(address(bank));
+        excludeSender(address(handler));
+        excludeSender(address(this));
+
+        // Halmos must explore only the Handler: direct calls to Bank
+        // would skip the update of the ghost variables
+        targetContract(address(handler));
     }
 
-    function getCredits(address user) internal view returns (uint256) {
-        bytes32 slot = keccak256(abi.encodePacked(uint256(uint160(user)), uint256(0)));
-        bytes32 value = vm.load(address(bank), slot);
-        return uint256(value);
+    function _assumeUser(address a) internal view {
+        vm.assume(a != address(0));
+        vm.assume(a != address(bank));
+        vm.assume(a != address(handler));
+        vm.assume(a != address(this));
     }
 
-    /// @notice Property: withdraw-revert
-     function check_withdraw_revert(
-        address caller,
-        uint256 depositAmount,
-        uint256 withdrawAmount
-    ) public {
-        vm.assume(caller != address(0));
-        vm.assume(caller != address(bank));
-        vm.assume(caller != address(vm));
-
-        vm.assume(depositAmount <= 1000 ether);
-        vm.assume(withdrawAmount <= 1000 ether);
-        vm.deal(caller, 2000 ether);
-
-        vm.prank(caller);
-        (bool depositSuccess,) = address(bank).call{value: depositAmount}(
-            abi.encodeWithSelector(Bank.deposit.selector)
-        );
-
-        uint256 credit = getCredits(caller);
-        bool shouldRevert = (withdrawAmount == 0 || withdrawAmount > credit);
-
-        vm.prank(caller);
-        (bool success,) = address(bank).call(
-            abi.encodeWithSelector(Bank.withdraw.selector, withdrawAmount)
-        );
-
-        if (shouldRevert) {
-            assert(!success);
+    /// @custom:halmos --invariant-depth 3
+    function invariant_withdraw_revert() public view {
+        if (handler.lastSelector() == Bank.withdraw.selector) {
+            assert(handler.lastAmount() != 0);
+            assert(handler.lastAmount() <= handler.senderCreditBefore());
         }
     }
 }
