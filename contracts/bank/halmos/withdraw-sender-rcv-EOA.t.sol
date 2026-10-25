@@ -2,51 +2,49 @@
 pragma solidity >=0.8.2;
 
 import "target/{{VERSION}}.sol";
+import "./BankHandler/bankHandler.sol";
+import {SymTest} from "halmos-cheatcodes/SymTest.sol";
+import {Test} from "forge-std/Test.sol";
 
-interface IHalmosVM {
-    function assume(bool condition) external;
-    function prank(address msgSender) external;
-    function deal(address account, uint256 newBalance) external;
-}
-
-contract BankTest {
-    IHalmosVM constant vm = IHalmosVM(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
+/// Property withdraw-sender-rcv-EOA:
+/// after a non-reverting `withdraw(amount)` originated by an EOA, the ETH balance of the `msg.sender` is increased by `amount` wei.
+contract BankTest is Test, SymTest {
     Bank bank;
+    BankHandler handler;
 
     function setUp() public {
+        
+        address owner = svm.createAddress("owner");
+        vm.startPrank(owner);
         {{CONSTRUCTOR_SETUP}};
+        vm.stopPrank();
+
+        address user = svm.createAddress("A");
+        handler = new BankHandler(address(bank), user);
+
+        _assumeUser(owner);
+        _assumeUser(user);
+        excludeSender(address(0));
+        excludeSender(address(bank));
+        excludeSender(address(handler));
+        excludeSender(address(this));
+
+        // Halmos must explore only the Handler: direct calls to Bank
+        // would skip the update of the ghost variables
+        targetContract(address(handler));
     }
 
-    /// @notice Property: withdraw-sender-rcv-EOA
-    function check_withdraw_sender_rcv_EOA(
-        address caller,
-        uint256 depositAmount,
-        uint256 withdrawAmount
-    ) public {
-        vm.assume(caller != address(0) && caller != address(bank));
-        vm.assume(caller.code.length == 0); 
+    function _assumeUser(address a) internal view {
+        vm.assume(a != address(0));
+        vm.assume(a != address(bank));
+        vm.assume(a != address(handler));
+        vm.assume(a != address(this));
+    }
 
-        vm.assume(depositAmount <= 1000 ether);
-        vm.assume(withdrawAmount <= 1000 ether);
-        vm.deal(caller, 2000 ether);
-
-        // Deposit
-        vm.prank(caller);
-        address(bank).call{value: depositAmount}(
-            abi.encodeWithSelector(Bank.deposit.selector)
-        );
-
-        uint256 balanceBefore = caller.balance;
-
-        // Withdraw
-        vm.prank(caller);
-        (bool success,) = address(bank).call(
-            abi.encodeWithSelector(Bank.withdraw.selector, withdrawAmount)
-        );
-
-        if (success) {
-            uint256 balanceAfter = caller.balance;
-            assert(balanceAfter == balanceBefore + withdrawAmount);
+    /// @custom:halmos --invariant-depth 3
+    function invariant_withdraw_sender_rcv_EOA() public view {
+        if (handler.lastSelector() == Bank.withdraw.selector && handler.lastSender() == handler.lastOrigin()) {
+            assert(handler.senderBalanceAfter() - handler.senderBalanceBefore() == handler.lastAmount());
         }
     }
 }

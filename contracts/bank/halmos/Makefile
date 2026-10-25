@@ -9,7 +9,7 @@ VER_NORMALIZED = $(if $(ver),$(if $(patsubst v%,%,$(ver)),v$(patsubst v%,%,$(ver
 # Input files
 VERSIONS_DIR = ../versions
 PROPERTIES_DIR = .
-GROUND_TRUTH = ../ground-truth.csv
+GETTER_FILE = getters.sol
 
 # Selection of versions and properties
 VERSIONS_FILES = $(if $(VER_NORMALIZED),\
@@ -27,28 +27,16 @@ CONTRACTS_DIR = $(BUILD_DIR)/contracts
 LOGS_DIR = $(OUTPUT_DIR)/logs
 LIB_DIR = $(CONTRACTS_DIR)/lib
 OUT = $(OUTPUT_DIR)/out.csv
-CM = $(OUTPUT_DIR)/cm.csv
-TABLE = $(OUTPUT_DIR)/table.md
 
-# Path to bank/
-ROOT_BANK_HALMOS_CSV = ../halmos.csv
+# Handler directory
+HANDLER_DIR = $(CONTRACTS_DIR)/BankHandler
 
 PYTHON = python
 
-.PHONY: run setup contracts directories clean
+.PHONY: run setup contracts directories clean 
 
 #---------------------------- RUN --------------------------------#
-run: $(TABLE)
-
-$(TABLE): $(CM)
-	@echo "Generating Halmos results table ($(TABLE))..."
-	@echo "#### Halmos" > $(TABLE)
-	@$(PYTHON) ../../../scripts/mdtable_gen.py --input $(CM) >> $(TABLE)
-
-$(CM): $(GROUND_TRUTH) $(OUT)
-	@echo "Generating Halmos confusion matrix ($(CM))..."
-	@$(PYTHON) ../../../scripts/cm_gen.py --ground-truth $(GROUND_TRUTH) --results $(OUT) > $(CM)
-	@cp -f $(OUT) $(ROOT_BANK_HALMOS_CSV)
+run: $(OUT)
 
 $(OUT): setup
 	@echo "Running Halmos experiments..."
@@ -61,32 +49,33 @@ $(OUT): setup
 		$(if $(prop),--property $(prop),)
 
 #---------------------------- SETUP ------------------------------#
+
 setup: contracts directories
-	
- contracts: $(CONTRACTS_DIR) $(LIB_DIR)
+
+contracts: $(CONTRACTS_DIR) $(LIB_DIR) $(HANDLER_DIR)
 	@echo "Generating version-specific test files for Halmos..."
+	@cp ./BankHandler/bankHandler.sol $(HANDLER_DIR)/
 	@cp ./foundry.toml $(CONTRACTS_DIR)/
 	@mkdir -p $(CONTRACTS_DIR)/versions
-	@cp -r $(LIB_DIR) $(CONTRACTS_DIR)/versions/lib
+	@mkdir -p $(CONTRACTS_DIR)/versions/lib
+	@cp $(LIB_DIR)/*.sol $(CONTRACTS_DIR)/versions/lib/
 	@for ver_file in $(notdir $(VERSIONS_FILES)); do \
 		ver_name=$${ver_file%.sol}; \
 		ver_short=$$(echo $$ver_name | sed 's/Bank_//'); \
-		cp $(VERSIONS_DIR)/$$ver_file $(CONTRACTS_DIR)/versions/$$ver_short.sol; \
+		case $$ver_short in \
+			v3) ctor_setup='uint256 opLimit = svm.createUint256("opLimit"); vm.assume(opLimit > 0); bank = new Bank(opLimit)' ;; \
+			*)  ctor_setup='bank = new Bank()' ;; \
+		esac; \
+		$(PYTHON) ../../../scripts/inject_getters.py --contracts $(VERSIONS_DIR)/$$ver_file --getters $(GETTER_FILE) > $(CONTRACTS_DIR)/versions/$$ver_short.sol; \
 		for prop_file in $(PROPERTIES_FILES); do \
 			prop_name=$$(basename $$prop_file .t.sol); \
 			prop_name_safe=$$(echo $$prop_name | sed 's/-/_/g'); \
 			target_file=$(CONTRACTS_DIR)/$${ver_short}_$${prop_name_safe}.t.sol; \
-			if [ "$$ver_short" = "v3" ]; then \
-				sed -e "s/{{VERSION}}/$$ver_short/g" \
-				    -e "s/{{CONTRACT_NAME}}/BankTest_$${ver_short}_$${prop_name_safe}/g" \
-				    -e "s/contract BankTest/contract BankTest_$${ver_short}_$${prop_name_safe}/g" \
-				    -e "s/{{CONSTRUCTOR_SETUP}}/bank = new Bank(99 ether)/g" $$prop_file > $$target_file; \
-			else \
-				sed -e "s/{{VERSION}}/$$ver_short/g" \
-				    -e "s/{{CONTRACT_NAME}}/BankTest_$${ver_short}_$${prop_name_safe}/g" \
-				    -e "s/contract BankTest/contract BankTest_$${ver_short}_$${prop_name_safe}/g" \
-				    -e "s/{{CONSTRUCTOR_SETUP}}/bank = new Bank()/g" $$prop_file > $$target_file; \
-			fi; \
+			sed -e "s/{{VERSION}}/$$ver_short/g" \
+			    -e "s/{{CONTRACT_NAME}}/BankTest_$${ver_short}_$${prop_name_safe}/g" \
+			    -e "s/contract BankTest/contract BankTest_$${ver_short}_$${prop_name_safe}/g" \
+			    -e "s|{{CONSTRUCTOR_SETUP}}|$$ctor_setup|g" \
+			    $$prop_file > $$target_file; \
 		done; \
 	done
 
@@ -103,6 +92,10 @@ $(LIB_DIR):
 	@rm -f $@/ERC20v2.sol
 	@rm -f $@/ERC20v3.sol
 
+$(HANDLER_DIR):
+	@mkdir -p $@
+
 #---------------------------- CLEAN ------------------------------#
+
 clean:
 	rm -rf $(BUILD_DIR)
