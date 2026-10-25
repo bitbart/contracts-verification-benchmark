@@ -1,0 +1,13 @@
+[profile.default]
+src = '.'
+test = '.'
+out = 'out'
+libs = ['../../../../lib']
+skip = []
+
+remappings = [
+    'versions/=../../versions/'
+]
+
+[lint]
+lint_on_build = false
